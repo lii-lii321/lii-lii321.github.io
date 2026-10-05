@@ -32,7 +32,7 @@
 ## 三、复核确认「不需要动」的资产
 
 1. **整体视觉方向**（纸白 + 发丝线 + 衬线大标题 + 唯一暗色岛 TravelIsland）——克制、统一、有明确规格来源；
-2. **零 JS 首页架构**：`index.astro` 服务端渲染，仅地图/灯箱两个 React island；
+2. **零 JS 首页架构**：`index.astro` 服务端渲染，全站仅地图 / 小地图 / 灯箱 / 文章目录 4 个 React island；
 3. **Base.astro 布局层**：skip-link、aria-expanded 汉堡菜单、canonical/OG、`/` 聚焦搜索快捷键、返回顶部 rAF 节流——全部达标；
 4. **打印样式**（A4 排版、链接显示地址、隐藏交互设施）——同类站点几乎没人做；
 5. **prose-editorial 正文排版**：代码块工具条、callout/aside-note/blockquote 全套落样式；

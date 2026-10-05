@@ -57,7 +57,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
 
   {
     hero && (
-      <section class="mt-10" aria-label="头条文章">
+      <section class="mt-10" aria-label="头条文章" data-filter-scope="blog" data-filter-hide>
         <a
           href={`/blog/${hero.id}`}
           class="group grid gap-8 border border-rule bg-paper p-6 transition-colors hover:bg-paper-2 md:grid-cols-[1.1fr_1fr] md:p-8"
@@ -86,7 +86,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
   <section class="mt-[var(--spacing-sec)] pb-[var(--spacing-sec)]" aria-label="全部文章">
     {
       years.map((year) => (
-        <div class="mb-14 last:mb-0">
+        <div class="mb-14 last:mb-0" data-filter-group data-filter-scope="blog">
           <div class="flex items-baseline justify-between border-b border-ink pb-3">
             <h2 class="font-serif text-2xl font-bold text-ink">{year}</h2>
             <p class="meta">{byYear.get(year)!.length} 篇</p>
@@ -108,5 +108,9 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
         </div>
       ))
     }
+    {/* 空态：FilterChips 脚本在该分类无文章时显示 */}
+    <p class="py-16 text-center text-sm text-ink-2" data-filter-scope="blog" data-filter-empty hidden>
+      该分类下暂无文章。
+    </p>
   </section>
 </Base>

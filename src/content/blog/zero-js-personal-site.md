@@ -49,7 +49,7 @@ document.addEventListener('click', (event) => {
 
 ## 样式即架构
 
-Tailwind v4 的 `@theme` 让设计令牌变成了 CSS 变量——强调色切换这种「主题级」交互，纯 CSS 变量级联就能完成：
+Tailwind v4 的 `@theme` 让设计令牌变成了 CSS 变量——上线前评审用的强调色切换（靛蓝 vs 朱橙），就是靠纯 CSS 变量级联完成的（靛蓝终审定稿后，这套切换已随页脚按钮一并移除，这里留作机制样例）：
 
 ```css
 /* <html data-accent="vermilion"> 一属性切换全站强调色 */

@@ -3,6 +3,7 @@
  * ✅ 已接真实数据：姓名 / 学校 / 邮箱 / GitHub / 项目 / 旅行照片。
  * ⚠️ 仍可打磨：availability（当前状态）、timeline 工作经历（当前只有开源项目里程碑）。
  */
+import { execSync } from "node:child_process";
 import travelsData from "../data/travels.json";
 import projectsData from "../data/projects.json";
 import type { TravelData, Project } from "../types";
@@ -11,6 +12,19 @@ import type { TravelData, Project } from "../types";
  *  构建 时计算，杜绝「站点数字与事实脱节」（此前手写 340 张，实际已 592 张）。 */
 const travelStats = (travelsData as TravelData).stats;
 const projectCount = (projectsData as Project[]).length;
+
+/** 「最后更新」兜底值：git 不可用（如无 .git 的构建环境）时使用 */
+const FALLBACK_UPDATED_AT = "2026-10-06";
+
+/** 站点最后更新日期：构建时取 git 最近一次提交日期（%cs = YYYY-MM-DD），
+ *  不再手动维护——此前手写 2026-10-03，其后 10-05/10-06 多次内容变更，三处展示随之过期漂移 */
+function deriveUpdatedAt(): string {
+  try {
+    return execSync("git log -1 --format=%cs", { encoding: "utf8" }).trim() || FALLBACK_UPDATED_AT;
+  } catch {
+    return FALLBACK_UPDATED_AT;
+  }
+}
 
 export const siteConfig = {
   /** 姓名（真实） */
@@ -39,8 +53,8 @@ export const siteConfig = {
   email: "3028410005@qq.com",
   /** 简历 PDF：放在 public/ 下（public/resume.pdf，⚠️ 需要你自己提供） */
   resumeUrl: "/resume.pdf",
-  /** 站点最后更新日期（手动维护） */
-  updatedAt: "2026-10-03",
+  /** 站点最后更新日期（构建时从 git 派生，git 不可用时回退兜底值） */
+  updatedAt: deriveUpdatedAt(),
 
   /** 首页数字带（构建时从 data/ 派生，永远与事实一致；href 让数字可点击） */
   stats: [

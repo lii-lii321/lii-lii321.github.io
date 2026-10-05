@@ -38,6 +38,9 @@ interface Props {
 const { trip, prev, next } = Astro.props;
 const { place } = trip;
 
+/** 封面对应的照片（与 TravelIsland 同法：缩略图 640w 起步、原图兜底，避免手机端 eager 拉全尺寸原图当 LCP） */
+const coverPhoto = trip.photos.find((p) => p.src === trip.cover) ?? trip.photos[0] ?? null;
+
 /** “2025-04-12” → “2025 年 4 月 12 日”；解析失败时原样返回 */
 function formatDate(iso: string): string {
   const date = new Date(`${iso}T00:00:00`);
@@ -78,7 +81,9 @@ const sceneChips = groupScenes
     <!-- 相册头：大封面背景（照片上的白字用墨色渐变压底） -->
     <section class="relative mt-10 overflow-hidden rounded-[14px]">
       <img
-        src={trip.cover}
+        src={coverPhoto?.thumb ?? trip.cover}
+        srcset={coverPhoto ? `${coverPhoto.thumb} 640w, ${trip.cover} ${coverPhoto.width}w` : undefined}
+        sizes="(min-width: 1280px) 1200px, 100vw"
         alt=""
         aria-hidden="true"
         loading="eager"
