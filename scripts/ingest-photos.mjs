@@ -60,18 +60,23 @@ for (const trip of TRIPS) {
   const all = collectImages(path.join(SRC_ROOT, trip.src)).sort();
   const picked = sampleEvenly(all, DEFAULT_CAP);
   let ok = 0;
-  let firstLandscape = null; // 封面优先用横版（竖版封面在横幅区域会被裁切）
+  let firstLandscape = null; // 封面优先用横版（基于转正后的真实方向）
   for (let i = 0; i < picked.length; i++) {
     const out = path.join(destDir, `${String(i + 1).padStart(2, '0')}.jpg`);
     try {
       const meta = await sharp(picked[i]).metadata();
-      if (!firstLandscape && (meta.width ?? 0) > (meta.height ?? 0) * 1.05) {
+      // orientation 5–8 表示存储时旋转了 90°，真实方向要交换宽高
+      const swapped = (meta.orientation ?? 1) >= 5;
+      const w = swapped ? (meta.height ?? 0) : (meta.width ?? 0);
+      const h = swapped ? (meta.width ?? 0) : (meta.height ?? 0);
+      if (!firstLandscape && w > h * 1.05) {
         firstLandscape = `${String(i + 1).padStart(2, '0')}.jpg`;
       }
       await sharp(picked[i])
+        .rotate() // 关键：按 EXIF Orientation 把像素物理转正（相机竖拍的照片缩略图才是正的）
         .resize({ width: MAX_EDGE, height: MAX_EDGE, fit: 'inside', withoutEnlargement: true })
         .jpeg({ quality: QUALITY })
-        .withMetadata() // 保留 EXIF（拍摄时间等），供 build-photos 读取
+        .withMetadata() // 保留其余 EXIF（拍摄时间等）；sharp 转正后会把 Orientation 置 1
         .toFile(out);
       ok++;
     } catch (err) {
