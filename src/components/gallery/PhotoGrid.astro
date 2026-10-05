@@ -1,10 +1,12 @@
 ---
 /**
- * 照片瀑布流网格（CSS columns 多列布局）：
+ * 照片墙（justified 行式布局，Google Photos 风格）：
+ * - 等高行 + 按宽高比分配 flex-grow：竖版横版混排时行内高度一致、几乎不裁切，
+ *   比传统 columns 瀑布流更适合 46% 竖版的照片分布；
  * - 静态渲染，只加载 640 宽 WebP 缩略图（thumb），原图留给灯箱；
- * - blur（16px WebP data URI）作为 img 背景占位，缩略图加载完成前先铺底；
- * - width/height 属性 + h-auto 让浏览器按原图比例占位，加载时不跳动；
- * - 点击网格项派发 gallery:open 自定义事件，由 Lightbox 岛接收打开。
+ * - blur（16px WebP data URI）作为 img 背景占位；width/height 属性防跳动；
+ * - 点击网格项派发 gallery:open 自定义事件，由 Lightbox 岛接收打开（索引 = 全局顺序）。
+ * - 有子景点清单时按景点分段（与 travel/[id] 的 sceneChips 锚点同一套分组序号）。
  */
 import type { Photo } from '../../types';
 
@@ -35,57 +37,89 @@ const hasScenes = groups.length > 1;
               <p class="meta">{group.items.length} 张</p>
             </div>
           )}
-          <ul class="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4">
-            {group.items.map((photo, j) => (
-              <li class="mb-3 break-inside-avoid sm:mb-4">
-                <button
-                  type="button"
-                  data-gallery-index={group.start + j}
-                  aria-label={`查看第 ${group.start + j + 1} 张照片：${albumTitle}${group.scene ? ` · ${group.scene}` : ''}`}
-                  class="group block w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
+          <ul class="jrow">
+            {group.items.map((photo, j) => {
+              const ratio = photo.width > 0 && photo.height > 0 ? photo.width / photo.height : 1.5;
+              const index = group.start + j;
+              return (
+                <li
+                  style={`flex-grow:${Math.max(1, Math.round(ratio * 100))};flex-basis:calc(var(--jrow-h) * ${ratio.toFixed(4)})`}
                 >
-                  <img
-                    src={photo.thumb}
-                    alt={`${albumTitle}${group.scene ? ` · ${group.scene}` : ''} · 第 ${group.start + j + 1} 张照片`}
-                    width={photo.width}
-                    height={photo.height}
-                    loading="lazy"
-                    decoding="async"
-                    class="h-auto w-full transition-transform duration-300 group-hover:scale-[1.02]"
-                    style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
-                  />
-                </button>
-              </li>
-            ))}
+                  <button
+                    type="button"
+                    data-gallery-index={index}
+                    aria-label={`查看第 ${index + 1} 张照片：${albumTitle}${group.scene ? ` · ${group.scene}` : ''}`}
+                    class="group block h-full w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
+                  >
+                    <img
+                      src={photo.thumb}
+                      alt={`${albumTitle}${group.scene ? ` · ${group.scene}` : ''} · 第 ${index + 1} 张照片`}
+                      width={photo.width}
+                      height={photo.height}
+                      loading="lazy"
+                      decoding="async"
+                      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
+                    />
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </section>
       ))
     : (
-        <ul class="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4">
-          {photos.map((photo, index) => (
-            <li class="mb-3 break-inside-avoid sm:mb-4">
-              <button
-                type="button"
-                data-gallery-index={index}
-                aria-label={`查看第 ${index + 1} 张照片：${albumTitle}`}
-                class="group block w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
-              >
-                <img
-                  src={photo.thumb}
-                  alt={`${albumTitle} · 第 ${index + 1} 张照片`}
-                  width={photo.width}
-                  height={photo.height}
-                  loading="lazy"
-                  decoding="async"
-                  class="h-auto w-full transition-transform duration-300 group-hover:scale-[1.02]"
-                  style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
-                />
-              </button>
-            </li>
-          ))}
+        <ul class="jrow">
+          {photos.map((photo, index) => {
+            const ratio = photo.width > 0 && photo.height > 0 ? photo.width / photo.height : 1.5;
+            return (
+              <li style={`flex-grow:${Math.max(1, Math.round(ratio * 100))};flex-basis:calc(var(--jrow-h) * ${ratio.toFixed(4)})`}>
+                <button
+                  type="button"
+                  data-gallery-index={index}
+                  aria-label={`查看第 ${index + 1} 张照片：${albumTitle}`}
+                  class="group block h-full w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
+                >
+                  <img
+                    src={photo.thumb}
+                    alt={`${albumTitle} · 第 ${index + 1} 张照片`}
+                    width={photo.width}
+                    height={photo.height}
+                    loading="lazy"
+                    decoding="async"
+                    class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
+                  />
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )
 }
+
+<style>
+  /* justified 行式：等高行，条目宽度 ∝ 照片宽高比；行末留白正常（不再撑满避免最后一张被拉爆） */
+  .jrow {
+    --jrow-h: 150px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .jrow li {
+    height: var(--jrow-h);
+    min-width: 0;
+  }
+  @media (min-width: 640px) {
+    .jrow {
+      --jrow-h: 230px;
+      gap: 6px;
+    }
+  }
+</style>
 
 <script>
   // 事件委托：点击任意网格项，向 Lightbox 岛广播打开事件（带打开下标）

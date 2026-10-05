@@ -60,9 +60,14 @@ for (const trip of TRIPS) {
   const all = collectImages(path.join(SRC_ROOT, trip.src)).sort();
   const picked = sampleEvenly(all, DEFAULT_CAP);
   let ok = 0;
+  let firstLandscape = null; // 封面优先用横版（竖版封面在横幅区域会被裁切）
   for (let i = 0; i < picked.length; i++) {
     const out = path.join(destDir, `${String(i + 1).padStart(2, '0')}.jpg`);
     try {
+      const meta = await sharp(picked[i]).metadata();
+      if (!firstLandscape && (meta.width ?? 0) > (meta.height ?? 0) * 1.05) {
+        firstLandscape = `${String(i + 1).padStart(2, '0')}.jpg`;
+      }
       await sharp(picked[i])
         .resize({ width: MAX_EDGE, height: MAX_EDGE, fit: 'inside', withoutEnlargement: true })
         .jpeg({ quality: QUALITY })
@@ -81,7 +86,7 @@ for (const trip of TRIPS) {
     title: trip.title,
     date: trip.date,
     place: trip.place,
-    cover: `${String(1).padStart(2, '0')}.jpg`,
+    cover: firstLandscape ?? `${String(1).padStart(2, '0')}.jpg`,
     tags: trip.tags,
     description: trip.description,
   };
