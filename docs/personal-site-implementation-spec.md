@@ -114,14 +114,14 @@ scripts/{build-photos.mjs,make-sample-photos.mjs}
   --color-paper:   #FBFAF7;
   --color-paper-2: #F3F1EA;
   --color-paper-3: #E9E6DC;
-  /* 墨色 */
+  /* 墨色（ink-3 需对 paper ≥4.5:1 过 WCAG AA，小字号 meta 文本适用） */
   --color-ink:     #15151A;
   --color-ink-2:   #4B4B55;
-  --color-ink-3:   #8C8C96;
+  --color-ink-3:   #6F6F7A;
   /* 线 */
   --color-rule:    #E2DFD6;
   --color-rule-2:  #CFCBBD;
-  /* 强调色（靛蓝；朱橙方案把 #2F4BFF 换成 #D9481F） */
+  /* 强调色（靛蓝，2026-10-05 终审定稿） */
   --color-accent:      #2F4BFF;
   --color-accent-soft: rgba(47,75,255,.09);
   --color-code-bg:     #F4F2EB;
@@ -139,16 +139,10 @@ html { scroll-behavior: smooth; }
 ::selection { background: var(--color-accent); color: #fff; }
 ```
 
-### 4.1 强调色双方案
+### 4.1 强调色（已终审）
 
-用 `<html data-accent="indigo|vermilion">` 驱动，方便一次性对比评审：
-
-```css
-html[data-accent="vermilion"] {
-  --color-accent:      #D9481F;
-  --color-accent-soft: rgba(217,72,31,.09);
-}
-```
+**2026-10-05 定稿：靛蓝 #2F4BFF。** 朱橙备选方案（#D9481F）与页脚切换按钮已移除；
+若未来重开此决策，用 `<html data-accent>` 方案驱动即可（历史实现见 git 记录）。
 
 **中文 webfont 注意**：Google Fonts 的 Noto Serif SC 全字重体积大，生产环境务必做 subset 或退回系统字体（`Songti SC` / `SimSun`），否则首屏会拖垮 LCP。设计稿里的 CDN 链接**仅供评审**，不要直接搬进生产。
 

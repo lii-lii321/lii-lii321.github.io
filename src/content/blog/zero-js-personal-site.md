@@ -34,14 +34,16 @@ document.addEventListener('click', (event) => {
 
 ## 交互岛屿：只给真正需要的组件
 
-全站最后保留了两个 island（Astro 的 Islands 架构允许页面大部分静态、局部hydrate）：
+全站最后保留了四个 island（Astro 的 Islands 架构允许页面大部分静态、局部hydrate）：
 
 1. **足迹地图**——ECharts 必须在客户端初始化，`client:load`；
-2. **相册灯箱**——键盘导航和焦点管理，`client:load`。
+2. **相册小地图**——同样是 ECharts 画的单点光点，`client:load`；
+3. **相册灯箱**——键盘导航和焦点管理，`client:load`；
+4. **文章目录**——滚动高亮需要维护 aria-current 状态，`client:load`。
 
 <aside-note>
 
-判断标准很简单：这个交互离了 JS 是否根本不成立？目录高亮（IntersectionObserver）用十几行原生代码就能做，不需要成为 island。
+判断标准很简单：这个交互离了 JS 是否根本不成立？以文章目录为例：目录本身仍是静态生成的（页面从 Markdown headings 直接渲染），成为 island 的只有滚动高亮那一小块交互。
 
 </aside-note>
 

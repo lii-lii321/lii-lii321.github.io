@@ -3,7 +3,7 @@
 李云强的个人站：博客 + 项目展示 + 工程履历 + 旅行足迹地图。
 浅色编辑 / 杂志风：纸白底、衬线大标题、发丝线行式列表，层级只用 1px 线。
 
-**技术栈**：Astro 5 · React 19（仅地图 / 灯箱两个 island）· Tailwind CSS v4 · ECharts 5 · sharp / exifr（照片管线）
+**技术栈**：Astro 5 · React 19（仅地图 / 小地图 / 灯箱 / 文章目录 4 个 island）· Tailwind CSS v4 · ECharts 5 · sharp / exifr（照片管线）
 
 ## 站点结构
 
@@ -15,7 +15,7 @@ src/
 ├── content/blog/*.md         文章（Content Collections，frontmatter 见 content.config.ts）
 ├── content.config.ts         文章 schema
 ├── types.ts                  全部数据契约（Trip/Photo/Project/GitHubData…）
-├── layouts/Base.astro        浅色杂志风布局：导航/页脚/汉堡菜单/强调色切换/返回顶部
+├── layouts/Base.astro        浅色杂志风布局：导航/页脚/汉堡菜单/返回顶部
 ├── pages/
 │   ├── index.astro           首页：Hero→数字带→精选项目→最新文章→Now→旅行暗岛
 │   ├── projects/             项目索引（筛选 chips）+ 详情（问题/做法/决策/指标/踩坑）
@@ -36,7 +36,6 @@ src/
 photos/<trip>/                入库照片 + album.json + scenes.json（子景点清单）
 public/photos/                管线产物：原图 + 缩略图（构建时生成，勿手改）
 scripts/                      照片入库/子景点/构建管线 + GitHub 抓取 + 截图入库 + 死链审计
-.github/workflows/deploy.yml  GitHub Pages 部署（构建后自动跑死链审计）
 .github/workflows/deploy.yml  GitHub Pages 部署（构建后自动跑死链审计）
 ```
 
@@ -68,7 +67,7 @@ npm run preview  # 预览构建产物
 
 **改个人信息 / 履历 / 数字 / 技术栈**：全部在 `src/config/site.ts`（单一出口）。
 
-**加一次旅行**：原始照片按行程放好后，在 `scripts/trips.config.mjs` 里加一条配置（含地点坐标），跑 `node scripts/ingest-photos.mjs --only=<id>` → `node scripts/gen-scenes.mjs` → `node scripts/build-photos.mjs`。管线只读原始图库，均匀抽样（每册 ≤32 张）、压缩到 1600px、保留 EXIF；有子文件夹结构的相册自动按子景点分组展示。
+**加一次旅行**：原始照片按行程放好后，在 `scripts/trips.config.mjs` 里加一条配置（含地点坐标），跑 `node scripts/ingest-photos.mjs --only=<id>` → `node scripts/gen-scenes.mjs` → `node scripts/build-photos.mjs`。管线只读原始图库，均匀抽样（默认每册 ≤60 张，`ingest-photos.mjs` 的 `DEFAULT_CAP`）、压缩到 1600px、保留 EXIF；有子文件夹结构的相册自动按子景点分组展示。
 
 **点亮的国家 / 省份**：`src/data/visited.json`。
 
@@ -87,13 +86,13 @@ npm run preview  # 预览构建产物
 3. 仓库 Settings → Pages → Source 选 **GitHub Actions**；
 4. 之后每次 push 到 main 自动构建发布。`astro.config.mjs` 的 `site` 已指向对应域名。
 
-> 注意：仓库里包含 photos/（入库照片约 120MB），首次 push 会比较慢；若部署为项目站（子路径），需要额外做 base 适配。
+> 注意：仓库里包含 photos/（入库照片约 180MB），首次 push 会比较慢；若部署为项目站（子路径），需要额外做 base 适配。
 
 ## ⚠️ 仍可完善
 
-- 站点数字带 / 部分项目指标的口径可随进展更新（当前全部取自仓库可核实事实）；
-- `public/resume.pdf` 简历、`public/portrait.*` 头像待放入；
-- 强调色默认靛蓝，页脚「● 强调色」按钮可切换朱橙预览（决定后删按钮、改 `global.css` 令牌）；
+- 站点数字带 / 部分项目指标的口径可随进展更新（数字带已改为构建时从 data/ 派生，见 `src/config/site.ts`）；
+- `public/resume.pdf` 已由 `make-resume.mjs` 生成真实内容版（英文）；中文正式简历可自行导出覆盖；`public/portrait.*` 头像待放入；
+- ~~强调色~~：靛蓝已终审定稿（2026-10-05），朱橙方案与页脚切换按钮已移除；
 - 青城后山相册因 iPhone HEIC（HEVC）解码限制暂缺：手机导出 JPG 后跑 `node scripts/ingest-photos.mjs --only=qingcheng`。
 
 ## 设计与施工规格

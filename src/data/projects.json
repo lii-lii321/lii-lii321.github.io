@@ -216,7 +216,7 @@
     "stack": ["Astro", "React", "ECharts", "sharp", "exifr"],
     "cover": "/projects/travel-atlas/cover.webp",
     "metrics": [
-      { "num": "11", "unit": "本", "label": "旅行相册", "baseline": "340 张照片，原始图库 6700+ 张自动抽样" },
+      { "num": "11", "unit": "本", "label": "旅行相册", "baseline": "592 张照片，原始图库 6700+ 张自动抽样" },
       { "num": "8", "unit": "个", "label": "省级地区点亮", "baseline": "全部来自真实行程" },
       { "num": "0", "unit": "KB", "label": "首页客户端 JS", "baseline": "纯服务端渲染" }
     ],

@@ -115,7 +115,8 @@ const hasScenes = groups.length > 1;
       });
     }
 
-    // ① 末行 grow 归零：按 offsetTop 分行，最后一行还原为自然宽度
+    // ① 末行 grow 归零：按 offsetTop 分行，仅最后一行还原为自然宽度；
+    // 折叠中的条目 display:none、offsetTop 恒为 0，需跳过，否则会被误判成末行
     function relayout() {
       for (const ul of uls) {
         const lis = Array.from(ul.children) as HTMLLIElement[];
@@ -123,17 +124,20 @@ const hasScenes = groups.length > 1;
           if (li.dataset.grow === undefined) li.dataset.grow = li.style.flexGrow;
           li.style.flexGrow = li.dataset.grow;
         }
-        let top: number | null = null;
+        const rows: HTMLLIElement[][] = [];
         let row: HTMLLIElement[] = [];
-        const flushRow = () => {
-          if (row.length) row.forEach((li) => (li.style.flexGrow = '0'));
-        };
+        let top: number | null = null;
         for (const li of lis) {
-          if (top !== null && li.offsetTop !== top) flushRow();
+          if (li.hidden) continue;
+          if (top !== null && li.offsetTop !== top) {
+            rows.push(row);
+            row = [];
+          }
           top = li.offsetTop;
-          row = [li];
+          row.push(li);
         }
-        flushRow();
+        if (row.length) rows.push(row);
+        rows[rows.length - 1]?.forEach((li) => (li.style.flexGrow = '0'));
       }
     }
 
