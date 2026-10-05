@@ -1,7 +1,9 @@
 ---
 // 通用筛选 chips（规格 §9.1）：选中态为 --color-ink 实心胶囊。
 // 静态站零框架方案：点击切换 active + 按钮组 data-filter-scope 联动
-// 容器内 [data-filter-item] 的显隐（值 "all" 显示全部）。
+// 容器内 [data-filter-item] 的显隐（值 "all" 显示全部）；
+// 配套标记：data-filter-group（条目分组，空组整组隐藏）、
+// data-filter-empty（空态提示，条目全隐藏时显示）、data-filter-hide（非「全部」时隐藏，如头条卡）。
 interface ChipItem {
   label: string;
   count: number;
@@ -50,6 +52,23 @@ const { scope, items, active = 'all' } = Astro.props;
       const values = (el.getAttribute('data-filter-value') ?? '').split(/\s+/);
       const show = value === 'all' || values.includes(value);
       el.toggleAttribute('hidden', !show);
+    });
+    // 空态与分组收束：
+    // - 分组（data-filter-group，如文章年份段）内无可见条目时整组隐藏，避免悬空标题；
+    // - 条目全部被筛掉时显示空态提示（data-filter-empty）；
+    // - 非「全部」时隐藏不参与筛选的区块（data-filter-hide，如头条大卡）。
+    let visible = 0;
+    document.querySelectorAll(`[data-filter-item][data-filter-scope="${scope}"]`).forEach((el) => {
+      if (!el.hasAttribute('hidden')) visible += 1;
+    });
+    document.querySelectorAll(`[data-filter-group][data-filter-scope="${scope}"]`).forEach((group) => {
+      group.toggleAttribute('hidden', group.querySelector('[data-filter-item]:not([hidden])') === null);
+    });
+    document.querySelectorAll(`[data-filter-empty][data-filter-scope="${scope}"]`).forEach((el) => {
+      el.toggleAttribute('hidden', visible > 0);
+    });
+    document.querySelectorAll(`[data-filter-hide][data-filter-scope="${scope}"]`).forEach((el) => {
+      el.toggleAttribute('hidden', value !== 'all');
     });
   });
 </script>

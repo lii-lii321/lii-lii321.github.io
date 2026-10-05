@@ -55,5 +55,9 @@ const chips = [
         </div>
       ))
     }
+    {/* 空态：FilterChips 脚本在该分类无项目时显示 */}
+    <p class="py-16 text-center text-sm text-ink-2" data-filter-scope="projects" data-filter-empty hidden>
+      该分类下暂无项目。
+    </p>
   </section>
 </Base>

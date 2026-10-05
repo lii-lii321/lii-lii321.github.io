@@ -16,7 +16,7 @@ export const TOKENS = {
   paper3: '#e9e6dc',
   ink: '#15151a',
   ink2: '#4b4b55',
-  ink3: '#8c8c96',
+  ink3: '#6f6f7a',
   accent: '#2f4bff',
   rule2: '#cfcbbd',
 } as const;
