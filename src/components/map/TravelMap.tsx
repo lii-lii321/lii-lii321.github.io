@@ -9,7 +9,7 @@
  * - 点击标记弹出侧面板，列出该地点的旅行卡片，点击卡片跳 /travel/<id>；
  * - 处理 resize（ResizeObserver）与卸载（dispose），任一地图数据失败时给出降级 UI，页面不崩。
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as echarts from 'echarts/core';
 import { EffectScatterChart } from 'echarts/charts';
 import { GeoComponent, TooltipComponent } from 'echarts/components';
@@ -59,12 +59,35 @@ export default function TravelMap({ trips, visited }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<EChartsType | null>(null);
   const geoRef = useRef<Partial<Record<MapView, GeoFeatureCollection>>>({});
+  /** 已发起抓取的视图（防止重复请求）；卸载后置真，异步回调不再 setState */
+  const requestedRef = useRef<Partial<Record<MapView, boolean>>>({});
+  const cancelledRef = useRef(false);
 
   const clusters = useMemo(() => clusterTripsByPlace(trips), [trips]);
   const selected: PlaceCluster | null =
     clusters.find((c) => c.key === selectedKey) ?? null;
 
-  /* ① 初始化图表、拉取两份本地 GeoJSON、resize 监听、卸载 dispose */
+  /** 按需抓取某视图的 GeoJSON（同一视图只请求一次），成功 / 失败写回 status */
+  const ensureGeo = useCallback((v: MapView) => {
+    if (geoRef.current[v] || requestedRef.current[v]) return;
+    requestedRef.current[v] = true;
+    fetch(v === 'world' ? worldUrl : chinaUrl)
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return (await res.json()) as GeoFeatureCollection;
+      })
+      .then((geo) => {
+        if (cancelledRef.current) return;
+        geoRef.current[v] = geo;
+        echarts.registerMap(v, geo as never);
+        setStatus((s) => ({ ...s, [v]: 'ready' }));
+      })
+      .catch(() => {
+        if (!cancelledRef.current) setStatus((s) => ({ ...s, [v]: 'error' }));
+      });
+  }, []);
+
+  /* ① 初始化图表、resize 监听、卸载 dispose */
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -75,36 +98,19 @@ export default function TravelMap({ trips, visited }: Props) {
     const ro = new ResizeObserver(() => chart.resize());
     ro.observe(el);
 
-    let cancelled = false;
-    const sources: { view: MapView; url: string }[] = [
-      { view: 'world', url: worldUrl },
-      { view: 'china', url: chinaUrl },
-    ];
-    Promise.all(
-      sources.map(async ({ view: v, url }) => {
-        try {
-          const res = await fetch(url);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const geo = (await res.json()) as GeoFeatureCollection;
-          if (cancelled) return;
-          geoRef.current[v] = geo;
-          echarts.registerMap(v, geo as never);
-          setStatus((s) => ({ ...s, [v]: 'ready' }));
-        } catch {
-          if (!cancelled) setStatus((s) => ({ ...s, [v]: 'error' }));
-        }
-      }),
-    ).catch(() => {
-      /* 单个视图的失败已在上面各自捕获，这里兜底避免未处理的 Promise 拒绝 */
-    });
-
     return () => {
-      cancelled = true;
+      cancelledRef.current = true;
       ro.disconnect();
       chart.dispose();
       chartRef.current = null;
     };
   }, []);
+
+  /* ①b GeoJSON 按需加载（含首次挂载）：初始只拉 world（约 0.96MB），
+   * china（约 0.56MB）推迟到首次切到中国视图——挂载不再并行拉两份共约 1.5MB */
+  useEffect(() => {
+    ensureGeo(view);
+  }, [view, ensureGeo]);
 
   /* ② 视图 / 地图就绪 / 数据变化时重建 option 并绑定事件 */
   useEffect(() => {

@@ -290,7 +290,7 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
     </button>
 
     <script>
-      // 按 / 跳转全站搜索（输入框内不触发）
+      // 按 / 跳转全站搜索（输入框内不触发；焦点在对话框如灯箱内时不抢占，避免中断浏览）
       addEventListener('keydown', (event) => {
         if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
         const target = event.target as HTMLElement | null;
@@ -300,6 +300,7 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
         ) {
           return;
         }
+        if (event.defaultPrevented || target?.closest?.('[role="dialog"]')) return;
         event.preventDefault();
         location.href = '/search';
       });

@@ -100,6 +100,34 @@ const hasScenes = groups.length > 1;
     // ② 折叠：第 LIMIT 张之后先隐藏（保留 DOM，灯箱索引不变）
     const more = grid.querySelector<HTMLElement>('.jrow-more');
     const btn = more?.querySelector('button');
+    // 有子景点分组时 ul 外层是 section（含标题与「N 张」计数）；无分组时为 null
+    const sections = uls
+      .map((ul) => ul.closest<HTMLElement>('section'))
+      .filter((s): s is HTMLElement => s !== null);
+
+    // 分组收束：照片全被折叠的分区整组隐藏（避免「有标题无照片」的空分区、锚点跳到空组）；
+    // 部分折叠的把「N 张」改为「已展示 X / 共 N 张」，展开时还原为「N 张」
+    function syncSections() {
+      for (const section of sections) {
+        const lis = Array.from(section.querySelectorAll<HTMLElement>('.jrow > li'));
+        const total = lis.length;
+        const visible = lis.filter((li) => !li.hidden).length;
+        section.hidden = visible === 0;
+        const counter = section.querySelector<HTMLElement>('p.meta');
+        if (counter) {
+          counter.textContent = visible < total ? `已展示 ${visible} / 共 ${total} 张` : `${total} 张`;
+        }
+      }
+    }
+
+    // 展开全部折叠的照片（「查看更多」按钮与子景点锚点 chips 共用），随后恢复分区与行式布局
+    const expandAll = () => {
+      allLis.forEach((li) => (li.hidden = false));
+      more?.classList.add('hidden');
+      syncSections();
+      relayout();
+    };
+
     if (allLis.length > LIMIT && more && btn) {
       allLis.forEach((li, i) => {
         if (i >= LIMIT) li.hidden = true;
@@ -108,12 +136,22 @@ const hasScenes = groups.length > 1;
       const remaining = allLis.length - LIMIT;
       const label = btn.dataset.moreLabel ?? '查看更多照片';
       btn.textContent = `${label}（还有 ${remaining} 张）`;
-      btn.addEventListener('click', () => {
-        allLis.forEach((li) => (li.hidden = false));
-        more.classList.add('hidden');
-        relayout();
-      });
+      btn.addEventListener('click', expandAll);
+      syncSections();
     }
+
+    // 子景点锚点 chips：目标分区可能初始整组折叠隐藏，点击先展开、浏览器随后照常完成锚点跳转
+    document.addEventListener('click', (event) => {
+      const anchor =
+        event.target instanceof Element
+          ? event.target.closest<HTMLAnchorElement>('a[href^="#scene-"]')
+          : null;
+      if (!anchor) return;
+      const target = document.getElementById(anchor.hash.slice(1));
+      if (!target || !grid.contains(target)) return;
+      if (!more || more.classList.contains('hidden')) return; // 未处于折叠态，无需展开
+      expandAll();
+    });
 
     // ① 末行 grow 归零：按 offsetTop 分行，仅最后一行还原为自然宽度；
     // 折叠中的条目 display:none、offsetTop 恒为 0，需跳过，否则会被误判成末行
@@ -128,7 +166,7 @@ const hasScenes = groups.length > 1;
         let row: HTMLLIElement[] = [];
         let top: number | null = null;
         for (const li of lis) {
-          if (li.hidden) continue;
+          if (li.hidden || li.closest('section')?.hidden) continue;
           if (top !== null && li.offsetTop !== top) {
             rows.push(row);
             row = [];
