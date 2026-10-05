@@ -1,0 +1,59 @@
+---
+// 项目索引 /projects（规格 §8.2）：页头 + 筛选 chips + 行式列表（WorkRow 复用）。
+// 筛选为纯客户端渐进增强（FilterChips 的事件委托脚本），选中态 = ink 实心胶囊。
+import Base from '../../layouts/Base.astro';
+import { siteConfig } from '../../config/site';
+import WorkRow from '../../components/project/WorkRow.astro';
+import FilterChips from '../../components/common/FilterChips.astro';
+import projectsJson from '../../data/projects.json';
+import type { Project } from '../../types';
+
+const projects = (projectsJson as Project[]).sort((a, b) => a.order - b.order);
+
+const countBy = (fn: (p: Project) => boolean) => projects.filter(fn).length;
+const chips = [
+  { label: '全部', count: projects.length, value: 'all' },
+  { label: '产品', count: countBy((p) => p.category === '产品'), value: '产品' },
+  { label: '开源', count: countBy((p) => p.category === '开源'), value: '开源' },
+  { label: '实验', count: countBy((p) => p.category === '实验'), value: '实验' },
+  { label: '已归档', count: countBy((p) => p.status === 'archived'), value: 'archived' },
+];
+---
+
+<Base title="项目" description={`${siteConfig.name}，${siteConfig.title}。${projects.length} 个产品的、开源的与实验性的项目：完整的问题、做法与结果。`}>
+  <section class="pt-14">
+    <p class="eyebrow">Project Index</p>
+    <h1 class="h1 mt-4">项目</h1>
+    <p class="lede mt-5">
+      每个项目都按同一套骨架写：问题是什么、分几步做的、结果如何、踩过什么坑。数字都可核实。
+    </p>
+  </section>
+
+  <section class="mt-10" aria-label="项目筛选">
+    <FilterChips scope="projects" items={chips} />
+  </section>
+
+  <section class="mt-4 border-t border-rule pb-[var(--spacing-sec)]" aria-label="项目列表" data-filter-list>
+    {
+      projects.map((p, i) => (
+        <div
+          data-filter-item
+          data-filter-scope="projects"
+          data-filter-value={`${p.category}${p.status === 'archived' ? ' archived' : ''}`}
+        >
+          <WorkRow
+            index={String(i + 1).padStart(2, '0')}
+            title={p.title}
+            meta={`${p.year} · ${p.category}`}
+            desc={p.summary}
+            stack={p.stack}
+            status={p.status}
+            href={`/projects/${p.id}`}
+          >
+            <span slot="right" class="meta pt-1.5">{p.year}</span>
+          </WorkRow>
+        </div>
+      ))
+    }
+  </section>
+</Base>

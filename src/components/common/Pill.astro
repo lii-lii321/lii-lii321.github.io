@@ -1,0 +1,17 @@
+---
+// 状态胶囊 / 技术栈标签（规格 §9.1）。variant: default 墨字描边 / accent 强调 / ok 状态绿
+interface Props {
+  variant?: 'default' | 'accent' | 'ok';
+  class?: string;
+}
+const { variant = 'default', class: className = '' } = Astro.props;
+const styles = {
+  default: 'border-rule-2 bg-paper text-ink-2',
+  accent: 'border-accent/30 bg-accent-soft text-accent',
+  ok: 'border-ok/30 bg-ok/10 text-ok',
+} as const;
+---
+
+<span class={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[11px] tracking-[0.02em] ${styles[variant]} ${className}`}>
+  <slot />
+</span>

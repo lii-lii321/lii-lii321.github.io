@@ -1,0 +1,19 @@
+---
+// 作者卡（规格 §8.5 文章结尾）：头像圆 + 姓名 + 一行介绍 + 「更多 →」。
+import { siteConfig } from '../../config/site';
+---
+
+<aside class="mt-14 flex items-center gap-4 border-y border-rule py-6">
+  <!-- 头像占位：换成 public/portrait.* 后改为 <img> -->
+  <span
+    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-paper-3 font-serif text-lg font-bold text-ink-2"
+    aria-hidden="true"
+  >
+    {siteConfig.name.slice(0, 1)}
+  </span>
+  <div class="min-w-0 flex-1">
+    <p class="text-sm font-medium text-ink">{siteConfig.name} · {siteConfig.title}</p>
+    <p class="mt-1 text-sm text-ink-2">{siteConfig.tagline}</p>
+  </div>
+  <a href="/about" class="meta shrink-0 transition-colors hover:text-accent">更多 →</a>
+</aside>

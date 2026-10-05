@@ -1,0 +1,68 @@
+---
+// GitHub 贡献热力图（规格 §8.6.5）：53 周 × 7 天，9px 方块 3px 间隔，4 级 accent 递进。
+// 纯 CSS grid，零 JS；数据来自构建时抓取的 src/data/github.json。
+// 抓取失败（githubUser 还是占位 / 网络）时显示诚实的空状态，不用假数据。
+import type { GitHubData } from '../../types';
+
+interface Props {
+  data: GitHubData;
+}
+const { data } = Astro.props;
+
+/** 贡献等级 → 方块底色（0 = 纸面空格，1–4 = accent 递进） */
+function levelColor(level: number): string {
+  if (level <= 0) return 'var(--color-paper-3)';
+  if (level === 1) return 'rgba(47,75,255,.25)';
+  if (level === 2) return 'rgba(47,75,255,.45)';
+  if (level === 3) return 'rgba(47,75,255,.7)';
+  return 'var(--color-accent)';
+}
+
+---
+
+<div class="grid items-start gap-10 lg:grid-cols-[auto_1fr]">
+  {
+    data.weeks ? (
+      <div
+        class="grid grid-flow-col gap-[3px] overflow-x-auto pb-1"
+        style={`grid-template-rows:repeat(7, 9px);grid-auto-columns:9px`}
+        role="img"
+        aria-label={`GitHub 贡献热力图：近一年 ${data.total ?? '?'} 次贡献`}
+      >
+        {data.weeks.map((week) =>
+          week.map((level) => (
+            <span class="rounded-[2px]" style={`background:${levelColor(level)}`} />
+          )),
+        )}
+      </div>
+    ) : (
+      <div class="flex h-[63px] items-center rounded-[4px] border border-dashed border-rule-2 px-6">
+        <p class="text-sm text-ink-3">
+          热力图暂无数据：在 src/config/site.ts 填入真实 GitHub 用户名后重新构建即可抓取。
+        </p>
+      </div>
+    )
+  }
+
+  <div>
+    <dl class="grid max-w-xs grid-cols-2 gap-x-6 gap-y-5">
+      <div>
+        <dd class="font-serif text-3xl font-bold text-ink">
+          {data.total ?? '—'}
+        </dd>
+        <dt class="meta mt-1 normal-case">近一年贡献</dt>
+      </div>
+      <div>
+        <dd class="font-serif text-3xl font-bold text-ink">{data.user || '—'}</dd>
+        <dt class="meta mt-1 normal-case">GitHub 用户</dt>
+      </div>
+    </dl>
+    <p class="mt-5 max-w-[52ch] text-sm leading-relaxed text-ink-2">
+      {
+        data.weeks
+          ? `数据构建时抓取自 GitHub（${data.source === 'graphql' ? 'GraphQL API' : '公共 contributions API'}），非静态假数据。`
+          : data.error
+      }
+    </p>
+  </div>
+</div>

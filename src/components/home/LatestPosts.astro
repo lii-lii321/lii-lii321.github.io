@@ -1,0 +1,43 @@
+---
+// 首页「最新文章」区块（规格 §8.1.4）：区块头 + 3 条 PostRow（dense 密度）。
+import PostRow from '../blog/PostRow.astro';
+
+interface PostLike {
+  href: string;
+  date: Date;
+  title: string;
+  desc: string;
+  readingTime: number;
+  category: string;
+}
+interface Props {
+  posts: PostLike[];
+}
+const { posts } = Astro.props;
+---
+
+<section aria-labelledby="latest-posts-title">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="eyebrow">Writing</p>
+      <h2 id="latest-posts-title" class="h2 mt-3">最新文章</h2>
+    </div>
+    <a href="/blog" class="meta transition-colors hover:text-accent">全部文章 →</a>
+  </div>
+
+  <div class="mt-6 border-t border-rule">
+    {
+      posts.map((post) => (
+        <PostRow
+          href={post.href}
+          date={post.date}
+          title={post.title}
+          desc={post.desc}
+          readingTime={post.readingTime}
+          category={post.category}
+          dense
+        />
+      ))
+    }
+  </div>
+</section>

@@ -1,0 +1,74 @@
+---
+// 首页「精选项目」区块（规格 §8.1.3）：区块头 + 3 条行式条目（WorkRow 复用）。
+// 右列：16:10 截图占位 + 右对齐指标 chips；整行 hover 项目名转 accent。
+import WorkRow from '../project/WorkRow.astro';
+import Pill from '../common/Pill.astro';
+import type { Project } from '../../types';
+
+interface Props {
+  projects: Project[];
+  total: number;
+}
+const { projects, total } = Astro.props;
+---
+
+<section aria-labelledby="featured-title">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="eyebrow">Selected Work</p>
+      <h2 id="featured-title" class="h2 mt-3">精选项目</h2>
+    </div>
+    <a href="/projects" class="meta transition-colors hover:text-accent">全部 {total} 个项目 →</a>
+  </div>
+
+  <div class="mt-6 border-t border-rule">
+    {
+      projects.map((p, i) => (
+        <WorkRow
+          index={String(i + 1).padStart(2, '0')}
+          title={p.title}
+          meta={`${p.year} · ${p.role}`}
+          desc={p.summary}
+          stack={p.stack}
+          status={p.status}
+          href={`/projects/${p.id}`}
+        >
+          <div slot="right" class="flex flex-col items-end gap-3">
+            {/* 16:10 缩略图：有真实截图用真实截图 */}
+            {
+              p.cover ? (
+                <img
+                  src={p.cover}
+                  alt={`${p.title} 界面截图`}
+                  width={400}
+                  height={250}
+                  loading="lazy"
+                  decoding="async"
+                  class="aspect-[16/10] w-40 rounded-[4px] border border-rule bg-paper-2 object-cover object-top"
+                />
+              ) : (
+                <div
+                  class="flex aspect-[16/10] w-40 items-center justify-center rounded-[4px] border border-rule bg-paper-3"
+                  role="img"
+                  aria-label={`${p.title} 截图占位`}
+                >
+                  <span class="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-3">Shot</span>
+                </div>
+              )
+            }
+            <ul class="flex flex-wrap justify-end gap-1.5">
+              {p.metrics.slice(0, 2).map((m) => (
+                <li>
+                  <Pill variant="accent">
+                    {m.num}
+                    {m.unit ?? ''} {m.label}
+                  </Pill>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </WorkRow>
+      ))
+    }
+  </div>
+</section>

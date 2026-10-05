@@ -1,0 +1,124 @@
+---
+// 足迹地图页（浅色适配版）：
+// - 统计条按规格做「数字带」样式（上下 1px rule、列间竖线、无卡片无阴影）；
+// - 地图区为 React island（client:load），ECharts 仅在客户端初始化，
+//   GeoJSON 从 src/assets/geo/ 以同源静态资源加载，运行时不请求任何外部地图服务。
+import Base from '../../layouts/Base.astro';
+import TravelMap from '../../components/map/TravelMap';
+import travels from '../../data/travels.json';
+import visited from '../../data/visited.json';
+import type { TravelData, VisitedData } from '../../types';
+
+const data = travels as TravelData;
+const visitedData = visited as VisitedData;
+const tripCount = data.trips.length;
+const sortedTrips = [...data.trips].sort((a, b) => b.date.localeCompare(a.date));
+
+const stats = [
+  { value: `${tripCount}`, unit: '次旅行' },
+  { value: `${data.stats.countries}`, unit: '个国家' },
+  { value: `${data.stats.provinces}`, unit: '个省份' },
+  { value: `${data.stats.photoCount}`, unit: '张照片' },
+];
+---
+
+<Base title="旅行" description="我的旅行足迹地图：点亮去过的国家与省份，点击地图上的光点查看当地旅行与照片。">
+  <section class="pt-14">
+    <p class="eyebrow">Travel Map</p>
+    <h1 class="h1 mt-4">足迹地图</h1>
+    <p class="lede mt-5">
+      用脚步丈量世界。地图上每一个光点，都是一段被照片记住的旅程；点击它可以打开当地的相册。
+    </p>
+  </section>
+
+  <!-- 统计数字带：上下 1px rule，列间 1px 竖线，无卡片无阴影 -->
+  <section class="mt-12" aria-label="旅行统计">
+    <dl class="grid grid-cols-2 border-y border-rule sm:grid-cols-4">
+      {
+        stats.map((item, i) => (
+          <div
+            class={`flex flex-col gap-1 px-5 py-6 ${i > 0 ? 'border-l border-rule max-sm:[&:nth-child(3)]:border-l-0' : ''} max-sm:[&:nth-child(n+3)]:border-t max-sm:[&:nth-child(n+3)]:border-rule`}
+          >
+            <dd class="font-serif text-4xl font-bold text-ink">
+              {item.value}
+              <small class="ml-1 font-sans text-sm font-normal text-ink-3">{item.unit}</small>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <!-- 点亮的省份：点击进入搜索（地点标签参与检索） -->
+  <section class="mt-5 flex flex-wrap items-center gap-2" aria-label="已点亮的地区">
+    <span class="meta">已点亮</span>
+    {
+      ['中国', ...visitedData.provinces].map((name) => (
+        <a href={`/search?q=${encodeURIComponent(name)}`} class="tag-link chip">
+          {name}
+        </a>
+      ))
+    }
+  </section>
+
+  <!-- 地图（世界 / 中国切换 · 点亮名单 · 光点标记 · 侧面板） -->
+  <section class="mt-12">
+    <TravelMap client:load trips={data.trips} visited={visitedData} />
+  </section>
+
+  <!-- 全部相册：行式索引（地图下方，按日期倒序） -->
+  <section class="mt-[var(--spacing-sec)] pb-[var(--spacing-sec)]" aria-labelledby="album-index-title">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow">All Albums</p>
+        <h2 id="album-index-title" class="h2 mt-3">全部相册</h2>
+      </div>
+      <p class="meta normal-case">{tripCount} 本 · {data.stats.photoCount} 张照片</p>
+    </div>
+
+    <div class="mt-6 border-t border-rule">
+      {
+        sortedTrips.map((trip, i) => {
+          const cover = trip.photos.find((p) => p.src === trip.cover) ?? trip.photos[0];
+          return (
+            <a
+              href={`/travel/${trip.id}`}
+              class="group grid grid-cols-[72px_1fr] items-center gap-x-5 border-b border-rule py-5 transition-colors hover:bg-paper-2 sm:grid-cols-[88px_1fr_auto] md:py-6"
+            >
+              <span
+                class="block h-[54px] w-[72px] overflow-hidden rounded-[4px] border border-rule bg-cover bg-center bg-paper-3 sm:h-[66px] sm:w-[88px]"
+                style={cover ? `background-image:url(${cover.blur})` : undefined}
+              >
+                {cover && (
+                  <img
+                    src={cover.thumb}
+                    alt=""
+                    width={160}
+                    height={120}
+                    loading="lazy"
+                    decoding="async"
+                    class="h-full w-full object-cover"
+                  />
+                )}
+              </span>
+              <span class="min-w-0">
+                <span class="meta block">
+                  {String(i + 1).padStart(2, '0')} · {trip.date}
+                </span>
+                <span class="mt-1 block truncate font-serif text-[1.05rem] font-semibold text-ink transition-colors group-hover:text-accent">
+                  {trip.title}
+                </span>
+                <span class="meta mt-1 block normal-case sm:hidden">
+                  {trip.place.province ?? trip.place.country} · {trip.photos.length} 张
+                </span>
+              </span>
+              <span class="meta hidden shrink-0 sm:block">
+                {trip.place.province ?? trip.place.country} · {trip.place.name} · {trip.photos.length} 张
+              </span>
+            </a>
+          );
+        })
+      }
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,58 @@
+---
+// 归档 /archives：全部文章按年份紧凑时间线（对标 AstroPaper Archives）。
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const byYear = new Map<number, typeof posts>();
+for (const p of posts) {
+  const y = p.data.pubDate.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(p);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+---
+
+<Base title="归档" description={`全部 ${posts.length} 篇文章的按年归档。`}>
+  <section class="pt-14">
+    <p class="eyebrow">Archives</p>
+    <h1 class="h1 mt-4">归档</h1>
+    <p class="lede mt-5">共 {posts.length} 篇，写作是一场长跑。</p>
+  </section>
+
+  <section class="mt-12 pb-[var(--spacing-sec)]">
+    {
+      years.map((year) => (
+        <div class="mb-12 last:mb-0">
+          <div class="flex items-baseline justify-between border-b border-ink pb-3">
+            <h2 class="font-serif text-2xl font-bold text-ink">{year}</h2>
+            <p class="meta">{byYear.get(year)!.length} 篇</p>
+          </div>
+          <ul>
+            {byYear.get(year)!.map((post) => {
+              const d = post.data.pubDate;
+              return (
+                <li class="border-b border-rule">
+                  <a
+                    href={`/blog/${post.id}`}
+                    class="group flex items-baseline gap-5 py-3.5 transition-colors hover:bg-paper-2"
+                  >
+                    <time datetime={d.toISOString()} class="meta w-[92px] shrink-0 normal-case">
+                      {String(d.getMonth() + 1).padStart(2, '0')}.{String(d.getDate()).padStart(2, '0')}
+                    </time>
+                    <span class="min-w-0 flex-1 truncate text-sm text-ink transition-colors group-hover:text-accent">
+                      {post.data.title}
+                    </span>
+                    <span class="meta hidden shrink-0 sm:inline">{post.data.category}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+</Base>

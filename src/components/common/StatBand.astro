@@ -1,0 +1,33 @@
+---
+// 数字带（规格 §8.1.2 / §9.1）：4 列，上下 1px rule，列间 1px 竖线，无卡片无阴影。
+// 每列：大号衬线数字（<small> 单位）+ 说明 + 等宽副信息。900px 以下转 2×2。
+export interface StatItem {
+  num: string;
+  unit?: string;
+  label: string;
+  sub?: string;
+}
+interface Props {
+  items: readonly StatItem[];
+}
+const { items } = Astro.props;
+---
+
+<section>
+  <dl class="grid grid-cols-2 border-y border-rule md:grid-cols-4">
+    {
+      items.map((item, i) => (
+        <div
+          class={`flex flex-col gap-1.5 px-6 py-8 ${i > 0 ? 'border-l border-rule' : ''} max-md:[&:nth-child(3)]:border-l-0 max-md:[&:nth-child(n+3)]:border-t`}
+        >
+          <dd class="font-serif text-[2.6rem] font-bold leading-none text-ink">
+            {item.num}
+            {item.unit && <small class="ml-1 font-sans text-sm font-normal text-ink-3">{item.unit}</small>}
+          </dd>
+          <dt class="text-sm text-ink-2">{item.label}</dt>
+          {item.sub && <dd class="meta normal-case">{item.sub}</dd>}
+        </div>
+      ))
+    }
+  </dl>
+</section>

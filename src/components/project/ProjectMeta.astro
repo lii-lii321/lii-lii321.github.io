@@ -1,0 +1,39 @@
+---
+// 项目详情 4 列 meta 表（规格 §9.1 ProjectMeta）：角色 / 周期 / 技术栈 / 状态。
+// 上下 1px rule（顶线 ink 加粗），列间竖线；移动端转 2×2。
+import type { Project } from '../../types';
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+
+const statusText = { live: '在线', archived: '已归档', wip: '进行中' } as const;
+---
+
+<dl class="grid grid-cols-2 border-y border-ink md:grid-cols-4">
+  <div class="border-b border-rule px-1 py-5 md:border-b-0 md:border-r md:border-rule">
+    <dt class="meta">角色</dt>
+    <dd class="mt-2 text-sm text-ink">{project.role}</dd>
+  </div>
+  <div class="border-b border-l border-rule px-1 py-5 md:border-b-0 md:border-l-0 md:border-r md:border-rule">
+    <dt class="meta">周期</dt>
+    <dd class="mt-2 font-mono text-sm text-ink">{project.period}</dd>
+  </div>
+  <div class="border-r border-rule px-1 py-5">
+    <dt class="meta">技术栈</dt>
+    <dd class="mt-2 flex flex-wrap gap-1.5">
+      {project.stack.map((s) => <span class="chip">{s}</span>)}
+    </dd>
+  </div>
+  <div class="border-l border-rule px-1 py-5 md:border-l-0">
+    <dt class="meta">状态</dt>
+    <dd class="mt-2 flex items-center gap-2 text-sm text-ink">
+      <span
+        class={`h-1.5 w-1.5 rounded-full ${project.status === 'live' ? 'bg-ok' : project.status === 'wip' ? 'bg-amber' : 'bg-ink-3'}`}
+        aria-hidden="true"
+      />
+      {statusText[project.status]}
+    </dd>
+  </div>
+</dl>

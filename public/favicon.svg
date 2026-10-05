@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 编辑风站点标记：纸白底 + 靛蓝竖条 + 墨色发丝线（与站点设计令牌一致） -->
+  <rect width="64" height="64" rx="12" fill="#FBFAF7"/>
+  <rect x="0.5" y="0.5" width="63" height="63" rx="11.5" fill="none" stroke="#E2DFD6"/>
+  <rect x="16" y="16" width="5" height="32" fill="#2F4BFF"/>
+  <rect x="27" y="22" width="22" height="1.5" fill="#15151A"/>
+  <rect x="27" y="32" width="22" height="1.5" fill="#15151A" opacity="0.55"/>
+  <rect x="27" y="42" width="14" height="1.5" fill="#15151A" opacity="0.3"/>
+</svg>

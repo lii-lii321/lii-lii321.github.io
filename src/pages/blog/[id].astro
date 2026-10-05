@@ -1,0 +1,266 @@
+---
+// 文章详情 /blog/[id]（规格 §8.5）：
+// 面包屑 → eyebrow → H1 → standfirst → post-meta 横条 → 两栏（sticky 目录 | 68ch 正文）
+// → 作者卡 → 上/下一篇。
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Toc from '../../components/blog/Toc.tsx';
+import AuthorCard from '../../components/blog/AuthorCard.astro';
+import PostRow from '../../components/blog/PostRow.astro';
+import { siteConfig } from '../../config/site';
+import { readingMinutes, formatDateCN, formatISO, type PostEntry } from '../../components/blog/utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: PostEntry;
+}
+const { post } = Astro.props;
+
+const { Content, headings } = await render(post);
+const minutes = readingMinutes(post.body);
+const tocHeadings = headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({ id: h.slug, text: h.text, level: h.depth }));
+
+// 按 pubDate 倒序找上 / 下一篇
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const idx = posts.findIndex((p) => p.id === post.id);
+const newer = idx > 0 ? posts[idx - 1] : null;
+const older = idx < posts.length - 1 ? posts[idx + 1] : null;
+
+// 相关文章：同标签（×2）+ 同分类打分，取前 2 篇
+const related = posts
+  .filter((p) => p.id !== post.id)
+  .map((p) => ({
+    p,
+    score:
+      p.data.tags.filter((t: string) => post.data.tags.includes(t)).length * 2 +
+      (p.data.category === post.data.category ? 1 : 0),
+  }))
+  .sort((a, b) => b.score - a.score)
+  .filter((x) => x.score > 0)
+  .slice(0, 2)
+  .map((x) => x.p);
+---
+
+<Base title={post.data.title} description={post.data.description} ogType="article">
+  <!-- 结构化数据：BlogPosting + 面包屑（规格 §13.4） -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify([
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.data.title,
+        description: post.data.description,
+        datePublished: post.data.pubDate.toISOString(),
+        dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+        author: {
+          '@type': 'Person',
+          name: siteConfig.name,
+          url: new URL('/about', Astro.site ?? 'https://lii-lii321.github.io').toString(),
+        },
+        keywords: post.data.tags.join(', '),
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: '文章', item: new URL('/blog', Astro.site ?? 'https://lii-lii321.github.io').toString() },
+          { '@type': 'ListItem', position: 2, name: post.data.title },
+        ],
+      },
+    ])}
+  />
+
+  <article class="pb-[var(--spacing-sec)]">
+    <nav class="meta flex items-center gap-2 pt-10 normal-case" aria-label="面包屑">
+      <a href="/blog" class="transition-colors hover:text-accent">文章</a>
+      <span aria-hidden="true">/</span>
+      <span>{post.data.category}</span>
+    </nav>
+
+    <header class="mt-8">
+      <p class="eyebrow">{post.data.category}</p>
+      <h1 class="h1 mt-4 max-w-[24ch]">{post.data.title}</h1>
+      <p class="mt-6 max-w-[56ch] font-serif text-[1.42rem] leading-relaxed text-ink-2">
+        {post.data.description}
+      </p>
+    </header>
+
+    <!-- post-meta 横条：上下 1px rule -->
+    <div class="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-rule py-4">
+      <time datetime={formatISO(post.data.pubDate)} class="meta normal-case">
+        {formatDateCN(post.data.pubDate)}
+      </time>
+      <span class="meta normal-case">{minutes} 分钟阅读</span>
+      {
+        post.data.tags.length > 0 && (
+          <ul class="flex flex-wrap gap-2">
+            {post.data.tags.map((t) => (
+              <li>
+                <a
+                  href={`/tags/${encodeURIComponent(t)}/`}
+                  class="tag-link chip"
+                  aria-label={`查看标签 ${t} 下的全部文章`}
+                >
+                  #{t}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      {
+        post.data.updatedDate && (
+          <span class="meta normal-case ml-auto">最后更新 {formatDateCN(post.data.updatedDate)}</span>
+        )
+      }
+    </div>
+
+    <!-- 两栏：200px 目录 | 正文 -->
+    <div class="mt-12 grid gap-10 lg:grid-cols-[200px_1fr] lg:gap-16">
+      <aside class="hidden lg:block">
+        <div class="sticky top-[132px]">
+          <Toc client:load headings={tocHeadings} />
+        </div>
+      </aside>
+
+      <div class="min-w-0">
+        <!-- 移动端折叠目录（桌面端用右侧 sticky Toc） -->
+        {
+          tocHeadings.length > 0 && (
+            <details class="mb-8 rounded-[4px] border border-rule bg-paper-2/60 lg:hidden">
+              <summary class="meta cursor-pointer list-none px-4 py-3">目录（{tocHeadings.length} 节）</summary>
+              <ul class="space-y-1 px-4 pb-4">
+                {tocHeadings.map((h) => (
+                  <li class={h.level >= 3 ? 'pl-4' : ''}>
+                    <a href={`#${h.id}`} class="text-sm text-ink-2 hover:text-accent">
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )
+        }
+        <div class="prose-editorial">
+          <Content />
+        </div>
+        <div class="max-w-[68ch]">
+          <AuthorCard />
+        </div>
+      </div>
+    </div>
+
+    <!-- 相关文章：同标签优先，其次同分类 -->
+    {
+      related.length > 0 && (
+        <section class="mt-[var(--spacing-sec)]" aria-labelledby="related-title">
+          <p class="eyebrow">Related</p>
+          <h2 id="related-title" class="h2 mt-3">相关文章</h2>
+          <div class="mt-6 border-t border-rule">
+            {related.map((p) => (
+              <PostRow
+                href={`/blog/${p.id}`}
+                date={p.data.pubDate}
+                title={p.data.title}
+                desc={p.data.description}
+                readingTime={readingMinutes(p.body)}
+                category={p.data.category}
+                dense
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- 阅读进度条（顶部 2px accent，随滚动增长） -->
+    <div
+      id="read-progress"
+      class="fixed inset-x-0 top-0 z-[60] h-0.5 origin-left scale-x-0 bg-accent"
+      aria-hidden="true"
+    >
+    </div>
+    <script>
+      const bar = document.getElementById('read-progress');
+      if (bar) {
+        let ticking = false;
+        const update = () => {
+          ticking = false;
+          const doc = document.documentElement;
+          const max = doc.scrollHeight - doc.clientHeight;
+          const ratio = max > 0 ? Math.min(1, doc.scrollTop / max) : 0;
+          bar.style.transform = `scaleX(${ratio})`;
+        };
+        addEventListener(
+          'scroll',
+          () => {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(update);
+            }
+          },
+          { passive: true },
+        );
+        update();
+      }
+    </script>
+    <script>
+      // 给每个代码块注入复制按钮（pre 已是 relative 定位，按钮浮在工具条上）
+      document.querySelectorAll('.prose-editorial pre').forEach((pre) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset.copyCode = '';
+        btn.textContent = '复制';
+        btn.className = 'code-copy';
+        pre.appendChild(btn);
+      });
+    </script>
+    <script>
+      // 代码块复制：事件委托，复制后按钮短暂显示「已复制」
+      document.addEventListener('click', async (event) => {
+        const btn = event.target instanceof Element ? event.target.closest('[data-copy-code]') : null;
+        if (!btn) return;
+        const pre = btn.parentElement?.querySelector('code');
+        const code = pre?.textContent ?? '';
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = '已复制';
+        } catch {
+          btn.textContent = '复制失败';
+        }
+        setTimeout(() => (btn.textContent = '复制'), 1600);
+      });
+    </script>
+
+    <!-- 上 / 下一篇 -->
+    <nav class="grid border-t border-rule sm:grid-cols-2 sm:divide-x sm:divide-rule" aria-label="上一篇 / 下一篇">
+      {
+        older ? (
+          <a href={`/blog/${older.id}`} class="group py-8 sm:pr-8">
+            <p class="meta">← 上一篇</p>
+            <p class="h3 mt-2 transition-colors group-hover:text-accent">{older.data.title}</p>
+          </a>
+        ) : (
+          <div class="py-8 sm:pr-8" />
+        )
+      }
+      {
+        newer && (
+          <a href={`/blog/${newer.id}`} class="group py-8 sm:pl-8 sm:text-right">
+            <p class="meta">下一篇 →</p>
+            <p class="h3 mt-2 transition-colors group-hover:text-accent">{newer.data.title}</p>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</Base>

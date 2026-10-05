@@ -1,0 +1,5 @@
+# Traveling · 李云强的个人站
+User-agent: *
+Allow: /
+
+Sitemap: https://lii-lii321.github.io/sitemap-index.xml

@@ -1,0 +1,38 @@
+---
+// Now 完整页（首页只放 3 行摘要，这里展开 + 说明）。
+import Base from '../layouts/Base.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Base title="Now" description={`${siteConfig.name}最近在做什么：正在构建、正在读、正在学。`}>
+  <section class="pt-14">
+    <p class="eyebrow">Now</p>
+    <h1 class="h1 mt-4">最近在做</h1>
+    <p class="lede mt-5">
+      这一页回答「你现在在干嘛」。参考 Derek Sivers 的 /now 页传统：不写历史，只写此刻。最后更新 {siteConfig.updatedAt}。
+    </p>
+  </section>
+
+  <section class="mt-12 max-w-[68ch] pb-[var(--spacing-sec)]">
+    <dl>
+      {
+        siteConfig.now.map((item, i) => (
+          <div
+            class={`grid gap-x-6 gap-y-1 py-6 sm:grid-cols-[170px_1fr] ${
+              i < siteConfig.now.length - 1 ? 'border-b border-dashed border-rule-2' : 'border-b border-rule'
+            }`}
+          >
+            <dt class="meta pt-1">{item.key}</dt>
+            <dd class="leading-[1.9] text-ink-2">{item.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <p class="mt-10 text-sm leading-relaxed text-ink-2">
+      更完整的项目进展见<a href="/projects" class="text-accent underline underline-offset-4">项目页</a>，
+      所思所想沉淀在<a href="/blog" class="text-accent underline underline-offset-4">文章</a>里，
+      不在电脑前的时候，我在<a href="/travel" class="text-accent underline underline-offset-4">路上</a>。
+    </p>
+  </section>
+</Base>

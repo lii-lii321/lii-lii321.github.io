@@ -1,0 +1,37 @@
+---
+// 首页 Now 区块（规格 §8.1.5）：3 行，等宽大写 key | 内容。
+// 行间虚线 rule，最后一条实线。
+interface NowItem {
+  key: string;
+  text: string;
+}
+interface Props {
+  items: readonly NowItem[];
+}
+const { items } = Astro.props;
+---
+
+<section aria-labelledby="now-title">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="eyebrow">Now</p>
+      <h2 id="now-title" class="h2 mt-3">最近在做</h2>
+    </div>
+    <a href="/now" class="meta transition-colors hover:text-accent">完整 Now →</a>
+  </div>
+
+  <dl class="mt-6">
+    {
+      items.map((item, i) => (
+        <div
+          class={`grid gap-x-6 gap-y-1 py-5 sm:grid-cols-[170px_1fr] ${
+            i < items.length - 1 ? 'border-b border-dashed border-rule-2' : 'border-b border-rule'
+          }`}
+        >
+          <dt class="meta pt-0.5">{item.key}</dt>
+          <dd class="text-sm leading-relaxed text-ink-2">{item.text}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>

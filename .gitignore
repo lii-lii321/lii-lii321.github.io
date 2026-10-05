@@ -1,0 +1,21 @@
+# build 产物与依赖
+node_modules/
+dist/
+.astro/
+
+# 构建与本地日志
+build.log
+*.log
+
+# 本地环境与工具
+.env
+.env.*
+.zcode/
+.mimosa/
+.v2c/
+.video_agent/
+.zcodeignore
+
+# 编辑器/系统
+Thumbs.db
+.DS_Store
