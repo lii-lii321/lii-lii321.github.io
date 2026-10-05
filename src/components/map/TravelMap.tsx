@@ -83,6 +83,8 @@ export default function TravelMap({ trips, visited }: Props) {
         setStatus((s) => ({ ...s, [v]: 'ready' }));
       })
       .catch(() => {
+        // 失败时清除已请求标记：切走再切回该视图会重新发起抓取，错误态不是终态
+        requestedRef.current[v] = false;
         if (!cancelledRef.current) setStatus((s) => ({ ...s, [v]: 'error' }));
       });
   }, []);

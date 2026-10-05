@@ -84,7 +84,17 @@ const sceneChips = groupScenes
     <section class="relative mt-10 overflow-hidden rounded-[14px]">
       <img
         src={coverPhoto?.thumb ?? trip.cover}
-        srcset={coverPhoto ? `${coverPhoto.thumb} 640w, ${trip.cover} ${coverPhoto.width}w` : undefined}
+        srcset={
+          coverPhoto
+            ? [
+                `${coverPhoto.thumb} 640w`,
+                coverPhoto.thumb2x && `${coverPhoto.thumb2x} 1280w`,
+                `${trip.cover} ${coverPhoto.width}w`,
+              ]
+                .filter((s): s is string => Boolean(s))
+                .join(', ')
+            : undefined
+        }
         sizes="(min-width: 1280px) 1200px, 100vw"
         alt=""
         aria-hidden="true"

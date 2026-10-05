@@ -2,7 +2,7 @@
  * 照片数据管线（幂等，可反复运行）：
  * 1. 扫描 photos/<相册id>/album.json 相册描述；
  * 2. 用 exifr 读取每张照片的 EXIF（拍摄时间 / 相机型号 / GPS），缺失时对应字段为 null；
- * 3. 用 sharp 生成 640 宽 WebP 缩略图与 16 宽模糊 base64 占位图；
+ * 3. 用 sharp 生成 640/1280 宽两档 WebP 缩略图与 16 宽模糊 base64 占位图；
  * 4. 原图与缩略图复制到 public/photos/<id>/；
  * 5. 聚合生成 src/data/travels.json（国家/省份去重计数 + 照片总数）。
  *
@@ -22,6 +22,9 @@ const TRAVELS_JSON_PATH = path.join(projectRoot, 'src', 'data', 'travels.json');
 
 const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const THUMB_WIDTH = 640;
+// 中间档：约 1280 宽。封面 srcset 的第二档——sizes 需求 640–1280（DPR≥2 手机、DPR1 桌面）
+// 都会命中它而不是 1600w 原图 JPG（WebP 1280w 比典型原图 JPG 小约一半）
+const MEDIUM_WIDTH = 1280;
 const BLUR_WIDTH = 16;
 
 /** 读取并校验 album.json 的必要字段 */
@@ -158,6 +161,14 @@ async function main() {
         .webp({ quality: 80 })
         .toFile(path.join(outThumbDir, thumbBase));
 
+      // 中间档：1280 宽 WebP（同目录，文件名带 .1280 后缀）
+      const thumbMediumBase = `${path.basename(fileName, path.extname(fileName))}.1280.webp`;
+      await sharp(buffer)
+        .rotate()
+        .resize({ width: MEDIUM_WIDTH })
+        .webp({ quality: 80 })
+        .toFile(path.join(outThumbDir, thumbMediumBase));
+
       // 模糊占位：16 宽 WebP，base64 data URI
       const blurBuffer = await sharp(buffer).rotate().resize({ width: BLUR_WIDTH }).webp({ quality: 40 }).toBuffer();
       const blur = `data:image/webp;base64,${blurBuffer.toString('base64')}`;
@@ -168,6 +179,7 @@ async function main() {
       photos.push({
         src: `/photos/${id}/${fileName}`,
         thumb: `/photos/${id}/thumbs/${thumbBase}`,
+        thumb2x: `/photos/${id}/thumbs/${thumbMediumBase}`,
         blur,
         width,
         height,

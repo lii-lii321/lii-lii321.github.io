@@ -128,7 +128,14 @@ const hasScenes = groups.length > 1;
       relayout();
     };
 
-    if (allLis.length > LIMIT && more && btn) {
+    // URL 带 #scene-N 直达 / 刷新时，目标分区可能整组在折叠范围之外——命中则本次不折叠，
+    // 保证浏览器初始锚点定位能找到目标（点击页面内的子景点 chips 走 expandAll 委托，不受影响）
+    const hashTarget = location.hash.startsWith('#scene-')
+      ? document.getElementById(location.hash.slice(1))
+      : null;
+    const hashHitsScene = Boolean(hashTarget && grid.contains(hashTarget));
+
+    if (allLis.length > LIMIT && more && btn && !hashHitsScene) {
       allLis.forEach((li, i) => {
         if (i >= LIMIT) li.hidden = true;
       });

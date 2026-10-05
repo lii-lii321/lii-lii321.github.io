@@ -1,7 +1,7 @@
 ---
 // GitHub 贡献热力图（规格 §8.6.5）：53 周 × 7 天，9px 方块 3px 间隔，4 级 accent 递进。
 // 纯 CSS grid，零 JS；数据来自构建时抓取的 src/data/github.json。
-// 抓取失败（githubUser 还是占位 / 网络）时显示诚实的空状态，不用假数据。
+// 抓取失败（网络 / 限流）时显示诚实的空状态，不用假数据。
 import type { GitHubData } from '../../types';
 
 interface Props {
@@ -38,7 +38,7 @@ function levelColor(level: number): string {
     ) : (
       <div class="flex h-[63px] items-center rounded-[4px] border border-dashed border-rule-2 px-6">
         <p class="text-sm text-ink-3">
-          热力图暂无数据：在 src/config/site.ts 填入真实 GitHub 用户名后重新构建即可抓取。
+          热力图暂无数据：构建时抓取 GitHub 失败（多为网络或限流问题），稍后重新构建即可重试。
         </p>
       </div>
     )

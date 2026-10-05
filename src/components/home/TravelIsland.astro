@@ -68,7 +68,15 @@ const numbers = [
         cover && trip ? (
           <img
             src={cover.thumb}
-            srcset={`${cover.thumb} 640w, ${trip.cover} ${cover.width}w`}
+            srcset={
+              [
+                `${cover.thumb} 640w`,
+                cover.thumb2x && `${cover.thumb2x} 1280w`,
+                `${trip.cover} ${cover.width}w`,
+              ]
+                .filter((s): s is string => Boolean(s))
+                .join(', ')
+            }
             sizes="(min-width: 1024px) 420px, 100vw"
             alt={`${trip.title} —— ${trip.place.name}`}
             width={cover.width}
