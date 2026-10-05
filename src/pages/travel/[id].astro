@@ -61,6 +61,16 @@ const spanText =
   takenDates.length > 0
     ? `${takenDates[0].getFullYear()}.${String(takenDates[0].getMonth() + 1).padStart(2, '0')}.${String(takenDates[0].getDate()).padStart(2, '0')} — ${takenDates[takenDates.length - 1].getFullYear()}.${String(takenDates[takenDates.length - 1].getMonth() + 1).padStart(2, '0')}.${String(takenDates[takenDates.length - 1].getDate()).padStart(2, '0')}`
     : null;
+
+/** 子景点锚点 chips（与 PhotoGrid 分组逻辑一致：连续相同 scene 为一组，锚点 = 组序号） */
+const groupScenes: (string | null)[] = [];
+for (const p of trip.photos) {
+  const s = p.scene ?? null;
+  if (groupScenes[groupScenes.length - 1] !== s) groupScenes.push(s);
+}
+const sceneChips = groupScenes
+  .map((scene, gi) => ({ scene, gi }))
+  .filter((g): g is { scene: string; gi: number } => g.scene !== null);
 ---
 
 <Base title={trip.title} description={trip.description} ogImage={trip.cover}>
@@ -115,6 +125,17 @@ const spanText =
               {trip.photos.length} 张
               {spanText && <span class="meta ml-2 normal-case">{spanText}</span>}
             </dd>
+            {
+              sceneChips.length > 1 && (
+                <dd class="mt-3 flex flex-wrap gap-1.5">
+                  {sceneChips.map((chip) => (
+                    <a href={`#scene-${chip.gi}`} class="tag-link chip" aria-label={`跳到「${chip.scene}」分组`}>
+                      {chip.scene}
+                    </a>
+                  ))}
+                </dd>
+              )
+            }
           </div>
           <div>
             <dt class="meta">拍摄设备</dt>

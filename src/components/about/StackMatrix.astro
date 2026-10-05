@@ -17,9 +17,19 @@ const { groups } = Astro.props;
       <div class={`pr-6 ${i > 0 ? 'md:border-l md:border-rule md:pl-6' : ''}`}>
         <p class="meta">{group.name}</p>
         <ul class="mt-4 flex flex-wrap gap-2">
-          {group.items.map((item) => (
-            <li class="chip">{item}</li>
-          ))}
+          {
+            group.items.map((item) => (
+              <li>
+                <a
+                  href={`/search?q=${encodeURIComponent(item)}`}
+                  class="chip tag-link"
+                  aria-label={`搜索「${item}」相关内容`}
+                >
+                  {item}
+                </a>
+              </li>
+            ))
+          }
         </ul>
       </div>
     ))

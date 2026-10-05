@@ -53,6 +53,7 @@ const latestTrip = trips[0] ?? null;
     <TravelIsland
       trip={latestTrip}
       stats={{ trips: travels.trips.length, countries: travels.stats.countries, photos: travels.stats.photoCount }}
+      recent={trips.slice(0, 3)}
     />
   </div>
 </Base>

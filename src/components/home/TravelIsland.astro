@@ -9,8 +9,10 @@ import { getCoverPhoto } from './utils';
 interface Props {
   trip: Trip | null;
   stats: { trips: number; countries: number; photos: number };
+  /** 最近 3 本相册（在暗岛底部快速跳转） */
+  recent?: Trip[];
 }
-const { trip, stats } = Astro.props;
+const { trip, stats, recent = [] } = Astro.props;
 const cover = trip ? getCoverPhoto(trip) : null;
 const numbers = [
   { num: stats.trips, label: '次旅行' },
@@ -91,4 +93,48 @@ const numbers = [
       </p>
     </div>
   </div>
+
+  {/* 最新 3 本相册快速跳转（暗岛底部） */}
+  {
+    recent.length > 0 && (
+      <div class="relative mt-10 border-t border-white/10 pt-6">
+        <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-[#e6eaf2]/50">Latest Albums</p>
+        <ul class="mt-4 grid gap-4 sm:grid-cols-3">
+          {recent.map((t) => {
+            const photo = t.photos.find((p) => p.src === t.cover) ?? t.photos[0];
+            return (
+              <li>
+                <a href={`/travel/${t.id}`} class="group flex items-center gap-3">
+                  <span
+                    class="block h-12 w-16 shrink-0 overflow-hidden rounded-[4px] bg-cover bg-center bg-[#111a30]"
+                    style={photo ? `background-image:url(${photo.blur})` : undefined}
+                  >
+                    {photo && (
+                      <img
+                        src={photo.thumb}
+                        alt=""
+                        width={160}
+                        height={120}
+                        loading="lazy"
+                        decoding="async"
+                        class="h-full w-full object-cover"
+                      />
+                    )}
+                  </span>
+                  <span class="min-w-0">
+                    <span class="block truncate text-sm font-medium text-white transition-colors group-hover:text-amber">
+                      {t.title}
+                    </span>
+                    <span class="mt-0.5 block font-mono text-[11px] text-[#e6eaf2]/55">
+                      {t.date} · {t.photos.length} 张
+                    </span>
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )
+  }
 </section>

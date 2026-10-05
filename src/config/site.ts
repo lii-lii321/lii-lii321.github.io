@@ -33,12 +33,12 @@ export const siteConfig = {
   /** 站点最后更新日期（手动维护） */
   updatedAt: "2026-10-03",
 
-  /** 首页数字带（全部为可核实的真实数字） */
+  /** 首页数字带（全部为可核实的真实数字；href 让数字可点击） */
   stats: [
-    { num: "4", unit: "个", label: "在线项目", sub: "全部开源在 GitHub" },
-    { num: "11", unit: "本", label: "旅行相册", sub: "8 个省级地区" },
-    { num: "340", unit: "张", label: "旅行照片", sub: "自动管线持续更新" },
-    { num: "0", unit: "KB", label: "首页客户端 JS", sub: "纯服务端渲染" },
+    { num: "4", unit: "个", label: "在线项目", sub: "全部开源在 GitHub", href: "/projects" },
+    { num: "11", unit: "本", label: "旅行相册", sub: "8 个省级地区", href: "/travel" },
+    { num: "340", unit: "张", label: "旅行照片", sub: "自动管线持续更新", href: "/travel" },
+    { num: "0", unit: "KB", label: "首页客户端 JS", sub: "纯服务端渲染", href: "/blog/zero-js-personal-site" },
   ],
 
   /** 技术栈矩阵（来自三个仓库的真实技术选型） */
