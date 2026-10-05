@@ -67,7 +67,8 @@ export const siteConfig = {
       href: "/travel",
     },
     { num: String(travelStats.photoCount), unit: "张", label: "旅行照片", sub: "自动管线持续更新", href: "/travel" },
-    { num: "0", unit: "KB", label: "首页客户端 JS", sub: "纯服务端渲染", href: "/blog/zero-js-personal-site" },
+    // 「0 KB 客户端 JS」不可验证（Base 布局有约 0.8 KB 渐进增强脚本）；改用可核实口径：首页 0 个 island
+    { num: "0", unit: "个", label: "首页 island", sub: "渐进增强脚本 <1 KB", href: "/blog/zero-js-personal-site" },
   ],
 
   /** 技术栈矩阵（来自三个仓库的真实技术选型） */

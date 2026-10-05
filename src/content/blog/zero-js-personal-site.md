@@ -37,7 +37,7 @@ document.addEventListener('click', (event) => {
 全站最后保留了四个 island（Astro 的 Islands 架构允许页面大部分静态、局部hydrate）：
 
 1. **足迹地图**——ECharts 必须在客户端初始化，`client:load`；
-2. **相册小地图**——同样是 ECharts 画的单点光点，`client:load`；
+2. **相册小地图**——同样是 ECharts 画的单点光点，在折叠线下方，`client:idle`；
 3. **相册灯箱**——键盘导航和焦点管理，`client:load`；
 4. **文章目录**——滚动高亮需要维护 aria-current 状态，`client:load`。
 
@@ -63,6 +63,6 @@ html[data-accent="vermilion"] {
 
 ## 结果
 
-首页客户端 JS 为 **0 KB**，LCP 是首屏那行衬线大标题本身。这个站没有存在的性能借口——它就应该快。
+首页没有任何框架 island，客户端脚本只有约 0.8 KB 的渐进增强（汉堡菜单、`/` 快捷键、返回顶部，均为原生 JS）。LCP 是首屏那行衬线大标题本身。这个站没有存在的性能借口——它就应该快。
 
 如果你也在做个人站，我的建议是：先把「零 JS」当成默认假设，让每个字节的客户端代码都自己证明必要性。

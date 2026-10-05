@@ -53,7 +53,9 @@ const dateText = formatDate(trip.date);
 const regionText = place.province ? `${place.province} · ${place.country}` : place.country;
 /** 拍摄设备（EXIF 去重）；无 EXIF 时为空 */
 const cameras = [...new Set(trip.photos.map((p) => p.camera).filter((c): c is string => c !== null))];
-/** EXIF 拍摄时间跨度（年月日）；无 EXIF 时为 null */
+/** EXIF 拍摄时间跨度（年月日）；无 EXIF 时为 null。
+ *  takenAt 是拍摄地「墙钟时间」按 UTC 序列化的（约定见 build-photos.mjs），取日期须用 getUTC*，
+ *  否则构建机时区会把晚间照片的日期偏一天 */
 const takenDates = trip.photos
   .map((p) => p.takenAt)
   .filter((t): t is string => t !== null)
@@ -62,7 +64,7 @@ const takenDates = trip.photos
   .sort((a, b) => a.valueOf() - b.valueOf());
 const spanText =
   takenDates.length > 0
-    ? `${takenDates[0].getFullYear()}.${String(takenDates[0].getMonth() + 1).padStart(2, '0')}.${String(takenDates[0].getDate()).padStart(2, '0')} — ${takenDates[takenDates.length - 1].getFullYear()}.${String(takenDates[takenDates.length - 1].getMonth() + 1).padStart(2, '0')}.${String(takenDates[takenDates.length - 1].getDate()).padStart(2, '0')}`
+    ? `${takenDates[0].getUTCFullYear()}.${String(takenDates[0].getUTCMonth() + 1).padStart(2, '0')}.${String(takenDates[0].getUTCDate()).padStart(2, '0')} — ${takenDates[takenDates.length - 1].getUTCFullYear()}.${String(takenDates[takenDates.length - 1].getUTCMonth() + 1).padStart(2, '0')}.${String(takenDates[takenDates.length - 1].getUTCDate()).padStart(2, '0')}`
     : null;
 
 /** 子景点锚点 chips（与 PhotoGrid 分组逻辑一致：连续相同 scene 为一组，锚点 = 组序号） */
