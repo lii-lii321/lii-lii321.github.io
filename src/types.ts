@@ -21,6 +21,8 @@ export interface Photo {
   src: string;
   /** 640 宽 WebP 缩略图 URL，如 "/photos/2025-yunnan/thumbs/01.webp" */
   thumb: string;
+  /** 1280 宽 WebP 中间档缩略图 URL（封面 srcset 第二档）；旧管线数据可能缺失，消费端需容错 */
+  thumb2x?: string;
   /** 16 宽 WebP 模糊占位图，data:image/webp;base64,... 形式，可直接放进 img/CSS */
   blur: string;
   /** 原图宽（像素） */

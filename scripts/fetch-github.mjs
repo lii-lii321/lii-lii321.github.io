@@ -8,8 +8,8 @@
  *
  * 安全约束：仅允许 https；请求前按 host 白名单校验，
  * 显式拒绝 localhost / 环回 / 私有 / 保留地址。
- * 用户名来自 src/config/site.ts 的 githubUser 字段（占位 "yourname" 时抓取会失败，
- * 属预期行为——填入真实用户名后重新构建即可得到真实热力图）。
+ * 用户名来自 src/config/site.ts 的 githubUser 字段（已配置真实用户名）；
+ * 抓取失败多为网络 / 限流问题，同样写入空数据不阻塞构建，稍后重新构建即可重试。
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
