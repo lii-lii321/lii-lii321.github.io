@@ -24,12 +24,14 @@ interface Props {
   albumTitle: string;
 }
 
-/** ISO 时间串 → “2025 年 4 月 12 日 08:30”；解析失败时原样返回 */
+/** ISO 时间串 → “2025 年 4 月 12 日 08:30”；解析失败时原样返回。
+ *  takenAt 是拍摄地「墙钟时间」按 UTC 序列化的（约定见 build-photos.mjs），
+ *  展示必须用 getUTC*，否则访客本地时区会整体偏移、晚间照片跨天 */
 function formatTakenAt(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日 ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return `${date.getUTCFullYear()} 年 ${date.getUTCMonth() + 1} 月 ${date.getUTCDate()} 日 ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}`;
 }
 
 export default function Lightbox({ photos, albumTitle }: Props) {

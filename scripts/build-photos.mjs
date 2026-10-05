@@ -51,6 +51,9 @@ async function readExif(buffer) {
   try {
     const meta = await exifr.parse(buffer, { tiff: true, ifd0: true, exif: true, gps: true });
     if (!meta) return { takenAt: null, camera: null, gps: null };
+    // EXIF 的 DateTimeOriginal 是无时区的「墙钟时间」；toISOString() 把它原样按 UTC 序列化。
+    // 约定：travels.json 的 takenAt = 拍摄地墙钟时间 + Z 后缀，消费端展示/取日期必须用 getUTC*
+    // （见 Lightbox 的 formatTakenAt 与 travel/[id] 的 spanText），不要用本地时区 getter
     const date = meta.DateTimeOriginal;
     const takenAt =
       date instanceof Date && !Number.isNaN(date.getTime()) ? date.toISOString() : null;

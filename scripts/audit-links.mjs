@@ -15,10 +15,18 @@ const htmlFiles = [];
 const check = new Set();
 for (const f of htmlFiles) {
   const html = fs.readFileSync(f, 'utf8');
-  for (const m of html.matchAll(/(?:href|src)="([^"#]+)"/g)) {
+  for (const m of html.matchAll(/(?:href|src|srcset)="([^"#]+)"/g)) {
     const raw = m[1];
     if (/^(https?:|mailto:|data:|javascript:)/.test(raw)) continue;
-    check.add(raw.split('?')[0]);
+    if (m[0].startsWith('srcset')) {
+      // srcset 值是逗号分隔的「URL 候选 描述符」列表（如 "/a.webp 640w, /a.jpg 1600w"），逐段取 URL
+      for (const part of raw.split(',')) {
+        const url = part.trim().split(/\s+/)[0];
+        if (url) check.add(url.split('?')[0]);
+      }
+    } else {
+      check.add(raw.split('?')[0]);
+    }
   }
 }
 
