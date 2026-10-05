@@ -138,22 +138,25 @@ async function main() {
       const srcPath = path.join(dir, fileName);
       const buffer = await fs.readFile(srcPath);
 
-      const meta = await sharp(buffer).metadata();
-      const width = meta.width ?? 0;
-      const height = meta.height ?? 0;
+      const rawMeta = await sharp(buffer).metadata();
+      // orientation 5–8：存储像素旋转了 90°，记录真实宽高需交换（缩略图链路会先转正）
+      const swapped = (rawMeta.orientation ?? 1) >= 5;
+      const width = (swapped ? rawMeta.height : rawMeta.width) ?? 0;
+      const height = (swapped ? rawMeta.width : rawMeta.height) ?? 0;
 
       // EXIF：拍摄时间 / 相机 / GPS（缺失为 null）
       const { takenAt, camera, gps } = await readExif(buffer);
 
-      // 缩略图：640 宽 WebP
+      // 缩略图：640 宽 WebP（rotate() 按 EXIF 自动转正；WebP 不带 EXIF，必须物理转正）
       const thumbBase = `${path.basename(fileName, path.extname(fileName))}.webp`;
       await sharp(buffer)
+        .rotate()
         .resize({ width: THUMB_WIDTH })
         .webp({ quality: 80 })
         .toFile(path.join(outThumbDir, thumbBase));
 
       // 模糊占位：16 宽 WebP，base64 data URI
-      const blurBuffer = await sharp(buffer).resize({ width: BLUR_WIDTH }).webp({ quality: 40 }).toBuffer();
+      const blurBuffer = await sharp(buffer).rotate().resize({ width: BLUR_WIDTH }).webp({ quality: 40 }).toBuffer();
       const blur = `data:image/webp;base64,${blurBuffer.toString('base64')}`;
 
       // 原图复制到 public
