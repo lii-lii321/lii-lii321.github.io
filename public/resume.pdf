@@ -1,0 +1,46 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 689 >>
+stream
+0.08 w 0.08 0.08 0.10 RG 80 780 m 515 780 l S
+0.6 w 0.82 0.80 0.76 RG 80 700 m 515 700 l S
+0.6 w 0.82 0.80 0.76 RG 80 520 m 515 520 l S
+0.18 0.29 1 RG 5 w 80 700 m 80 780 l S
+BT /F1 26 Tf 110 745 Td (LI YUNQIANG) Tj ET
+BT /F2 11 Tf 112 722 Td (Data Science Major - Full-stack / AI Application Developer) Tj ET
+BT /F2 12 Tf 100 668 Td (PLACEHOLDER RESUME - replace public/resume.pdf with your real CV.) Tj ET
+BT /F2 10 Tf 100 480 Td (GITHUB   github.com/lii-lii321) Tj ET
+BT /F2 10 Tf 100 460 Td (EMAIL    3028410005@qq.com) Tj ET
+BT /F2 10 Tf 100 440 Td (SITE     lii-lii321.github.io) Tj ET
+BT /F2 10 Tf 100 400 Td (PROJECTS Math_Tutor_RAG / smart_tutor / research-lab / Traveling) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000990 00000 n 
+0000001061 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+1129
+%%EOF

@@ -1,0 +1,73 @@
+---
+// 行式项目条目（规格 §9.1 WorkRow）：首页精选 + /projects 列表 + /about 代表作三处复用。
+// 网格：编号 | 项目名+摘要+chips | 右列（缩略图 / 指标 / 年份，由页面以 slot="right" 注入）。
+// dense 控制密度（/about 代表作更紧凑）。
+interface Props {
+  /** 等宽编号，如 "01" */
+  index: string;
+  title: string;
+  /** 等宽 meta 行，如 "2023 · 独立开发" */
+  meta?: string;
+  desc?: string;
+  stack?: readonly string[];
+  status?: 'live' | 'archived' | 'wip';
+  href: string;
+  dense?: boolean;
+}
+const { index, title, meta, desc, stack = [], status, href, dense = false } = Astro.props;
+
+const statusText = { live: '在线', archived: '已归档', wip: '进行中' } as const;
+const statusColor = { live: 'bg-ok', archived: 'bg-ink-3', wip: 'bg-amber' } as const;
+---
+
+<a
+  href={href}
+  class={`group grid grid-cols-[36px_1fr] gap-x-5 border-b border-rule transition-colors hover:bg-paper-2 md:grid-cols-[56px_1.15fr_1fr] md:gap-x-8 ${
+    dense ? 'py-6' : 'py-[34px] md:py-[38px]'
+  }`}
+>
+  <span class="meta pt-1.5" aria-hidden="true">{index}</span>
+
+  <div class="min-w-0">
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <h3 class="font-serif text-[1.25rem] font-semibold text-ink transition-colors group-hover:text-accent">
+        {title}
+      </h3>
+      {
+        status && (
+          <span class="flex items-center gap-1.5 font-mono text-[11px] tracking-[0.04em] text-ink-3">
+            <span class={`h-1.5 w-1.5 rounded-full ${statusColor[status]}`} aria-hidden="true" />
+            {statusText[status]}
+          </span>
+        )
+      }
+    </div>
+
+    {
+      meta && <p class="meta mt-1.5 normal-case">{meta}</p>
+    }
+
+    {
+      desc && (
+        <p class="mt-2.5 max-w-[42ch] text-sm leading-relaxed text-ink-2 max-md:max-w-none">
+          {desc}
+        </p>
+      )
+    }
+
+    {
+      stack.length > 0 && (
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {stack.map((s) => (
+            <li class="chip">{s}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+
+  {/* 右列：缩略图 / 指标 chips / 年份等，由使用方注入；移动端隐藏保持单列 */}
+  <div class="hidden min-w-0 flex-col items-end justify-between gap-3 pt-1 md:flex">
+    <slot name="right" />
+  </div>
+</a>

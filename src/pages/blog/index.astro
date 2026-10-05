@@ -1,0 +1,112 @@
+---
+// 文章列表 /blog（规格 §8.4）：页头 + 分类 chips + 头条大卡 + 按年份分组文章流。
+// 不分页，直接渲染全部；分类筛选为纯客户端渐进增强。
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PostRow from '../../components/blog/PostRow.astro';
+import FilterChips from '../../components/common/FilterChips.astro';
+import { siteConfig } from '../../config/site';
+import { readingMinutes, formatISO } from '../../components/blog/utils';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+// 头条：最新一篇 featured（没有则取最新一篇）
+const hero = posts.find((p) => p.data.featured) ?? posts[0];
+
+const categories = ['工程', '架构', '随笔', '开源'] as const;
+const chips = [
+  { label: '全部', count: posts.length, value: 'all' },
+  ...categories.map((c) => ({
+    label: c,
+    count: posts.filter((p) => p.data.category === c).length,
+    value: c,
+  })),
+];
+
+// 按年份分组（倒序）
+const byYear = new Map<number, typeof posts>();
+for (const p of posts) {
+  const y = p.data.pubDate.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(p);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+---
+
+<Base title="文章" description={`${siteConfig.name}的文章与笔记：工程、架构、随笔与开源。`}>
+  <section class="pt-14">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow">Writing</p>
+        <h1 class="h1 mt-4">文章</h1>
+        <p class="lede mt-5">把做过的东西、踩过的坑写成文章。按年份倒序，不设分页。</p>
+      </div>
+      <div class="flex gap-5 pb-1">
+        <a href="/search" class="meta transition-colors hover:text-accent">搜索 →</a>
+        <a href="/archives" class="meta transition-colors hover:text-accent">归档 →</a>
+        <a href="/tags" class="meta transition-colors hover:text-accent">标签 →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10" aria-label="分类筛选">
+    <FilterChips scope="blog" items={chips} />
+  </section>
+
+  {
+    hero && (
+      <section class="mt-10" aria-label="头条文章">
+        <a
+          href={`/blog/${hero.id}`}
+          class="group grid gap-8 border border-rule bg-paper p-6 transition-colors hover:bg-paper-2 md:grid-cols-[1.1fr_1fr] md:p-8"
+        >
+          {/* 头条配图占位：4:3；有封面后替换为 <img> */}
+          <div
+            class="flex aspect-[4/3] items-center justify-center rounded-[4px] border border-rule bg-paper-3"
+            role="img"
+            aria-label={`${hero.data.title} 封面占位`}
+          >
+            <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-3">Cover</span>
+          </div>
+          <div class="flex flex-col justify-center">
+            <p class="eyebrow">
+              Featured · {hero.data.category} · {formatISO(hero.data.pubDate)}
+            </p>
+            <h2 class="h2 mt-4 transition-colors group-hover:text-accent">{hero.data.title}</h2>
+            <p class="mt-4 max-w-[56ch] leading-relaxed text-ink-2">{hero.data.description}</p>
+            <p class="meta mt-6 transition-colors group-hover:text-accent">读全文 →</p>
+          </div>
+        </a>
+      </section>
+    )
+  }
+
+  <section class="mt-[var(--spacing-sec)] pb-[var(--spacing-sec)]" aria-label="全部文章">
+    {
+      years.map((year) => (
+        <div class="mb-14 last:mb-0">
+          <div class="flex items-baseline justify-between border-b border-ink pb-3">
+            <h2 class="font-serif text-2xl font-bold text-ink">{year}</h2>
+            <p class="meta">{byYear.get(year)!.length} 篇</p>
+          </div>
+          <div>
+            {byYear.get(year)!.map((post) => (
+              <div data-filter-item data-filter-scope="blog" data-filter-value={post.data.category}>
+                <PostRow
+                  href={`/blog/${post.id}`}
+                  date={post.data.pubDate}
+                  title={post.data.title}
+                  desc={post.data.description}
+                  readingTime={readingMinutes(post.body)}
+                  category={post.data.category}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </section>
+</Base>

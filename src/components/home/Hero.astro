@@ -1,0 +1,37 @@
+---
+// Hero（规格 §8.1.1）：状态胶囊（呼吸绿点）+ Display 衬线大标题两行（第二行弱化）
+// + Lede 导语 + 3 个 CTA + 等宽 meta 行。纯文字，无封面图（封面移入 TravelIsland）。
+import { siteConfig } from '../../config/site';
+
+// 定位句按逗号拆成两行展示（无逗号则单行）
+const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
+---
+
+<section class="pt-[var(--spacing-sec)]">
+  <p class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ink-2">
+    <span class="pulse inline-block h-2 w-2 rounded-full bg-ok" aria-hidden="true"></span>
+    {siteConfig.availability} · {siteConfig.location}
+  </p>
+
+  <h1 class="display mt-7">
+    {
+      titleLines.map((line, i) => (
+        <span class={`block ${i > 0 ? 'text-ink-3' : ''}`}>{line}</span>
+      ))
+    }
+  </h1>
+
+  <p class="lede mt-8">
+    你好，我是 {siteConfig.name}——在这里写我做的东西、踩过的坑，也存着我去过的地方。
+  </p>
+
+  <div class="mt-10 flex flex-wrap gap-3">
+    <a href="/projects" class="btn-primary">看我的项目</a>
+    <a href="/blog" class="btn-outline">读最新文章</a>
+    <a href={siteConfig.resumeUrl} class="btn-outline">下载简历</a>
+  </div>
+
+  <p class="meta mt-10 normal-case">
+    {siteConfig.title} · React · Vue · Python · 本站最后更新 {siteConfig.updatedAt}
+  </p>
+</section>

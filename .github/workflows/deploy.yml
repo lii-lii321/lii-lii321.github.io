@@ -1,0 +1,41 @@
+# 部署到 GitHub Pages
+# 约定：推送到名为 lii-lii321.github.io 的仓库（用户站，根路径部署），
+# astro.config.mjs 的 site 已与之对应，站内所有根绝对链接无需 base 适配。
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install, check, build, audit, and upload site
+        uses: withastro/action@v3
+        with:
+          # 质量门禁：类型检查 → 测试 → 构建 → 死链审计，任一失败则不部署
+          buildCommand: npm run check && npm test && npm run build && node scripts/audit-links.mjs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

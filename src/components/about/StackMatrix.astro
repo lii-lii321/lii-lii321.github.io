@@ -1,0 +1,27 @@
+---
+// 技术栈矩阵（规格 §8.6.4）：5 列，顶部 1px ink 粗线，列间竖线，列标题等宽大写。
+// 数据来自 siteConfig.stack —— 改栈只改 site.ts，不碰组件。900px 以下转 2 列流式。
+interface StackGroup {
+  name: string;
+  items: readonly string[];
+}
+interface Props {
+  groups: readonly StackGroup[];
+}
+const { groups } = Astro.props;
+---
+
+<div class="grid grid-cols-2 gap-y-8 border-t border-ink pt-8 md:grid-cols-5">
+  {
+    groups.map((group, i) => (
+      <div class={`pr-6 ${i > 0 ? 'md:border-l md:border-rule md:pl-6' : ''}`}>
+        <p class="meta">{group.name}</p>
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {group.items.map((item) => (
+            <li class="chip">{item}</li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>

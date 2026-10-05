@@ -1,0 +1,171 @@
+---
+// 全站搜索 /search：构建时把博客、项目、相册索引内嵌进页面（零外部请求），
+// 客户端做加权子序列匹配，纯原生 JS（对标主流框架的 fuzzy search，去掉词库依赖）。
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { readingMinutes } from '../components/blog/utils';
+import projectsJson from '../data/projects.json';
+import travelsJson from '../data/travels.json';
+import type { Project, TravelData } from '../types';
+
+interface SearchItem {
+  type: '文章' | '项目' | '相册';
+  title: string;
+  desc: string;
+  meta: string;
+  tags: string[];
+  url: string;
+}
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const projects = (projectsJson as Project[]).sort((a, b) => a.order - b.order);
+const travels = travelsJson as TravelData;
+
+const index: SearchItem[] = [
+  ...posts.map((p) => ({
+    type: '文章' as const,
+    title: p.data.title,
+    desc: p.data.description,
+    meta: `${p.data.pubDate.getFullYear()}.${String(p.data.pubDate.getMonth() + 1).padStart(2, '0')} · ${p.data.category} · ${readingMinutes(p.body)} 分钟`,
+    tags: [p.data.category, ...p.data.tags],
+    url: `/blog/${p.id}`,
+  })),
+  ...projects.map((p) => ({
+    type: '项目' as const,
+    title: p.title,
+    desc: p.summary,
+    meta: `${p.year} · ${p.category}`,
+    tags: [...p.stack, p.category, p.role],
+    url: `/projects/${p.id}`,
+  })),
+  ...travels.trips.map((t) => ({
+    type: '相册' as const,
+    title: t.title,
+    desc: t.description,
+    meta: `${t.date} · ${t.place.province ?? t.place.country} · ${t.photos.length} 张`,
+    tags: [...t.tags, t.place.name, t.place.country, ...(t.place.province ? [t.place.province] : [])],
+    url: `/travel/${t.id}`,
+  })),
+];
+
+const serialized = JSON.stringify(index);
+---
+
+<Base title="搜索" description="搜索全站的文章、项目与相册。">
+  <section class="pt-14">
+    <p class="eyebrow">Search</p>
+    <h1 class="h1 mt-4">搜索</h1>
+    <p class="lede mt-5">检索范围：{posts.length} 篇文章 · {projects.length} 个项目 · {travels.trips.length} 本相册。索引在构建时生成，匹配在本地完成——任何页面按 <kbd class="rounded border border-rule-2 bg-paper-2 px-1.5 py-0.5 font-mono text-xs text-ink-2">/</kbd> 即可回到这里。</p>
+  </section>
+
+  <section class="mt-10 pb-[var(--spacing-sec)]">
+    <!-- 搜索框：journal 风格——只有底部发丝线，聚焦转 accent -->
+    <input
+      id="search-input"
+      type="search"
+      placeholder="输入关键词，如：RAG、家教、云南、SM-2……"
+      autocomplete="off"
+      class="w-full border-0 border-b border-rule-2 bg-transparent px-1 py-3 font-serif text-xl text-ink outline-none transition-colors placeholder:font-sans placeholder:text-base placeholder:text-ink-3 focus:border-accent"
+      aria-label="搜索全站"
+    />
+
+    <p id="search-stats" class="meta mt-4 normal-case" aria-live="polite"></p>
+    <ul id="search-results" class="mt-4 border-t border-rule"></ul>
+
+    <template id="search-row">
+      <li>
+        <a data-row class="group flex items-baseline gap-4 border-b border-rule py-4 transition-colors hover:bg-paper-2">
+          <span data-type class="meta w-[40px] shrink-0"></span>
+          <span class="min-w-0 flex-1">
+            <span data-title class="block truncate text-sm font-medium text-ink group-hover:text-accent"></span>
+            <span data-desc class="mt-1 block truncate text-xs text-ink-3"></span>
+          </span>
+          <span data-meta class="meta hidden shrink-0 sm:block"></span>
+        </a>
+      </li>
+    </template>
+
+    <noscript><p class="mt-6 text-sm text-ink-2">搜索需要启用 JavaScript；也可以从<a class="text-accent underline underline-offset-4" href="/archives">归档</a>或<a class="text-accent underline underline-offset-4" href="/tags">标签</a>浏览。</p></noscript>
+  </section>
+
+  <script type="application/json" id="search-index" set:html={serialized} />
+
+  <script>
+    // 加权匹配：标题 ×4、标签 ×2、描述 ×1；多关键词取最小分（AND 语义）
+    type Item = { type: string; title: string; desc: string; meta: string; tags: string[]; url: string };
+    const items: Item[] = JSON.parse(document.getElementById('search-index')?.textContent ?? '[]');
+    const input = document.getElementById('search-input') as HTMLInputElement | null;
+    const list = document.getElementById('search-results');
+    const stats = document.getElementById('search-stats');
+    const rowTpl = document.getElementById('search-row') as HTMLTemplateElement | null;
+
+    const score = (item: Item, query: string): number => {
+      const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      if (words.length === 0) return 0;
+      const title = item.title.toLowerCase();
+      const desc = item.desc.toLowerCase();
+      const tags = item.tags.join(' ').toLowerCase();
+      let total = Infinity;
+      for (const w of words) {
+        let s = 0;
+        if (title.includes(w)) s = 4;
+        else if (tags.includes(w)) s = 2;
+        else if (desc.includes(w)) s = 1;
+        if (s === 0) return 0;
+        total = Math.min(total, s);
+      }
+      return total;
+    };
+
+    const render = () => {
+      if (!input || !list || !stats || !rowTpl) return;
+      const q = input.value;
+      if (q.trim().length === 0) {
+        list.innerHTML = '';
+        stats.textContent = `索引 ${items.length} 条，等待输入。`;
+        return;
+      }
+      const hits = items
+        .map((item) => ({ item, s: score(item, q) }))
+        .filter((x) => x.s > 0)
+        .sort((a, b) => b.s - a.s)
+        .slice(0, 12);
+      stats.textContent = `「${q.trim()}」命中 ${hits.length} 条`;
+      list.innerHTML = '';
+
+      // 关键词高亮：先转义再替换，正则元字符与 HTML 特殊字符都处理
+      const esc = (s: string) =>
+        s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c);
+      const pattern = q
+        .trim()
+        .split(/\s+/)
+        .map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('|');
+      const highlight = (text: string) =>
+        pattern
+          ? esc(text).replace(new RegExp(`(${pattern})`, 'gi'), '<mark>$1</mark>')
+          : esc(text);
+
+      for (const { item } of hits) {
+        const node = rowTpl.content.cloneNode(true) as DocumentFragment;
+        const row = node.querySelector('[data-row]') as HTMLAnchorElement;
+        row.href = item.url;
+        (node.querySelector('[data-type]') as HTMLElement).textContent = item.type;
+        (node.querySelector('[data-title]') as HTMLElement).innerHTML = highlight(item.title);
+        (node.querySelector('[data-desc]') as HTMLElement).innerHTML = highlight(item.desc);
+        (node.querySelector('[data-meta]') as HTMLElement).textContent = item.meta;
+        list.appendChild(node);
+      }
+    };
+
+    input?.addEventListener('input', render);
+    // 支持 /search?q=关键词 深链（相册标签等入口会跳转过来）
+    const initial = new URLSearchParams(location.search).get('q');
+    if (initial && input) {
+      input.value = initial;
+    }
+    render();
+  </script>
+</Base>

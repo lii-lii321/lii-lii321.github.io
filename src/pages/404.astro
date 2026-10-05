@@ -1,0 +1,23 @@
+---
+// 404 页：杂志风留白 + 大号衬线 404 + 关键入口。
+import Base from '../layouts/Base.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Base title="页面不存在" description="你访问的页面不存在或已被移动。">
+  <section class="flex min-h-[60vh] flex-col items-start justify-center py-24">
+    <p class="eyebrow">404 · Not Found</p>
+    <h1 class="display mt-6">404</h1>
+    <p class="lede mt-6">
+      这一页不存在，或者已经被移动了——像地图上还没去过的坐标。
+    </p>
+    <div class="mt-9 flex flex-wrap gap-3">
+      <a href="/" class="btn-primary">回首页</a>
+      <a href="/travel" class="btn-outline">去看足迹地图</a>
+      <a href="/blog" class="btn-outline">读点文章</a>
+    </div>
+    <p class="meta mt-12 normal-case">
+      {siteConfig.name} · {siteConfig.location}
+    </p>
+  </section>
+</Base>

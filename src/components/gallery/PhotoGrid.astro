@@ -1,0 +1,106 @@
+---
+/**
+ * 照片瀑布流网格（CSS columns 多列布局）：
+ * - 静态渲染，只加载 640 宽 WebP 缩略图（thumb），原图留给灯箱；
+ * - blur（16px WebP data URI）作为 img 背景占位，缩略图加载完成前先铺底；
+ * - width/height 属性 + h-auto 让浏览器按原图比例占位，加载时不跳动；
+ * - 点击网格项派发 gallery:open 自定义事件，由 Lightbox 岛接收打开。
+ */
+import type { Photo } from '../../types';
+
+interface Props {
+  photos: Photo[];
+  albumTitle: string;
+}
+
+const { photos, albumTitle } = Astro.props;
+
+/** 按连续区段分组的子景点（photos 有序，同一景点的抽样天然连续）；无子景点时只有一个 null 组 */
+const groups: { scene: string | null; start: number; items: Photo[] }[] = [];
+photos.forEach((photo, index) => {
+  const last = groups[groups.length - 1];
+  if (last && last.scene === (photo.scene ?? null)) last.items.push(photo);
+  else groups.push({ scene: photo.scene ?? null, start: index, items: [photo] });
+});
+const hasScenes = groups.length > 1;
+---
+
+{
+  hasScenes
+    ? groups.map((group) => (
+        <section class="mb-10 last:mb-0" aria-label={group.scene ?? albumTitle}>
+          {group.scene && (
+            <div class="mb-4 flex items-baseline justify-between border-b border-rule pb-2">
+              <h3 class="h3">{group.scene}</h3>
+              <p class="meta">{group.items.length} 张</p>
+            </div>
+          )}
+          <ul class="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4">
+            {group.items.map((photo, j) => (
+              <li class="mb-3 break-inside-avoid sm:mb-4">
+                <button
+                  type="button"
+                  data-gallery-index={group.start + j}
+                  aria-label={`查看第 ${group.start + j + 1} 张照片：${albumTitle}${group.scene ? ` · ${group.scene}` : ''}`}
+                  class="group block w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
+                >
+                  <img
+                    src={photo.thumb}
+                    alt={`${albumTitle}${group.scene ? ` · ${group.scene}` : ''} · 第 ${group.start + j + 1} 张照片`}
+                    width={photo.width}
+                    height={photo.height}
+                    loading="lazy"
+                    decoding="async"
+                    class="h-auto w-full transition-transform duration-300 group-hover:scale-[1.02]"
+                    style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    : (
+        <ul class="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4">
+          {photos.map((photo, index) => (
+            <li class="mb-3 break-inside-avoid sm:mb-4">
+              <button
+                type="button"
+                data-gallery-index={index}
+                aria-label={`查看第 ${index + 1} 张照片：${albumTitle}`}
+                class="group block w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
+              >
+                <img
+                  src={photo.thumb}
+                  alt={`${albumTitle} · 第 ${index + 1} 张照片`}
+                  width={photo.width}
+                  height={photo.height}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-auto w-full transition-transform duration-300 group-hover:scale-[1.02]"
+                  style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
+                />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )
+}
+
+<script>
+  // 事件委托：点击任意网格项，向 Lightbox 岛广播打开事件（带打开下标）
+  document.addEventListener('click', (event) => {
+    const target =
+      event.target instanceof Element
+        ? event.target.closest<HTMLElement>('[data-gallery-index]')
+        : null;
+    if (!target) return;
+
+    const index = Number(target.dataset.galleryIndex);
+    if (!Number.isInteger(index)) return;
+
+    document.dispatchEvent(
+      new CustomEvent('gallery:open', { detail: { index } }),
+    );
+  });
+</script>

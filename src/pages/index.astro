@@ -1,0 +1,58 @@
+---
+// 首页（规格 §8.1 / §7）：定位句 → 4 个数字 → 精选项目 3 → 最新文章 3 → Now → 旅行板块。
+// 全部内容构建时服务端渲染；除 TravelIsland 封面外无图片。
+import Base from '../layouts/Base.astro';
+import { siteConfig } from '../config/site';
+import type { TravelData, Project } from '../types';
+import travelsData from '../data/travels.json';
+import projectsJson from '../data/projects.json';
+import { getCollection } from 'astro:content';
+
+import Hero from '../components/home/Hero.astro';
+import StatBand from '../components/common/StatBand.astro';
+import FeaturedProjects from '../components/home/FeaturedProjects.astro';
+import LatestPosts from '../components/home/LatestPosts.astro';
+import NowList from '../components/home/NowList.astro';
+import TravelIsland from '../components/home/TravelIsland.astro';
+import { readingMinutes } from '../components/blog/utils';
+
+const travels = travelsData as TravelData;
+const projects = (projectsJson as Project[]).sort((a, b) => a.order - b.order);
+const featuredProjects = projects.filter((p) => p.featured).slice(0, 3);
+
+const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3)
+  .map((p) => ({
+    href: `/blog/${p.id}`,
+    date: p.data.pubDate,
+    title: p.data.title,
+    desc: p.data.description,
+    readingTime: readingMinutes(p.body),
+    category: p.data.category,
+  }));
+
+const trips = [...travels.trips].sort((a, b) => b.date.localeCompare(a.date));
+const latestTrip = trips[0] ?? null;
+---
+
+<Base description={`${siteConfig.name}，${siteConfig.title}。${siteConfig.tagline} 项目、文章、履历与旅行足迹。`}>
+  <div class="flex flex-col gap-[var(--spacing-sec)]">
+    <Hero />
+
+    <StatBand items={siteConfig.stats} />
+
+    <FeaturedProjects projects={featuredProjects} total={projects.length} />
+
+    {
+      latestPosts.length > 0 && <LatestPosts posts={latestPosts} />
+    }
+
+    <NowList items={siteConfig.now} />
+
+    <TravelIsland
+      trip={latestTrip}
+      stats={{ trips: travels.trips.length, countries: travels.stats.countries, photos: travels.stats.photoCount }}
+    />
+  </div>
+</Base>

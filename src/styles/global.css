@@ -1,0 +1,461 @@
+/* 全局样式：浅色编辑 / 杂志风设计令牌 + Tailwind v4 主题
+ * 规格来源：docs/personal-site-implementation-spec.md §4–§6
+ * 层级只用 1px 发丝线；阴影仅 hover 态；衬线标题 / 无衬线正文 / 等宽元信息三层分工。
+ */
+@import "tailwindcss";
+
+@theme {
+  /* 纸面 */
+  --color-paper: #fbfaf7;
+  --color-paper-2: #f3f1ea;
+  --color-paper-3: #e9e6dc;
+  /* 墨色 */
+  --color-ink: #15151a;
+  --color-ink-2: #4b4b55;
+  --color-ink-3: #8c8c96;
+  /* 线 */
+  --color-rule: #e2dfd6;
+  --color-rule-2: #cfcbbd;
+  /* 强调色：靛蓝（默认）。朱橙方案见文件底部 html[data-accent="vermilion"] */
+  --color-accent: #2f4bff;
+  --color-accent-soft: rgba(47, 75, 255, 0.09);
+  --color-code-bg: #f4f2eb;
+  /* 状态 */
+  --color-ok: #22a06b;
+
+  /* 暗色岛屿专用令牌：全站唯一暗色块 = 首页 TravelIsland（含其内天蓝/琥珀点缀） */
+  --color-night: #0a0f1e;
+  --color-sky: #38bdf8;
+  --color-amber: #f59e0b;
+
+  /* 字体三层分工：衬线做标题 / 无衬线做正文 / 等宽做元信息。
+   * 中文衬线不做 webfont（Noto Serif SC 全字重 ~8MB 会拖垮 LCP），
+   * 直接回退系统字体（宋体 / Songti SC），规格 §15 允许的方案。 */
+  --font-sans:
+    "Inter", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Noto Serif SC", "Source Serif 4", "Songti SC", SimSun, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  /* 区块垂直间距：大留白是杂志感主要来源，不要压缩（规格 §6） */
+  --spacing-sec: clamp(56px, 8vw, 112px);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* A4 可打印排版：打印时保留底色 */
+* {
+  -webkit-print-color-adjust: exact;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+@layer components {
+  /* 容器：1280px + 40px 边距（移动 20px） */
+  .wrap {
+    @apply mx-auto w-full max-w-[1280px] px-5 md:px-10;
+  }
+
+  /* 眉题：等宽大写小字 */
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-ink-3;
+  }
+
+  /* 元信息：等宽 11–12.5px 微字距大写 */
+  .meta {
+    @apply font-mono text-[11.5px] uppercase tracking-[0.04em] text-ink-3;
+  }
+
+  /* 排版层级（规格 §5） */
+  .display {
+    @apply font-serif font-bold text-ink;
+    font-size: clamp(2.9rem, 7.4vw, 6.2rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+  }
+  .h1 {
+    @apply font-serif font-bold text-ink;
+    font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+    line-height: 1.08;
+  }
+  .h2 {
+    @apply font-serif font-semibold text-ink;
+    font-size: clamp(1.5rem, 2.7vw, 2.1rem);
+    line-height: 1.18;
+  }
+  .h3 {
+    @apply font-serif font-semibold text-ink;
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+  .lede {
+    @apply font-sans text-ink-2;
+    font-size: clamp(1.05rem, 1.5vw, 1.22rem);
+    line-height: 1.72;
+    max-width: 56ch;
+  }
+
+  /* 状态 / 技术栈胶囊（文字块圆角一律 0，胶囊例外） */
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-rule-2 bg-paper px-2.5 py-0.5 font-mono text-[11px] tracking-[0.02em] text-ink-2;
+  }
+
+  /* 主按钮 / 描边按钮（胶囊圆角 10px）。
+   * 注意：Tailwind v4 不允许 @apply 自定义类，这里用选择器共享基础样式 */
+  .btn,
+  .btn-primary,
+  .btn-outline {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-2.5 text-sm font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply bg-ink text-paper hover:bg-accent;
+  }
+  .btn-outline {
+    @apply border border-rule-2 bg-paper text-ink hover:border-accent hover:text-accent;
+  }
+
+  /* 发丝线行式列表的统一行 padding（规格 §6：34–38px + 1px rule） */
+  .row-item {
+    @apply border-b border-rule py-[34px] transition-colors md:py-[38px];
+  }
+}
+
+/* hover 态专用阴影（规格 §6：仅 hover 用，不作常规层级） */
+.lift {
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+}
+.lift:hover {
+  box-shadow:
+    0 1px 2px rgba(20, 20, 25, 0.05),
+    0 10px 30px rgba(20, 20, 25, 0.05);
+}
+
+/* 状态胶囊呼吸绿点（规格 §8.1：2.4s，prefers-reduced-motion 降级） */
+.pulse {
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* 移动端导航面板下滑入场 */
+.nav-panel {
+  transform-origin: top;
+  animation: nav-slide 0.18s ease;
+}
+@keyframes nav-slide {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .pulse,
+  .nav-panel {
+    animation: none;
+  }
+}
+
+/* 强调色双方案：朱橙。评审时在 <html> 上切 data-accent（页脚有切换按钮） */
+html[data-accent="vermilion"] {
+  --color-accent: #d9481f;
+  --color-accent-soft: rgba(217, 72, 31, 0.09);
+}
+
+/* ── 文章正文排版（规格 §8.5，全部元素都要落到样式） ─────────────────── */
+.prose-editorial {
+  max-width: 68ch;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  color: var(--color-ink-2);
+  overflow-wrap: break-word;
+}
+.prose-editorial h2,
+.prose-editorial h3,
+.prose-editorial h4 {
+  font-family: var(--font-serif);
+  color: var(--color-ink);
+  scroll-margin-top: 132px; /* sticky 目录锚点偏移 */
+}
+.prose-editorial h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 2.4em 0 0.8em;
+}
+.prose-editorial h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 2em 0 0.6em;
+}
+.prose-editorial p {
+  margin: 1.1em 0;
+}
+.prose-editorial ul,
+.prose-editorial ol {
+  margin: 1.1em 0;
+  padding-left: 1.5em;
+}
+.prose-editorial ul {
+  list-style: disc;
+}
+.prose-editorial ol {
+  list-style: decimal;
+}
+.prose-editorial li {
+  margin: 0.4em 0;
+}
+.prose-editorial li::marker {
+  color: var(--color-ink-3);
+}
+.prose-editorial a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-editorial hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 1px solid var(--color-rule);
+}
+.prose-editorial strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+/* 行内 code：去边框、纸灰底 */
+.prose-editorial code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--color-code-bg);
+  border-radius: 4px;
+  padding: 0.12em 0.4em;
+  color: var(--color-ink);
+}
+
+/* pre 代码块：1px rule 圆角容器 + 顶部工具条（三圆点 + 语言标签） */
+.prose-editorial pre {
+  position: relative;
+  margin: 1.4em 0;
+  padding: 2.6rem 1.25rem 1.25rem;
+  background: var(--color-code-bg) !important; /* 覆盖 Shiki 内联背景，统一纸灰 */
+  border: 1px solid var(--color-rule);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.prose-editorial pre::before {
+  content: "● ● ●";
+  position: absolute;
+  top: 0;
+  left: 1.1rem;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  font-size: 7px;
+  letter-spacing: 4px;
+  color: var(--color-rule-2);
+}
+.prose-editorial pre::after {
+  content: attr(data-language);
+  position: absolute;
+  top: 0;
+  right: 1.1rem;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+.prose-editorial pre code {
+  display: block;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  font-size: 12.3px;
+  line-height: 1.75;
+  overflow-x: auto;
+}
+
+/* .callout 提示框：左 3px accent 竖线 + accent-soft 底 */
+.prose-editorial .callout {
+  margin: 1.5em 0;
+  padding: 1em 1.25em;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 4px 4px 0;
+  background: var(--color-accent-soft);
+  font-size: 0.95em;
+}
+.prose-editorial .callout p {
+  margin: 0.3em 0;
+}
+
+/* .aside-note 旁注块：paper-2 底 + 1px rule */
+.prose-editorial .aside-note {
+  margin: 1.5em 0;
+  padding: 1em 1.25em;
+  border: 1px solid var(--color-rule);
+  border-radius: 0 4px 4px 0;
+  background: var(--color-paper-2);
+  font-size: 0.92em;
+  color: var(--color-ink-2);
+}
+.prose-editorial .aside-note p {
+  margin: 0.3em 0;
+}
+
+/* blockquote 引用：左 2px rule-2 竖线 + 衬线斜体 */
+.prose-editorial blockquote {
+  margin: 1.5em 0;
+  padding: 0.2em 0 0.2em 1.25em;
+  border-left: 2px solid var(--color-rule-2);
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--color-ink);
+}
+.prose-editorial blockquote p {
+  margin: 0.4em 0;
+}
+
+/* mark 高亮：accent-soft 底 + accent 字色 */
+.prose-editorial mark {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  padding: 0.05em 0.2em;
+  border-radius: 2px;
+}
+
+/* 表格：表头等宽大写 + 底边 1px ink 粗线 */
+.prose-editorial table {
+  width: 100%;
+  margin: 1.5em 0;
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+.prose-editorial th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  text-align: left;
+  padding: 0.6em 0.9em;
+  border-bottom: 1px solid var(--color-ink);
+}
+.prose-editorial td {
+  padding: 0.6em 0.9em;
+  border-bottom: 1px solid var(--color-rule);
+  vertical-align: top;
+}
+.prose-editorial img {
+  border-radius: 4px;
+}
+
+/* 代码块复制按钮（文章页脚本注入） */
+.code-copy {
+  position: absolute;
+  top: 0;
+  right: 4.2rem;
+  height: 2.4rem;
+  padding: 0 0.4em;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-3);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.code-copy:hover {
+  color: var(--color-accent);
+}
+
+/* 文章标签链接（post-meta 与 tags/index 通用） */
+.tag-link {
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+a.tag-link:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* 搜索结果关键词高亮 */
+.search-hit mark,
+#search-results mark {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  padding: 0 0.1em;
+  border-radius: 2px;
+}
+
+/* ── A4 可打印排版（规格 §3「可打印排版」）────────────────────────── */
+@media print {
+  /* 隐藏交互设施：导航、页脚、返回顶部、灯箱、进度条、筛选 chips */
+  header,
+  footer,
+  #back-to-top,
+  #read-progress,
+  details,
+  [data-filter-chips],
+  nav[aria-label='上一篇 / 下一篇'],
+  nav[aria-label='上一本 / 下一本相册'] {
+    display: none !important;
+  }
+  /* 纸面本色、黑字、正文铺满 */
+  body {
+    background: #fff;
+  }
+  .wrap {
+    max-width: none;
+    padding: 0;
+  }
+  section {
+    break-inside: avoid-page;
+  }
+  .prose-editorial {
+    max-width: none;
+    font-size: 10.5pt;
+  }
+  /* 链接在纸上显示地址 */
+  .prose-editorial a::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.75em;
+    color: var(--color-ink-3);
+  }
+  .prose-editorial pre {
+    white-space: pre-wrap;
+    border-color: #ccc;
+  }
+  /* 相册瀑布流打印为两列网格而非 columns 流 */
+  .lift:hover {
+    box-shadow: none;
+  }
+}

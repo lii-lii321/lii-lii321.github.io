@@ -1,0 +1,181 @@
+---
+// 关于 / 履历（规格 §8.6，本页是工程向说服力的核心）：
+// 头部两栏 → 经历时间线 → 代表作 → 技术栈矩阵 → 开源与 GitHub → 教育 → CTA。
+// ⚠️ 页内全部履历数字为占位（规格 §14），上线前必须替换并核实。
+import Base from '../layouts/Base.astro';
+import { siteConfig } from '../config/site';
+import Timeline from '../components/about/Timeline.astro';
+import StackMatrix from '../components/about/StackMatrix.astro';
+import Heatmap from '../components/about/Heatmap.astro';
+import WorkRow from '../components/project/WorkRow.astro';
+import Pill from '../components/common/Pill.astro';
+import githubData from '../data/github.json';
+import projectsJson from '../data/projects.json';
+import type { GitHubData, Project } from '../types';
+
+const github = githubData as GitHubData;
+const projects = projectsJson as Project[];
+// 代表作：进首页精选的 3 个项目，反向引用 /projects，不重复写内容
+const featured = [...projects].sort((a, b) => a.order - b.order).filter((p) => p.featured).slice(0, 3);
+
+const facts = [
+  { k: '当前', v: siteConfig.title },
+  { k: '所在地', v: siteConfig.location },
+  { k: '状态', v: siteConfig.availability },
+  { k: '邮箱', v: siteConfig.email },
+];
+---
+
+<Base title="关于" description={`${siteConfig.name}，${siteConfig.title}。${siteConfig.tagline} 履历、项目与技术栈。`}>
+  <!-- 结构化数据：Person（规格 §13.4） -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: siteConfig.name,
+      alternateName: siteConfig.enName,
+      jobTitle: siteConfig.title,
+      description: siteConfig.tagline,
+      email: `mailto:${siteConfig.email}`,
+      url: new URL('/about', Astro.site ?? 'https://lii-lii321.github.io').toString(),
+      sameAs: [siteConfig.github],
+    })}
+  />
+
+  <!-- ① 头部两栏：左头像 + 2×2 事实表；右定位 + 3 段自我介绍 + 2 按钮 -->
+  <section class="grid gap-12 pt-14 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
+    <div class="order-2 flex flex-col gap-8 lg:order-1">
+      <!-- 头像占位：3:4 竖版，替换 public/portrait.* 后改为 <img> -->
+      <div
+        class="flex aspect-[3/4] w-full max-w-[320px] items-center justify-center rounded-[4px] border border-rule bg-paper-2"
+        role="img"
+        aria-label="头像占位：请在 public/ 放入 portrait.jpg 并在此替换"
+      >
+        <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-3">Portrait</span>
+      </div>
+      <dl class="grid grid-cols-2 gap-x-6 gap-y-5">
+        {
+          facts.map((f) => (
+            <div>
+              <dt class="meta">{f.k}</dt>
+              <dd class="mt-1.5 break-all text-sm text-ink">{f.v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <div class="order-1 lg:order-2">
+      <p class="eyebrow">About</p>
+      <h1 class="h1 mt-4 max-w-[16ch]">
+        {siteConfig.name}。<br />
+        <span class="text-ink-3">{siteConfig.title}</span>
+      </h1>
+      <p class="lede mt-6">{siteConfig.tagline}</p>
+      <div class="mt-8 max-w-[68ch] space-y-4 leading-[1.9] text-ink-2">
+        {siteConfig.bio.map((para) => <p>{para}</p>)}
+      </div>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href={siteConfig.resumeUrl} class="btn-primary">下载简历 PDF</a>
+        <a href={`mailto:${siteConfig.email}`} class="btn-outline">发邮件聊聊</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 经历时间线：每条 ≥2 条量化成果 -->
+  <section class="mt-[var(--spacing-sec)]" aria-labelledby="exp-title">
+    <p class="eyebrow">Experience</p>
+    <h2 id="exp-title" class="h2 mt-3">经历</h2>
+    <div class="mt-8">
+      <Timeline items={siteConfig.timeline} />
+    </div>
+  </section>
+
+  <!-- ③ 代表作：复用 WorkRow，右侧只放 chips，反向引用 /projects -->
+  <section class="mt-[var(--spacing-sec)]" aria-labelledby="work-title">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow">Selected Work</p>
+        <h2 id="work-title" class="h2 mt-3">代表作</h2>
+      </div>
+      <a href="/projects" class="meta transition-colors hover:text-accent">全部 {projects.length} 个项目 →</a>
+    </div>
+    <div class="mt-6 border-t border-rule">
+      {
+        featured.map((p, i) => (
+          <WorkRow
+            index={String(i + 1).padStart(2, '0')}
+            title={p.title}
+            meta={`${p.year} · ${p.role}`}
+            desc={p.summary}
+            stack={p.stack}
+            status={p.status}
+            href={`/projects/${p.id}`}
+            dense
+          >
+            <ul slot="right" class="flex flex-wrap justify-end gap-1.5">
+              {p.metrics.map((m) => (
+                <li>
+                  <Pill variant="accent">
+                    {m.num}
+                    {m.unit ?? ''} {m.label}
+                  </Pill>
+                </li>
+              ))}
+            </ul>
+          </WorkRow>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ④ 技术栈矩阵：数据来自 site.ts -->
+  <section class="mt-[var(--spacing-sec)]" aria-labelledby="stack-title">
+    <p class="eyebrow">Stack</p>
+    <h2 id="stack-title" class="h2 mt-3">技术栈</h2>
+    <div class="mt-8">
+      <StackMatrix groups={siteConfig.stack} />
+    </div>
+  </section>
+
+  <!-- ⑤ 开源与 GitHub：构建时抓取的热力图，零客户端 JS -->
+  <section class="mt-[var(--spacing-sec)]" aria-labelledby="gh-title">
+    <p class="eyebrow">Open Source</p>
+    <h2 id="gh-title" class="h2 mt-3">开源与 GitHub</h2>
+    <div class="mt-8">
+      <Heatmap data={github} />
+    </div>
+  </section>
+
+  <!-- ⑥ 教育背景：两列 -->
+  <section class="mt-[var(--spacing-sec)]" aria-labelledby="edu-title">
+    <p class="eyebrow">Education</p>
+    <h2 id="edu-title" class="h2 mt-3">教育背景</h2>
+    <div class="mt-8 grid gap-8 md:grid-cols-2">
+      {
+        siteConfig.education.map((edu) => (
+          <div class="border-t border-rule pt-5">
+            <p class="font-serif text-lg font-semibold text-ink">{edu.school}</p>
+            <p class="meta mt-1.5 normal-case">{edu.what} · {edu.period}</p>
+            <p class="mt-3 text-sm leading-relaxed text-ink-2">{edu.note}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ⑦ CTA 区块 -->
+  <section class="mt-[var(--spacing-sec)] pb-[var(--spacing-sec)]">
+    <div class="flex flex-col items-start justify-between gap-6 rounded-[14px] border border-rule bg-paper-2 px-8 py-10 sm:flex-row sm:items-center">
+      <div>
+        <h2 class="h3">有合适的机会，或者只是想聊聊技术？</h2>
+        <p class="mt-2 text-sm text-ink-2">{siteConfig.availability} · {siteConfig.location}</p>
+      </div>
+      <div class="flex shrink-0 gap-3">
+        <a href={siteConfig.resumeUrl} class="btn-primary">下载简历</a>
+        <a href={`mailto:${siteConfig.email}`} class="btn-outline">发邮件</a>
+      </div>
+    </div>
+  </section>
+</Base>

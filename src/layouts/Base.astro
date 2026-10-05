@@ -1,0 +1,360 @@
+---
+// 全站基础布局：浅色编辑 / 杂志风。
+// 导航 5 入口 + 右侧 CTA（GitHub / Email / 简历 PDF），当前页 2px accent 下划线；
+// 页脚 4 列 + 底栏（版权 / 构建说明 / 最后更新 / RSS / 强调色切换）。
+// 移动端（≤900px）链接收进汉堡下滑面板。
+import '../styles/global.css';
+import { siteConfig } from '../config/site';
+
+interface Props {
+  /** 页面名：用于标题模板「{page} · {name} · {tagline}」；首页不传 */
+  title?: string;
+  description?: string;
+  /** 覆盖当前高亮的导航项（href），默认按 URL 自动判断 */
+  active?: string;
+  /** OG 类型：文章页传 article，其余默认 website */
+  ogType?: 'website' | 'article';
+  /** 分享图路径（站内绝对路径，如 /photos/yunnan/01.jpg）；缺省用全站默认图 */
+  ogImage?: string;
+}
+
+const { title, description = siteConfig.tagline, active, ogType = 'website', ogImage: ogImageProp } = Astro.props;
+
+const fullTitle = title
+  ? `${title} · ${siteConfig.name} · ${siteConfig.tagline}`
+  : `${siteConfig.name} · ${siteConfig.tagline}`;
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => {
+  if (active) return active === href;
+  if (href === '/') return path === '/';
+  return path.startsWith(href);
+};
+
+const navLinks = [
+  { href: '/', label: '首页' },
+  { href: '/projects', label: '项目' },
+  { href: '/blog', label: '文章' },
+  { href: '/about', label: '关于' },
+  { href: '/travel', label: '旅行' },
+];
+
+const year = new Date().getFullYear();
+
+// canonical 与 OG 绝对链接依赖 astro.config 的 site（当前为占位域名，上线前替换）
+const site = Astro.site ?? new URL('https://lii-lii321.github.io');
+const canonical = new URL(Astro.url.pathname, site);
+const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
+---
+
+<!doctype html>
+<html lang="zh-CN" data-accent="indigo">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#FBFAF7" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={fullTitle} href={new URL('/rss.xml', site)} />
+    <!-- OG / Twitter card -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <title>{fullTitle}</title>
+    <!-- 强调色偏好：在打包脚本运行前恢复，避免闪色 -->
+    <script is:inline>
+      try {
+        var a = localStorage.getItem('accent');
+        if (a === 'vermilion' || a === 'indigo') document.documentElement.dataset.accent = a;
+      } catch (e) {}
+    </script>
+  </head>
+
+  <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased">
+    <!-- 无障碍：跳过导航直达主内容 -->
+    <a
+      href="#main"
+      class="sr-only z-[100] rounded-[4px] bg-ink px-4 py-2 text-sm text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+    >
+      跳到主内容
+    </a>
+    <!-- 顶部导航：姓名（衬线）+ 拼音（等宽）｜ 5 入口 ｜ GitHub / Email / 简历 PDF，底部 1px rule -->
+    <header class="sticky top-0 z-50 border-b border-rule bg-paper/90 backdrop-blur">
+      <nav class="wrap flex h-16 items-center justify-between gap-6" aria-label="主导航">
+        <!-- 品牌区 -->
+        <a href="/" class="group flex items-baseline gap-2 whitespace-nowrap">
+          <span class="font-serif text-lg font-bold tracking-wide text-ink group-hover:text-accent">
+            {siteConfig.name}
+          </span>
+          <span class="meta hidden sm:inline">{siteConfig.enName}</span>
+        </a>
+
+        <!-- 桌面端链接 -->
+        <ul class="nav-links hidden items-center gap-7 md:flex">
+          {
+            navLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                  class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"
+                >
+                  {link.label}
+                  {isActive(link.href) && (
+                    <span class="absolute inset-x-0 -bottom-[21px] h-0.5 bg-accent" aria-hidden="true" />
+                  )}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <!-- 右侧 CTA：移动端只保留简历按钮 -->
+        <div class="hidden items-center gap-4 md:flex">
+          <a
+            href={siteConfig.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="meta transition-colors hover:text-ink"
+          >
+            GitHub ↗
+          </a>
+          <a href={`mailto:${siteConfig.email}`} class="meta transition-colors hover:text-ink">
+            Email
+          </a>
+          <a href={siteConfig.resumeUrl} class="chip !border-ink !text-ink hover:!border-accent hover:!text-accent">
+            简历 PDF
+          </a>
+        </div>
+
+        <!-- 移动端汉堡按钮 -->
+        <button
+          type="button"
+          id="nav-toggle"
+          class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
+          aria-expanded="false"
+          aria-controls="nav-panel"
+          aria-label="打开菜单"
+        >
+          <span class="h-px w-5 bg-ink transition-transform" aria-hidden="true"></span>
+          <span class="h-px w-5 bg-ink" aria-hidden="true"></span>
+          <span class="h-px w-5 bg-ink transition-transform" aria-hidden="true"></span>
+        </button>
+      </nav>
+
+      <!-- 移动端下滑面板 -->
+      <div id="nav-panel" hidden class="nav-panel border-t border-rule bg-paper md:hidden">
+        <ul class="wrap flex flex-col py-2">
+          {
+            navLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                  class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+          <li class="flex items-center gap-5 py-4">
+            <a href={siteConfig.github} target="_blank" rel="noopener noreferrer" class="meta">GitHub ↗</a>
+            <a href={`mailto:${siteConfig.email}`} class="meta">Email</a>
+            <a href={siteConfig.resumeUrl} class="chip !border-ink !text-ink ml-auto">简历 PDF</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- 页面主体 -->
+    <main class="wrap w-full flex-1">
+      <slot />
+    </main>
+
+    <!-- 页脚：顶部 1px ink 粗线 + 4 列 + 底栏 -->
+    <footer class="mt-[var(--spacing-sec)]">
+      <div class="border-t border-ink">
+        <div class="wrap grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+          <!-- 品牌 -->
+          <div>
+            <p class="font-serif text-xl font-bold">{siteConfig.name}</p>
+            <p class="mt-3 max-w-[26ch] text-sm leading-relaxed text-ink-2">
+              {siteConfig.title}。{siteConfig.tagline}
+            </p>
+            <p class="mt-4 flex items-center gap-2 text-sm text-ink-2">
+              <span class="pulse inline-block h-1.5 w-1.5 rounded-full bg-ok" aria-hidden="true"></span>
+              {siteConfig.availability}
+            </p>
+          </div>
+          <!-- 站点 -->
+          <nav aria-label="站点">
+            <p class="meta">站点</p>
+            <ul class="mt-4 space-y-2.5 text-sm">
+              {
+                navLinks.map((link) => (
+                  <li>
+                    <a href={link.href} class="text-ink-2 transition-colors hover:text-accent">
+                      {link.label}
+                    </a>
+                  </li>
+                ))
+              }
+              <li>
+                <a href="/archives" class="text-ink-2 transition-colors hover:text-accent">归档</a>
+              </li>
+              <li>
+                <a href="/tags" class="text-ink-2 transition-colors hover:text-accent">标签</a>
+              </li>
+              <li>
+                <a href="/search" class="text-ink-2 transition-colors hover:text-accent">搜索</a>
+              </li>
+              <li>
+                <a href="/now" class="text-ink-2 transition-colors hover:text-accent">Now</a>
+              </li>
+            </ul>
+          </nav>
+          <!-- 项目 -->
+          <nav aria-label="项目">
+            <p class="meta">项目</p>
+            <ul class="mt-4 space-y-2.5 text-sm">
+              <li><a href="/projects" class="text-ink-2 transition-colors hover:text-accent">全部项目</a></li>
+              <li><a href="/projects/math-tutor-rag" class="text-ink-2 transition-colors hover:text-accent">Math_Tutor_RAG</a></li>
+              <li><a href="/projects/smart-tutor" class="text-ink-2 transition-colors hover:text-accent">smart_tutor</a></li>
+              <li><a href="/projects/travel-atlas" class="text-ink-2 transition-colors hover:text-accent">Traveling 足迹地图</a></li>
+            </ul>
+          </nav>
+          <!-- 联系 -->
+          <div>
+            <p class="meta">联系</p>
+            <ul class="mt-4 space-y-2.5 text-sm">
+              <li>
+                <a
+                  href={siteConfig.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-ink-2 transition-colors hover:text-accent"
+                >
+                  GitHub ↗
+                </a>
+              </li>
+              <li>
+                <a href={`mailto:${siteConfig.email}`} class="text-ink-2 transition-colors hover:text-accent">
+                  {siteConfig.email}
+                </a>
+              </li>
+              <li>
+                <a href={siteConfig.resumeUrl} class="text-ink-2 transition-colors hover:text-accent">
+                  简历 PDF
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 底栏 -->
+        <div class="border-t border-rule">
+          <div class="wrap flex flex-wrap items-center gap-x-6 gap-y-2 py-5">
+            <p class="meta normal-case">© {year} {siteConfig.name}</p>
+            <p class="meta normal-case">本站用 Astro 构建</p>
+            <p class="meta normal-case">最后更新 {siteConfig.updatedAt}</p>
+            <a href="/rss.xml" class="meta normal-case transition-colors hover:text-accent">RSS</a>
+            <button
+              type="button"
+              id="accent-toggle"
+              class="meta normal-case transition-colors hover:text-accent"
+              title="切换强调色（靛蓝 / 朱橙）"
+            >
+              ● 强调色
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // 汉堡菜单：≤900px 时展开 / 收起下滑面板
+      const toggle = document.getElementById('nav-toggle');
+      const panel = document.getElementById('nav-panel');
+      if (toggle && panel) {
+        toggle.addEventListener('click', () => {
+          const open = panel.hidden;
+          panel.hidden = !open;
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+        });
+      }
+
+      // 强调色切换：indigo ↔ vermilion，写入 localStorage
+      const accentToggle = document.getElementById('accent-toggle');
+      accentToggle?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const next = root.dataset.accent === 'vermilion' ? 'indigo' : 'vermilion';
+        root.dataset.accent = next;
+        try {
+          localStorage.setItem('accent', next);
+        } catch {
+          /* 隐私模式下忽略 */
+        }
+      });
+    </script>
+    <!-- 返回顶部：滚动超过一屏后浮现 -->
+    <button
+      type="button"
+      id="back-to-top"
+      class="fixed bottom-6 right-6 z-40 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-rule-2 bg-paper text-ink-2 shadow-[0_1px_2px_rgba(20,20,25,0.05),0_10px_30px_rgba(20,20,25,0.08)] transition-colors hover:border-accent hover:text-accent"
+      aria-label="返回顶部"
+    >
+      ↑
+    </button>
+
+    <script>
+      // 按 / 跳转全站搜索（输入框内不触发）
+      addEventListener('keydown', (event) => {
+        if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
+        const target = event.target as HTMLElement | null;
+        if (
+          target &&
+          (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+        ) {
+          return;
+        }
+        event.preventDefault();
+        location.href = '/search';
+      });
+    </script>
+
+    <script>
+      const btn = document.getElementById('back-to-top');
+      if (btn) {
+        let ticking = false;
+        const update = () => {
+          ticking = false;
+          const show = document.documentElement.scrollTop > window.innerHeight;
+          btn.style.display = show ? 'flex' : 'none';
+        };
+        addEventListener(
+          'scroll',
+          () => {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(update);
+            }
+          },
+          { passive: true },
+        );
+        btn.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+        update();
+      }
+    </script>
+  </body>
+</html>

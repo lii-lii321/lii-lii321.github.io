@@ -1,0 +1,55 @@
+---
+// 通用筛选 chips（规格 §9.1）：选中态为 --color-ink 实心胶囊。
+// 静态站零框架方案：点击切换 active + 按钮组 data-filter-scope 联动
+// 容器内 [data-filter-item] 的显隐（值 "all" 显示全部）。
+interface ChipItem {
+  label: string;
+  count: number;
+  value: string;
+}
+interface Props {
+  /** 筛选作用域：页面内唯一，对应被筛条目容器上的 data-filter-scope 值 */
+  scope: string;
+  items: readonly ChipItem[];
+  /** 默认选中的 value */
+  active?: string;
+}
+const { scope, items, active = 'all' } = Astro.props;
+---
+
+<div class="flex flex-wrap gap-2" role="group" aria-label="筛选" data-filter-chips={scope}>
+  {
+    items.map((item) => (
+      <button
+        type="button"
+        data-filter-value={item.value}
+        aria-pressed={item.value === active}
+        class="cursor-pointer rounded-full border border-rule-2 bg-paper px-3.5 py-1.5 font-mono text-[11px] tracking-[0.02em] text-ink-2 transition-colors aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-paper hover:border-ink"
+      >
+        {item.label} {item.count}
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  // 事件委托：同一份脚本服务页面上的所有 chips 组
+  document.addEventListener('click', (event) => {
+    const btn = event.target instanceof Element ? event.target.closest('[data-filter-value]') : null;
+    if (!btn) return;
+    const group = btn.closest('[data-filter-chips]');
+    const scope = group?.getAttribute('data-filter-chips');
+    if (!group || !scope) return;
+
+    const value = btn.getAttribute('data-filter-value') ?? '';
+    for (const b of group.querySelectorAll('[data-filter-value]')) {
+      b.setAttribute('aria-pressed', String(b === btn));
+    }
+    document.querySelectorAll(`[data-filter-item][data-filter-scope="${scope}"]`)?.forEach((el) => {
+      // 条目可归属多个筛选项（空格分隔，如 "产品 archived"）
+      const values = (el.getAttribute('data-filter-value') ?? '').split(/\s+/);
+      const show = value === 'all' || values.includes(value);
+      el.toggleAttribute('hidden', !show);
+    });
+  });
+</script>

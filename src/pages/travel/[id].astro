@@ -1,0 +1,178 @@
+---
+/**
+ * 单次旅行相册页 /travel/<id>（浅色适配版）
+ * - getStaticPaths 由 src/data/travels.json 的 trips 生成（每个 trip 一个静态页）；
+ * - 相册头：大封面背景（墨色渐变压底保证文字对比）+ 标题 + 日期 + 地点 + 描述 + 标签；
+ * - 照片区：PhotoGrid 瀑布流（只加载缩略图）+ Lightbox 灯箱（原图浏览）。
+ */
+import Base from '../../layouts/Base.astro';
+import PhotoGrid from '../../components/gallery/PhotoGrid.astro';
+import Lightbox from '../../components/gallery/Lightbox.tsx';
+import MiniMap from '../../components/map/MiniMap';
+import travelsData from '../../data/travels.json';
+import type { Trip, TravelData } from '../../types';
+
+export function getStaticPaths() {
+  // 注意：不要把 travels 提升到模块顶层 —— Astro 编译器会把 getStaticPaths
+  // 提升到模块作用域并丢弃它未直接引用的顶层声明，导致运行时 travels 未定义。
+  const travels = travelsData as TravelData;
+  const sorted = [...travels.trips].sort((a, b) => b.date.localeCompare(a.date));
+  return sorted.map((trip) => ({
+    params: { id: trip.id },
+    props: {
+      trip,
+      prev: sorted[sorted.indexOf(trip) + 1] ?? null,
+      next: sorted[sorted.indexOf(trip) - 1] ?? null,
+    },
+  }));
+}
+
+interface Props {
+  trip: Trip;
+  /** 按日期排序的上一本（更早） */
+  prev: Trip | null;
+  /** 下一本（更新） */
+  next: Trip | null;
+}
+
+const { trip, prev, next } = Astro.props;
+const { place } = trip;
+
+/** “2025-04-12” → “2025 年 4 月 12 日”；解析失败时原样返回 */
+function formatDate(iso: string): string {
+  const date = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return iso;
+  return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`;
+}
+
+const dateText = formatDate(trip.date);
+/** 省内旅行显示「省 · 国家」，国外只显示国家 */
+const regionText = place.province ? `${place.province} · ${place.country}` : place.country;
+/** 拍摄设备（EXIF 去重）；无 EXIF 时为空 */
+const cameras = [...new Set(trip.photos.map((p) => p.camera).filter((c): c is string => c !== null))];
+/** EXIF 拍摄时间跨度（年月日）；无 EXIF 时为 null */
+const takenDates = trip.photos
+  .map((p) => p.takenAt)
+  .filter((t): t is string => t !== null)
+  .map((t) => new Date(t))
+  .filter((d) => !Number.isNaN(d.valueOf()))
+  .sort((a, b) => a.valueOf() - b.valueOf());
+const spanText =
+  takenDates.length > 0
+    ? `${takenDates[0].getFullYear()}.${String(takenDates[0].getMonth() + 1).padStart(2, '0')}.${String(takenDates[0].getDate()).padStart(2, '0')} — ${takenDates[takenDates.length - 1].getFullYear()}.${String(takenDates[takenDates.length - 1].getMonth() + 1).padStart(2, '0')}.${String(takenDates[takenDates.length - 1].getDate()).padStart(2, '0')}`
+    : null;
+---
+
+<Base title={trip.title} description={trip.description} ogImage={trip.cover}>
+  <article>
+    <!-- 相册头：大封面背景（照片上的白字用墨色渐变压底） -->
+    <section class="relative mt-10 overflow-hidden rounded-[14px]">
+      <img
+        src={trip.cover}
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/30" aria-hidden="true">
+      </div>
+
+      <div class="relative flex flex-col gap-4 px-6 py-10 sm:px-10 sm:py-14">
+        <a
+          href="/travel"
+          class="self-start rounded-full border border-white/25 bg-black/25 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-white/90 backdrop-blur transition-colors hover:border-white hover:text-white"
+        >
+          ← 返回足迹地图
+        </a>
+
+        <div>
+          <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-white/70">Travel Album</p>
+          <h1 class="mt-2 font-serif text-3xl font-bold text-white sm:text-4xl">{trip.title}</h1>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11.5px] uppercase tracking-[0.04em] text-white/80">
+          <time datetime={trip.date}>{dateText}</time>
+          <span aria-hidden="true">·</span>
+          <span>{regionText} · {place.name}</span>
+          <span aria-hidden="true">·</span>
+          <span>{trip.photos.length} 张照片</span>
+        </div>
+
+        <p class="max-w-3xl leading-relaxed text-white/85">{trip.description}</p>
+      </div>
+    </section>
+
+    <!-- 相册信息 + 位置小地图 -->
+    <section class="mt-6 grid gap-6 md:grid-cols-[1.35fr_1fr]" aria-label="相册信息">
+      <div class="rounded-[14px] border border-rule bg-paper-2/50 px-6 py-6">
+        <p class="meta">关于这组照片</p>
+        <dl class="mt-4 grid grid-cols-2 gap-x-6 gap-y-5">
+          <div>
+            <dt class="meta">照片</dt>
+            <dd class="mt-1.5 text-sm text-ink">
+              {trip.photos.length} 张
+              {spanText && <span class="meta ml-2 normal-case">{spanText}</span>}
+            </dd>
+          </div>
+          <div>
+            <dt class="meta">拍摄设备</dt>
+            <dd class="mt-1.5 text-sm text-ink">{cameras.length > 0 ? cameras.join(' / ') : '—'}</dd>
+          </div>
+          <div>
+            <dt class="meta">坐标</dt>
+            <dd class="mt-1.5 font-mono text-sm text-ink">
+              {place.lat.toFixed(2)}°N, {place.lng.toFixed(2)}°E
+            </dd>
+          </div>
+          <div>
+            <dt class="meta">标签</dt>
+            <dd class="mt-1.5 flex flex-wrap gap-1.5">
+              {
+                trip.tags.map((tag) => (
+                  <a href={`/search?q=${encodeURIComponent(tag)}`} class="tag-link chip" aria-label={`搜索标签 ${tag}`}>
+                    #{tag}
+                  </a>
+                ))
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <div class="min-h-[220px] overflow-hidden rounded-[14px] border border-rule bg-paper">
+        <MiniMap client:load trip={trip} />
+      </div>
+    </section>
+
+    <!-- 照片瀑布流：静态缩略图网格，点击交给灯箱 -->
+    <section class="mt-10 pb-[var(--spacing-sec)]" aria-label={`${trip.title} 照片墙`}>
+      <PhotoGrid photos={trip.photos} albumTitle={trip.title} />
+    </section>
+
+    <!-- 灯箱 island：全屏原图浏览 + 键盘/按钮切换 -->
+    <Lightbox client:load photos={trip.photos} albumTitle={trip.title} />
+
+    <!-- 上一本 / 下一本相册 -->
+    <nav class="mt-[var(--spacing-sec)] grid border-t border-rule sm:grid-cols-2 sm:divide-x sm:divide-rule" aria-label="上一本 / 下一本相册">
+      {
+        prev ? (
+          <a href={`/travel/${prev.id}`} class="group py-8 sm:pr-8">
+            <p class="meta">← 上一本（更早）</p>
+            <p class="h3 mt-2 transition-colors group-hover:text-accent">{prev.title}</p>
+          </a>
+        ) : (
+          <div class="py-8 sm:pr-8" />
+        )
+      }
+      {
+        next && (
+          <a href={`/travel/${next.id}`} class="group py-8 sm:pl-8 sm:text-right">
+            <p class="meta">下一本（更新）→</p>
+            <p class="h3 mt-2 transition-colors group-hover:text-accent">{next.title}</p>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</Base>
