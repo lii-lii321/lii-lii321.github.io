@@ -1,0 +1,43 @@
+---
+/**
+ * 照片墙单张条目（无裁切）：
+ * - li 的 flex-grow ∝ 宽高比、flex-basis = 比例 × 基准宽（--jrow-w 定义在 PhotoGrid），
+ *   行内等比拉伸时高度自然一致，内容完整不裁切；
+ * - width/height 属性让浏览器在加载前就按真实比例占位（height:auto 跟随）。
+ */
+import type { Photo } from '../../types';
+
+interface Props {
+  photo: Photo;
+  /** 全局顺序（0 起），灯箱打开定位与「查看更多」折叠都用它 */
+  index: number;
+  albumTitle: string;
+}
+
+const { photo, index, albumTitle } = Astro.props;
+const ratio = photo.width > 0 && photo.height > 0 ? photo.width / photo.height : 1.5;
+const sceneSuffix = photo.scene ? ` · ${photo.scene}` : '';
+---
+
+<li
+  data-gidx={index}
+  style={`flex-grow:${Math.max(1, Math.round(ratio * 100))};flex-basis:calc(var(--jrow-w) * ${ratio.toFixed(4)})`}
+>
+  <button
+    type="button"
+    data-gallery-index={index}
+    aria-label={`查看第 ${index + 1} 张照片：${albumTitle}${sceneSuffix}`}
+    class="group block w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
+  >
+    <img
+      src={photo.thumb}
+      alt={`${albumTitle} · 第 ${index + 1} 张照片`}
+      width={photo.width}
+      height={photo.height}
+      loading="lazy"
+      decoding="async"
+      class="block h-auto w-full"
+      style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
+    />
+  </button>
+</li>

@@ -19,7 +19,7 @@ const DEST_ROOT = new URL('../photos/', import.meta.url).pathname.replace(/^\/([
 const IMG = /\.(jpe?g|png|webp)$/i;
 const MAX_EDGE = 1600;
 const QUALITY = 80;
-const DEFAULT_CAP = 32;
+const DEFAULT_CAP = 60;
 
 const force = process.argv.includes('--force');
 const only = process.argv.find((a) => a.startsWith('--only='))?.slice(7);

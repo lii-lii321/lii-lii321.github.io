@@ -1,14 +1,15 @@
 ---
 /**
- * 照片墙（justified 行式布局，Google Photos 风格）：
- * - 等高行 + 按宽高比分配 flex-grow：竖版横版混排时行内高度一致、几乎不裁切，
- *   比传统 columns 瀑布流更适合 46% 竖版的照片分布；
- * - 静态渲染，只加载 640 宽 WebP 缩略图（thumb），原图留给灯箱；
- * - blur（16px WebP data URI）作为 img 背景占位；width/height 属性防跳动；
- * - 点击网格项派发 gallery:open 自定义事件，由 Lightbox 岛接收打开（索引 = 全局顺序）。
- * - 有子景点清单时按景点分段（与 travel/[id] 的 sceneChips 锚点同一套分组序号）。
+ * 照片墙（无裁切弹性行式布局）：
+ * - 每张照片按真实宽高比展示：不缩放变形、不裁切（条目布局见 PhotoItem）；
+ * - 末行不拉伸（脚本把最后一行的 grow 归零），避免残行照片被拉成巨图；
+ * - 「查看更多」：默认只展示前 24 张，其余由脚本折叠、按钮展开（无 JS 时全部展示）；
+ * - 只加载 640 宽 WebP 缩略图，原图留给灯箱；blur 占位防跳变；
+ * - 点击派发 gallery:open 事件，由 Lightbox 岛接收（索引 = 全局顺序，与折叠无关）；
+ * - 有子景点清单时按景点分段（锚点序号与 travel/[id] 的 sceneChips 一致）。
  */
 import type { Photo } from '../../types';
+import PhotoItem from './PhotoItem.astro';
 
 interface Props {
   photos: Photo[];
@@ -27,81 +28,47 @@ photos.forEach((photo, index) => {
 const hasScenes = groups.length > 1;
 ---
 
-{
-  hasScenes
-    ? groups.map((group, gi) => (
-        <section id={`scene-${gi}`} class="mb-10 last:mb-0 scroll-mt-28" aria-label={group.scene ?? albumTitle}>
-          {group.scene && (
-            <div class="mb-4 flex items-baseline justify-between border-b border-rule pb-2">
-              <h3 class="h3">{group.scene}</h3>
-              <p class="meta">{group.items.length} 张</p>
-            </div>
-          )}
+<div class="photogrid" data-total={photos.length}>
+  {
+    hasScenes
+      ? groups.map((group, gi) => (
+          <section id={`scene-${gi}`} class="mb-10 last:mb-0 scroll-mt-28" aria-label={group.scene ?? albumTitle}>
+            {group.scene && (
+              <div class="mb-4 flex items-baseline justify-between border-b border-rule pb-2">
+                <h3 class="h3">{group.scene}</h3>
+                <p class="meta">{group.items.length} 张</p>
+              </div>
+            )}
+            <ul class="jrow">
+              {group.items.map((photo, j) => (
+                <PhotoItem photo={photo} index={group.start + j} albumTitle={albumTitle} />
+              ))}
+            </ul>
+          </section>
+        ))
+      : (
           <ul class="jrow">
-            {group.items.map((photo, j) => {
-              const ratio = photo.width > 0 && photo.height > 0 ? photo.width / photo.height : 1.5;
-              const index = group.start + j;
-              return (
-                <li
-                  style={`flex-grow:${Math.max(1, Math.round(ratio * 100))};flex-basis:calc(var(--jrow-h) * ${ratio.toFixed(4)})`}
-                >
-                  <button
-                    type="button"
-                    data-gallery-index={index}
-                    aria-label={`查看第 ${index + 1} 张照片：${albumTitle}${group.scene ? ` · ${group.scene}` : ''}`}
-                    class="group block h-full w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
-                  >
-                    <img
-                      src={photo.thumb}
-                      alt={`${albumTitle}${group.scene ? ` · ${group.scene}` : ''} · 第 ${index + 1} 张照片`}
-                      width={photo.width}
-                      height={photo.height}
-                      loading="lazy"
-                      decoding="async"
-                      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                      style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
-                    />
-                  </button>
-                </li>
-              );
-            })}
+            {photos.map((photo, index) => (
+              <PhotoItem photo={photo} index={index} albumTitle={albumTitle} />
+            ))}
           </ul>
-        </section>
-      ))
-    : (
-        <ul class="jrow">
-          {photos.map((photo, index) => {
-            const ratio = photo.width > 0 && photo.height > 0 ? photo.width / photo.height : 1.5;
-            return (
-              <li style={`flex-grow:${Math.max(1, Math.round(ratio * 100))};flex-basis:calc(var(--jrow-h) * ${ratio.toFixed(4)})`}>
-                <button
-                  type="button"
-                  data-gallery-index={index}
-                  aria-label={`查看第 ${index + 1} 张照片：${albumTitle}`}
-                  class="group block h-full w-full cursor-zoom-in overflow-hidden rounded-[4px] border border-rule bg-paper-2 transition-colors focus-visible:outline-2 focus-visible:outline-accent hover:border-accent"
-                >
-                  <img
-                    src={photo.thumb}
-                    alt={`${albumTitle} · 第 ${index + 1} 张照片`}
-                    width={photo.width}
-                    height={photo.height}
-                    loading="lazy"
-                    decoding="async"
-                    class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                    style={`background-image: url("${photo.blur}"); background-size: cover; background-position: center;`}
-                  />
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )
-}
+        )
+  }
+
+  {/* 查看更多：默认只展示前 24 张，脚本折叠余下并接管按钮 */}
+  <div class="jrow-more mt-8 hidden text-center">
+    <button type="button" class="btn-outline cursor-pointer" data-more-label="查看更多照片">
+      查看更多照片
+    </button>
+  </div>
+</div>
 
 <style>
-  /* justified 行式：等高行，条目宽度 ∝ 照片宽高比；行末留白正常（不再撑满避免最后一张被拉爆） */
+  /* 无裁切弹性行式：--jrow-w 是「单位宽高比」的基准宽度。
+   * 条目 flex-grow ∝ 宽高比、flex-basis = 比例 × 基准宽 —— 行内所有条目被等比拉伸，
+   * 高度（img 的 width:100% + height:auto，比例来自 width/height 属性）自然一致，内容完整。 */
   .jrow {
-    --jrow-h: 150px;
+    --jrow-w: 150px;
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -110,16 +77,77 @@ const hasScenes = groups.length > 1;
     padding: 0;
   }
   .jrow li {
-    height: var(--jrow-h);
     min-width: 0;
   }
   @media (min-width: 640px) {
     .jrow {
-      --jrow-h: 230px;
+      --jrow-w: 250px;
       gap: 6px;
     }
   }
 </style>
+
+<script>
+  // 照片墙增强：① 末行 grow 归零（残行不拉伸成巨图）；② 超过 24 张时折叠 + 「查看更多」。
+  // 无 JS 时全部照片直接展示（渐进增强）。
+  const LIMIT = 24;
+
+  function setupGrid(grid: HTMLElement) {
+    const uls = Array.from(grid.querySelectorAll<HTMLUListElement>('.jrow'));
+    const allLis = uls.flatMap((ul) => Array.from(ul.children) as HTMLLIElement[]);
+    if (allLis.length === 0) return;
+
+    // ② 折叠：第 LIMIT 张之后先隐藏（保留 DOM，灯箱索引不变）
+    const more = grid.querySelector<HTMLElement>('.jrow-more');
+    const btn = more?.querySelector('button');
+    if (allLis.length > LIMIT && more && btn) {
+      allLis.forEach((li, i) => {
+        if (i >= LIMIT) li.hidden = true;
+      });
+      more.classList.remove('hidden');
+      const remaining = allLis.length - LIMIT;
+      const label = btn.dataset.moreLabel ?? '查看更多照片';
+      btn.textContent = `${label}（还有 ${remaining} 张）`;
+      btn.addEventListener('click', () => {
+        allLis.forEach((li) => (li.hidden = false));
+        more.classList.add('hidden');
+        relayout();
+      });
+    }
+
+    // ① 末行 grow 归零：按 offsetTop 分行，最后一行还原为自然宽度
+    function relayout() {
+      for (const ul of uls) {
+        const lis = Array.from(ul.children) as HTMLLIElement[];
+        for (const li of lis) {
+          if (li.dataset.grow === undefined) li.dataset.grow = li.style.flexGrow;
+          li.style.flexGrow = li.dataset.grow;
+        }
+        let top: number | null = null;
+        let row: HTMLLIElement[] = [];
+        const flushRow = () => {
+          if (row.length) row.forEach((li) => (li.style.flexGrow = '0'));
+        };
+        for (const li of lis) {
+          if (top !== null && li.offsetTop !== top) flushRow();
+          top = li.offsetTop;
+          row = [li];
+        }
+        flushRow();
+      }
+    }
+
+    relayout();
+    let timer: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(timer);
+      timer = setTimeout(relayout, 120);
+    });
+    window.addEventListener('load', relayout);
+  }
+
+  document.querySelectorAll<HTMLElement>('.photogrid').forEach(setupGrid);
+</script>
 
 <script>
   // 事件委托：点击任意网格项，向 Lightbox 岛广播打开事件（带打开下标）

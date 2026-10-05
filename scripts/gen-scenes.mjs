@@ -13,7 +13,7 @@ import { TRIPS } from './trips.config.mjs';
 const SRC_ROOT = 'D:\\个人下载\\Desktop\\旅行照片';
 const PHOTOS_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'photos');
 const IMG = /\.(jpe?g|png|webp)$/i;
-const CAP = 32;
+const CAP = 60;
 
 function collectImages(dir) {
   const out = [];
