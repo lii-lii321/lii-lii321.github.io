@@ -27,8 +27,8 @@ const hasScenes = groups.length > 1;
 
 {
   hasScenes
-    ? groups.map((group) => (
-        <section class="mb-10 last:mb-0" aria-label={group.scene ?? albumTitle}>
+    ? groups.map((group, gi) => (
+        <section id={`scene-${gi}`} class="mb-10 last:mb-0 scroll-mt-28" aria-label={group.scene ?? albumTitle}>
           {group.scene && (
             <div class="mb-4 flex items-baseline justify-between border-b border-rule pb-2">
               <h3 class="h3">{group.scene}</h3>

@@ -122,6 +122,8 @@ const serialized = JSON.stringify(index);
     const render = () => {
       if (!input || !list || !stats || !rowTpl) return;
       const q = input.value;
+      // URL 同步：搜索词写进地址栏（可分享、可回退）
+      history.replaceState(null, '', q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : '/search');
       if (q.trim().length === 0) {
         list.innerHTML = '';
         stats.textContent = `索引 ${items.length} 条，等待输入。`;
