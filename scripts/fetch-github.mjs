@@ -94,7 +94,12 @@ async function fetchByPublicApi(user) {
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
   // 最多保留 53 周（去掉不完整的尾周）
   while (weeks.length > 53) weeks.pop();
-  const total = typeof json.total?.lastYear === 'number' ? json.total.lastYear : null;
+  // total 兜底：jogruber v4 的 total 是按年份键（如 { "2025": 123 }），
+  // 读 lastYear 永远取不到（日志一直显示「共 ? 次」）——改为按天累加，口径最稳
+  const total =
+    typeof json.total?.lastYear === 'number'
+      ? json.total.lastYear
+      : days.reduce((sum, d) => sum + (Number(d.count) || 0), 0);
   return { weeks, total, source: 'jogruber' };
 }
 

@@ -1,7 +1,7 @@
 ---
 // 全站基础布局：浅色编辑 / 杂志风。
 // 导航 5 入口 + 右侧 CTA（GitHub / Email / 简历 PDF），当前页 2px accent 下划线；
-// 页脚 4 列 + 底栏（版权 / 构建说明 / 最后更新 / RSS / 强调色切换）。
+// 页脚 4 列 + 底栏（版权 / 构建说明 / 最后更新 / RSS）。
 // 移动端（≤900px）链接收进汉堡下滑面板。
 import '../styles/global.css';
 import { siteConfig } from '../config/site';
@@ -48,7 +48,7 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-accent="indigo">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -70,13 +70,6 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <title>{fullTitle}</title>
-    <!-- 强调色偏好：在打包脚本运行前恢复，避免闪色 -->
-    <script is:inline>
-      try {
-        var a = localStorage.getItem('accent');
-        if (a === 'vermilion' || a === 'indigo') document.documentElement.dataset.accent = a;
-      } catch (e) {}
-    </script>
   </head>
 
   <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased">
@@ -176,8 +169,8 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
       </div>
     </header>
 
-    <!-- 页面主体 -->
-    <main class="wrap w-full flex-1">
+    <!-- 页面主体（id="main" 供无障碍跳转链接落点，tabindex="-1" 使跳转后焦点可落在主内容） -->
+    <main id="main" tabindex="-1" class="wrap w-full flex-1">
       <slot />
     </main>
 
@@ -268,14 +261,6 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
             <p class="meta normal-case">本站用 Astro 构建</p>
             <p class="meta normal-case">最后更新 {siteConfig.updatedAt}</p>
             <a href="/rss.xml" class="meta normal-case transition-colors hover:text-accent">RSS</a>
-            <button
-              type="button"
-              id="accent-toggle"
-              class="meta normal-case transition-colors hover:text-accent"
-              title="切换强调色（靛蓝 / 朱橙）"
-            >
-              ● 强调色
-            </button>
           </div>
         </div>
       </div>
@@ -293,19 +278,6 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
           toggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
         });
       }
-
-      // 强调色切换：indigo ↔ vermilion，写入 localStorage
-      const accentToggle = document.getElementById('accent-toggle');
-      accentToggle?.addEventListener('click', () => {
-        const root = document.documentElement;
-        const next = root.dataset.accent === 'vermilion' ? 'indigo' : 'vermilion';
-        root.dataset.accent = next;
-        try {
-          localStorage.setItem('accent', next);
-        } catch {
-          /* 隐私模式下忽略 */
-        }
-      });
     </script>
     <!-- 返回顶部：滚动超过一屏后浮现 -->
     <button

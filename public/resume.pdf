@@ -6,41 +6,74 @@ endobj
 << /Type /Pages /Kids [3 0 R] /Count 1 >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> >>
 endobj
 4 0 obj
-<< /Length 689 >>
+<< /Length 4203 >>
 stream
-0.08 w 0.08 0.08 0.10 RG 80 780 m 515 780 l S
-0.6 w 0.82 0.80 0.76 RG 80 700 m 515 700 l S
-0.6 w 0.82 0.80 0.76 RG 80 520 m 515 520 l S
-0.18 0.29 1 RG 5 w 80 700 m 80 780 l S
-BT /F1 26 Tf 110 745 Td (LI YUNQIANG) Tj ET
-BT /F2 11 Tf 112 722 Td (Data Science Major - Full-stack / AI Application Developer) Tj ET
-BT /F2 12 Tf 100 668 Td (PLACEHOLDER RESUME - replace public/resume.pdf with your real CV.) Tj ET
-BT /F2 10 Tf 100 480 Td (GITHUB   github.com/lii-lii321) Tj ET
-BT /F2 10 Tf 100 460 Td (EMAIL    3028410005@qq.com) Tj ET
-BT /F2 10 Tf 100 440 Td (SITE     lii-lii321.github.io) Tj ET
-BT /F2 10 Tf 100 400 Td (PROJECTS Math_Tutor_RAG / smart_tutor / research-lab / Traveling) Tj ET
+1.2 w 0.08 0.08 0.10 RG 80 782 m 515 782 l S
+3 w 0.18 0.29 1 RG 80 726 m 80 782 l S
+BT 0.08 0.08 0.10 rg /F1 24 Tf 98 754 Td (LI YUNQIANG) Tj ET
+BT 0.31 0.31 0.36 rg /F2 10.5 Tf 98 733 Td (Data Science Major \(B.Eng.\) - Full-stack / AI Application Developer) Tj ET
+BT 0.18 0.29 1 rg /F3 8.5 Tf 98 715 Td (Chengdu, China  |  github.com/lii-lii321  |  3028410005@qq.com  |  lii-lii321.github.io) Tj ET
+0.6 w 0.82 0.80 0.76 RG 80 695 m 515 695 l S
+BT 0.08 0.08 0.10 rg /F1 10.5 Tf 80 661 Td (EDUCATION) Tj ET
+0.5 w 0.88 0.86 0.80 RG 80 654 m 515 654 l S
+BT 0.08 0.08 0.10 rg /F1 9.8 Tf 80 636 Td (Southwest Petroleum University - B.Eng. Data Science & Big Data Technology \(in progress\)) Tj ET
+BT 0.31 0.31 0.36 rg /F2 9.5 Tf 80 620.5 Td (Coursework applied directly into shipping products: every skill below is exercised by an open-source repo.) Tj ET
+BT 0.08 0.08 0.10 rg /F1 10.5 Tf 80 571 Td (OPEN-SOURCE PROJECTS \(ALL LIVE AND RUNNABLE\)) Tj ET
+0.5 w 0.88 0.86 0.80 RG 80 564 m 515 564 l S
+BT 0.08 0.08 0.10 rg /F1 9.8 Tf 80 546 Td (Math_Tutor_RAG - Visual-LLM + RAG mistake-notebook  \(2025 - present\)) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 80 530.5 Td (Photo-to-question capture -> structured parsing -> vector archive -> SM-2 spaced review.) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 90 515 Td (- 287 automated tests \(pytest, CI green\); 6 pluggable LLM providers; 10+ feature modules.) Tj ET
+BT 0.08 0.08 0.10 rg /F1 9.8 Tf 80 493 Td (smart_tutor - Multi-tenant tutoring order matching platform  \(2025 - 2026\)) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 80 477.5 Td (End-to-end digitization: WeChat chat logs in, structured orders out, deposits and balances settled online.) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 90 462 Td (- 71 orders parsed from one batch of WeChat text \(AI pipeline with human review\); 3 roles covered.) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 90 447 Td (- 100% of the core flow online: posting -> matching -> trial class -> deposit / balance.) Tj ET
+BT 0.08 0.08 0.10 rg /F1 9.8 Tf 80 425 Td (research-lab - One CSV in, one reproducible research report out  \(2026 - present\)) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 90 409.5 Td (- 5-stage automated pipeline: profile -> questions -> plan -> statistical tests -> report.) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 90 394.5 Td (- 100% reproducible: raw p-values archived with reproduction scripts; Streamlit / CLI / Python API.) Tj ET
+BT 0.08 0.08 0.10 rg /F1 9.8 Tf 80 372.5 Td (Traveling \(this website\) - Zero-JS personal site  \(2026\)) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 90 357 Td (- 592 photos / 11 albums auto-ingested from a 6,700+ photo library; 0 KB client-side JS on the homepage.) Tj ET
+BT 0.08 0.08 0.10 rg /F1 10.5 Tf 80 308 Td (SKILLS) Tj ET
+0.5 w 0.88 0.86 0.80 RG 80 301 m 515 301 l S
+BT 0.31 0.31 0.36 rg /F3 9 Tf 80 283 Td (Languages   Python / TypeScript / SQL) Tj ET
+BT 0.31 0.31 0.36 rg /F3 9 Tf 80 266 Td (Frontend      Vue 3 / React / Astro / Streamlit / Tailwind CSS) Tj ET
+BT 0.31 0.31 0.36 rg /F3 9 Tf 80 249 Td (Backend      FastAPI / SQLAlchemy / MySQL / PostgreSQL / Redis GEO) Tj ET
+BT 0.31 0.31 0.36 rg /F3 9 Tf 80 232 Td (AI / Data      RAG / ChromaDB / Vision LLMs / Agent-MCP / SM-2 / SciPy) Tj ET
+BT 0.31 0.31 0.36 rg /F3 9 Tf 80 215 Td (Engineering  Docker / GitHub Actions / pytest / Playwright / Alembic) Tj ET
+BT 0.08 0.08 0.10 rg /F1 10.5 Tf 80 164 Td (SELECTED WRITING \(ON LII-LII321.GITHUB.IO\)) Tj ET
+0.5 w 0.88 0.86 0.80 RG 80 157 m 515 157 l S
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 80 139 Td (- Search on a zero-JS site: build-time index + a 3 KB runtime) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 80 123.5 Td (- Ingesting 6,700+ travel photos: sampling, compression, and a HEIC pitfall) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 80 108 Td (- From WeChat group text to structured orders: an AI parsing pipeline) Tj ET
+BT 0.08 0.08 0.10 rg /F2 9.5 Tf 80 92.5 Td (- Making RAG retrieval quality measurable: from vibes to reproducible metrics) Tj ET
+0.6 w 0.82 0.80 0.76 RG 80 69 m 515 69 l S
+BT 0.18 0.29 1 rg /F1 9.5 Tf 80 53 Td (STATUS: Open to internship and remote collaboration.) Tj ET
+BT 0.31 0.31 0.36 rg /F2 8.5 Tf 290 53 Td (Updated 2026-10-05 - full details at lii-lii321.github.io) Tj ET
 endstream
 endobj
 5 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
 endobj
 6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+7 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Courier >>
 endobj
 xref
-0 7
+0 8
 0000000000 65535 f 
 0000000009 00000 n 
 0000000058 00000 n 
 0000000115 00000 n 
-0000000251 00000 n 
-0000000990 00000 n 
-0000001061 00000 n 
+0000000261 00000 n 
+0000004515 00000 n 
+0000004586 00000 n 
+0000004658 00000 n 
 trailer
-<< /Size 7 /Root 1 0 R >>
+<< /Size 8 /Root 1 0 R >>
 startxref
-1129
+4726
 %%EOF

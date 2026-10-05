@@ -10,13 +10,15 @@
   --color-paper-2: #f3f1ea;
   --color-paper-3: #e9e6dc;
   /* 墨色 */
+  /* 墨色（ink-3 用于 meta/眉题等小字：#6f6f7a 对 paper 对比度 4.8:1 过 WCAG AA；
+   * 旧值 #8c8c96 仅 3.2:1，小字号不达标） */
   --color-ink: #15151a;
   --color-ink-2: #4b4b55;
-  --color-ink-3: #8c8c96;
+  --color-ink-3: #6f6f7a;
   /* 线 */
   --color-rule: #e2dfd6;
   --color-rule-2: #cfcbbd;
-  /* 强调色：靛蓝（默认）。朱橙方案见文件底部 html[data-accent="vermilion"] */
+  /* 强调色：靛蓝（2026-10-05 终审定稿，朱橙备选方案已移除） */
   --color-accent: #2f4bff;
   --color-accent-soft: rgba(47, 75, 255, 0.09);
   --color-code-bg: #f4f2eb;
@@ -178,12 +180,6 @@ html {
   }
 }
 
-/* 强调色双方案：朱橙。评审时在 <html> 上切 data-accent（页脚有切换按钮） */
-html[data-accent="vermilion"] {
-  --color-accent: #d9481f;
-  --color-accent-soft: rgba(217, 72, 31, 0.09);
-}
-
 /* ── 文章正文排版（规格 §8.5，全部元素都要落到样式） ─────────────────── */
 .prose-editorial {
   max-width: 68ch;
@@ -314,8 +310,10 @@ html[data-accent="vermilion"] {
   margin: 0.3em 0;
 }
 
-/* .aside-note 旁注块：paper-2 底 + 1px rule */
-.prose-editorial .aside-note {
+/* .aside-note 旁注块：paper-2 底 + 1px rule（文章 Markdown 里以 <aside-note> 元素书写，故补元素选择器） */
+.prose-editorial .aside-note,
+.prose-editorial aside-note {
+  display: block;
   margin: 1.5em 0;
   padding: 1em 1.25em;
   border: 1px solid var(--color-rule);
@@ -324,7 +322,8 @@ html[data-accent="vermilion"] {
   font-size: 0.92em;
   color: var(--color-ink-2);
 }
-.prose-editorial .aside-note p {
+.prose-editorial .aside-note p,
+.prose-editorial aside-note p {
   margin: 0.3em 0;
 }
 

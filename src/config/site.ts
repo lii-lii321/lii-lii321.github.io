@@ -3,6 +3,15 @@
  * ✅ 已接真实数据：姓名 / 学校 / 邮箱 / GitHub / 项目 / 旅行照片。
  * ⚠️ 仍可打磨：availability（当前状态）、timeline 工作经历（当前只有开源项目里程碑）。
  */
+import travelsData from "../data/travels.json";
+import projectsData from "../data/projects.json";
+import type { TravelData, Project } from "../types";
+
+/** 数字带 / 文案与数据同源的依据：照片数、相册数、省份/国家数全部来自管线产物，
+ *  构建 时计算，杜绝「站点数字与事实脱节」（此前手写 340 张，实际已 592 张）。 */
+const travelStats = (travelsData as TravelData).stats;
+const projectCount = (projectsData as Project[]).length;
+
 export const siteConfig = {
   /** 姓名（真实） */
   name: "李云强",
@@ -33,11 +42,17 @@ export const siteConfig = {
   /** 站点最后更新日期（手动维护） */
   updatedAt: "2026-10-03",
 
-  /** 首页数字带（全部为可核实的真实数字；href 让数字可点击） */
+  /** 首页数字带（构建时从 data/ 派生，永远与事实一致；href 让数字可点击） */
   stats: [
-    { num: "4", unit: "个", label: "在线项目", sub: "全部开源在 GitHub", href: "/projects" },
-    { num: "11", unit: "本", label: "旅行相册", sub: "8 个省级地区", href: "/travel" },
-    { num: "340", unit: "张", label: "旅行照片", sub: "自动管线持续更新", href: "/travel" },
+    { num: String(projectCount), unit: "个", label: "在线项目", sub: "全部开源在 GitHub", href: "/projects" },
+    {
+      num: String((travelsData as TravelData).trips.length),
+      unit: "本",
+      label: "旅行相册",
+      sub: `${travelStats.provinces} 个省级地区`,
+      href: "/travel",
+    },
+    { num: String(travelStats.photoCount), unit: "张", label: "旅行照片", sub: "自动管线持续更新", href: "/travel" },
     { num: "0", unit: "KB", label: "首页客户端 JS", sub: "纯服务端渲染", href: "/blog/zero-js-personal-site" },
   ],
 
