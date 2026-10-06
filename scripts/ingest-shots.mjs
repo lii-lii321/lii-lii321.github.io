@@ -44,6 +44,8 @@ const SHOTS = [
 
 /** 本轮入库的产物尺寸（src → width/height），收尾统一写回 projects.json */
 const sizeBySrc = new Map();
+/** 640w 小档产物（1200w 产物 src → 640w 产物 src），首页卡片等小尺寸场景使用 */
+const smallBySrc = new Map();
 
 for (const { id, repo, files } of SHOTS) {
   const outDir = path.join(OUT_ROOT, id);
@@ -58,6 +60,10 @@ for (const { id, repo, files } of SHOTS) {
     await sharp(src).resize({ width: 1200, withoutEnlargement: true }).webp({ quality: 80 }).toFile(out);
     const meta = await sharp(out).metadata();
     sizeBySrc.set(`/projects/${id}/${path.basename(out)}`, { width: meta.width, height: meta.height });
+    const smallName = path.basename(out).replace(/\.webp$/i, '-640w.webp');
+    const small = path.join(outDir, smallName);
+    await sharp(src).resize({ width: 640, withoutEnlargement: true }).webp({ quality: 80 }).toFile(small);
+    smallBySrc.set(`/projects/${id}/${path.basename(out)}`, `/projects/${id}/${smallName}`);
     console.log(`[ok] /projects/${id}/${path.basename(out)}  ${meta.width}x${meta.height}  ${caption}`);
   }
 }
@@ -70,6 +76,10 @@ const PROJECTS_JSON = new URL('../src/data/projects.json', import.meta.url).path
 const projectsData = JSON.parse(fs.readFileSync(PROJECTS_JSON, 'utf8'));
 let updated = 0;
 for (const proj of projectsData) {
+  // 封面的 640w 小档：首页精选卡 160px 槽位不再加载 1200w 产物
+  if (proj.cover && smallBySrc.has(proj.cover)) {
+    proj.coverSmall = smallBySrc.get(proj.cover);
+  }
   for (const shot of proj.shots ?? []) {
     const size = sizeBySrc.get(shot.src);
     if (size) {

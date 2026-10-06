@@ -10,19 +10,61 @@
     "standfirst": "让错题管理像呼吸一样简单。手写作业拍照上传，视觉大模型输出结构化解析（考点 / 分步讲解 / 变式题），RAG 支持「举一反三」与语义搜索，SM-2 算法调度每日复习——一条从录入到掌握的完整闭环。",
     "status": "live",
     "repoUrl": "https://github.com/lii-lii321/Math_Tutor_RAG",
-    "stack": ["Python", "FastAPI", "Streamlit", "ChromaDB", "SQLAlchemy", "SM-2"],
+    "stack": [
+      "Python",
+      "FastAPI",
+      "Streamlit",
+      "ChromaDB",
+      "SQLAlchemy",
+      "SM-2"
+    ],
     "metrics": [
-      { "num": "287", "unit": "项", "label": "自动化测试", "baseline": "pytest 采集，CI 全绿" },
-      { "num": "6", "unit": "家", "label": "LLM 提供商即插切换", "baseline": "SiliconFlow / 通义 / 智谱 / DeepSeek / OpenAI / Ollama" },
-      { "num": "10", "unit": "+", "label": "功能模块", "baseline": "录题 → 复习 → 组卷 → 知识图谱 → 教师端" }
+      {
+        "num": "287",
+        "unit": "项",
+        "label": "自动化测试",
+        "baseline": "pytest 采集，CI 全绿"
+      },
+      {
+        "num": "6",
+        "unit": "家",
+        "label": "LLM 提供商即插切换",
+        "baseline": "SiliconFlow / 通义 / 智谱 / DeepSeek / OpenAI / Ollama"
+      },
+      {
+        "num": "10",
+        "unit": "+",
+        "label": "功能模块",
+        "baseline": "录题 → 复习 → 组卷 → 知识图谱 → 教师端"
+      }
     ],
     "pull": "无 API Key 时自动进入演示模式，克隆即可跑通——工具的评估成本应该是零。",
     "cover": "/projects/math-tutor-rag/notebook.webp",
     "shots": [
-      { "src": "/projects/math-tutor-rag/notebook.webp", "caption": "错题本：结构化解析与语义搜索", "width": 1200, "height": 800 },
-      { "src": "/projects/math-tutor-rag/review.webp", "caption": "SM-2 闪卡复习与调度", "width": 1200, "height": 800 },
-      { "src": "/projects/math-tutor-rag/graph.webp", "caption": "知识点共现图谱（颜色 = 掌握度）", "width": 1200, "height": 800 },
-      { "src": "/projects/math-tutor-rag/dashboard.webp", "caption": "学情看板与薄弱点 Top N", "width": 1200, "height": 800 }
+      {
+        "src": "/projects/math-tutor-rag/notebook.webp",
+        "caption": "错题本：结构化解析与语义搜索",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/projects/math-tutor-rag/review.webp",
+        "caption": "SM-2 闪卡复习与调度",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/projects/math-tutor-rag/graph.webp",
+        "caption": "知识点共现图谱（颜色 = 掌握度）",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/projects/math-tutor-rag/dashboard.webp",
+        "caption": "学情看板与薄弱点 Top N",
+        "width": 1200,
+        "height": 800
+      }
     ],
     "problem": [
       "错题管理的现状是「拍照存图」：题目躺在相册里，讲解靠翻教辅，复习靠感觉。三个环节全部断裂——录入不结构化、讲解不可溯源、复习没有调度。",
@@ -51,10 +93,22 @@
       }
     ],
     "decisions": [
-      { "title": "Provider 抽象，而不是绑定某一家", "body": "统一 Provider 接口对接 6 家 LLM，换 AI_BASE_URL + AI_MODEL 即切换。选它的原因很直接：模型供应商的格局每个月都在变，被任何一家锁死都是架构债。副产品是无 Key 自动进入演示模式，评估成本归零。" },
-      { "title": "检索降级链路：向量失败退关键词", "body": "ChromaDB 故障时自动降级为关键词检索，而不是让整个错题本不可用。教育产品的可用性优先于检索质量的完美——降级时 UI 明确标注「关键词模式」。" },
-      { "title": "结构化输出用 Schema 约束，不信任 JSON 模式", "body": "Pydantic Schema 定义解析结果 + 稳健解析层兜底。实测过不同供应商的「JSON 模式」可靠度差异巨大，Schema 约束是唯一跨供应商稳定的方案。" },
-      { "title": "SM-2 与掌握度双引擎并存", "body": "复习调度用经过验证的 SM-2（Anki 同源），不自己发明调度算法；掌握度估算独立建模（复习日志时间加权）。调度回答「什么时候复习」，掌握度回答「哪里薄弱」，两个问题不混在一个公式里。" }
+      {
+        "title": "Provider 抽象，而不是绑定某一家",
+        "body": "统一 Provider 接口对接 6 家 LLM，换 AI_BASE_URL + AI_MODEL 即切换。选它的原因很直接：模型供应商的格局每个月都在变，被任何一家锁死都是架构债。副产品是无 Key 自动进入演示模式，评估成本归零。"
+      },
+      {
+        "title": "检索降级链路：向量失败退关键词",
+        "body": "ChromaDB 故障时自动降级为关键词检索，而不是让整个错题本不可用。教育产品的可用性优先于检索质量的完美——降级时 UI 明确标注「关键词模式」。"
+      },
+      {
+        "title": "结构化输出用 Schema 约束，不信任 JSON 模式",
+        "body": "Pydantic Schema 定义解析结果 + 稳健解析层兜底。实测过不同供应商的「JSON 模式」可靠度差异巨大，Schema 约束是唯一跨供应商稳定的方案。"
+      },
+      {
+        "title": "SM-2 与掌握度双引擎并存",
+        "body": "复习调度用经过验证的 SM-2（Anki 同源），不自己发明调度算法；掌握度估算独立建模（复习日志时间加权）。调度回答「什么时候复习」，掌握度回答「哪里薄弱」，两个问题不混在一个公式里。"
+      }
     ],
     "outcome": [
       "287 项自动化测试，GitHub Actions CI 全绿",
@@ -66,7 +120,8 @@
       "掌握度估算一度直接用复习正确率，忽略时间衰减；改为复习日志时间加权后，薄弱知识点的排序才符合真实遗忘曲线。"
     ],
     "featured": true,
-    "order": 1
+    "order": 1,
+    "coverSmall": "/projects/math-tutor-rag/notebook-640w.webp"
   },
   {
     "id": "smart-tutor",
@@ -79,19 +134,61 @@
     "standfirst": "家教中介的日常活在微信群里：文本发单、刷屏找单、手写台账。smart_tutor 用 AI 把整段聊天记录变成结构化订单，用 Redis GEO 让教员在地图上看单，把试课、定金、尾款、信息费全部搬进带财务流水的系统。",
     "status": "live",
     "repoUrl": "https://github.com/lii-lii321/smart_tutor",
-    "stack": ["Python", "FastAPI", "Vue 3", "MySQL", "Redis GEO", "Docker"],
+    "stack": [
+      "Python",
+      "FastAPI",
+      "Vue 3",
+      "MySQL",
+      "Redis GEO",
+      "Docker"
+    ],
     "metrics": [
-      { "num": "71", "unit": "单", "label": "微信文本一次批量识别", "baseline": "AI 解析管道实测，逐条校对后入库" },
-      { "num": "3", "unit": "端", "label": "多租户角色覆盖", "baseline": "中介 / 教员 / 老板经营看板" },
-      { "num": "100", "unit": "%", "label": "核心流程线上化", "baseline": "发单 → 匹配 → 试课 → 定金尾款" }
+      {
+        "num": "71",
+        "unit": "单",
+        "label": "微信文本一次批量识别",
+        "baseline": "AI 解析管道实测，逐条校对后入库"
+      },
+      {
+        "num": "3",
+        "unit": "端",
+        "label": "多租户角色覆盖",
+        "baseline": "中介 / 教员 / 老板经营看板"
+      },
+      {
+        "num": "100",
+        "unit": "%",
+        "label": "核心流程线上化",
+        "baseline": "发单 → 匹配 → 试课 → 定金尾款"
+      }
     ],
     "pull": "演示库的数据不是摆拍——由真实微信群采集的家教订单文本，走线上同款 AI 解析管道灌入。",
     "cover": "/projects/smart-tutor/teacher-board-mobile.webp",
     "shots": [
-      { "src": "/projects/smart-tutor/teacher-board-mobile.webp", "caption": "教员橱窗地图 · 公开获客页", "width": 390, "height": 844 },
-      { "src": "/projects/smart-tutor/admin-batch-import-desktop.webp", "caption": "AI 批量导入 · 71 单一次识别", "width": 1200, "height": 750 },
-      { "src": "/projects/smart-tutor/teacher-recommend-mobile.webp", "caption": "智能推荐 · 画像排序", "width": 390, "height": 844 },
-      { "src": "/projects/smart-tutor/admin-financial-desktop.webp", "caption": "财务流水", "width": 1200, "height": 750 }
+      {
+        "src": "/projects/smart-tutor/teacher-board-mobile.webp",
+        "caption": "教员橱窗地图 · 公开获客页",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "src": "/projects/smart-tutor/admin-batch-import-desktop.webp",
+        "caption": "AI 批量导入 · 71 单一次识别",
+        "width": 1200,
+        "height": 750
+      },
+      {
+        "src": "/projects/smart-tutor/teacher-recommend-mobile.webp",
+        "caption": "智能推荐 · 画像排序",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "src": "/projects/smart-tutor/admin-financial-desktop.webp",
+        "caption": "财务流水",
+        "width": 1200,
+        "height": 750
+      }
     ],
     "problem": [
       "家教行业的交易发生在最原始的基础设施上：中介在微信群里发文字单，教员靠刷屏找单，试课、定金、尾款靠电话和记忆，财务是一本手写台账。信息散、匹配慢、账目糊涂，是三方共同的痛。",
@@ -120,10 +217,22 @@
       }
     ],
     "decisions": [
-      { "title": "AI 识别 + 人工校对的人机分工", "body": "批量识别不直接入库，逐条校对是默认步骤。订单下游是真金白银的结算，把幻觉挡在人工这一关，比追求识别率 100% 便宜且可靠。" },
-      { "title": "Redis GEO 做空间索引", "body": "教员找单的核心是「附近有哪些单」：Redis GEO 一条命令完成半径查询，避免在 MySQL 里做经纬度函数计算。中介发单频次远高于教员浏览，读写比例也站在缓存这一边。" },
-      { "title": "全流程状态机 + 财务流水", "body": "试课、定金、尾款、信息费统一建模为订单状态迁移，每笔钱对应一条流水。费率调整从「全链路回归」变成「单服务发布」，这是状态机收敛最大的红利。" },
-      { "title": "多租户从第一天就隔离", "body": "每家中介的数据从表结构层面就带租户边界，而不是事后用查询条件过滤。加这个约束的成本在第一天是半天，事后补是事故。" }
+      {
+        "title": "AI 识别 + 人工校对的人机分工",
+        "body": "批量识别不直接入库，逐条校对是默认步骤。订单下游是真金白银的结算，把幻觉挡在人工这一关，比追求识别率 100% 便宜且可靠。"
+      },
+      {
+        "title": "Redis GEO 做空间索引",
+        "body": "教员找单的核心是「附近有哪些单」：Redis GEO 一条命令完成半径查询，避免在 MySQL 里做经纬度函数计算。中介发单频次远高于教员浏览，读写比例也站在缓存这一边。"
+      },
+      {
+        "title": "全流程状态机 + 财务流水",
+        "body": "试课、定金、尾款、信息费统一建模为订单状态迁移，每笔钱对应一条流水。费率调整从「全链路回归」变成「单服务发布」，这是状态机收敛最大的红利。"
+      },
+      {
+        "title": "多租户从第一天就隔离",
+        "body": "每家中介的数据从表结构层面就带租户边界，而不是事后用查询条件过滤。加这个约束的成本在第一天是半天，事后补是事故。"
+      }
     ],
     "outcome": [
       "发单到成交打款的全链路线上化，中介 / 教员 / 老板三端各得其所",
@@ -135,7 +244,8 @@
       "批量识别不能全自动入库：幻觉率再低也要让人逐条校对，工具的目标是「十分钟核对 71 单」，不是「无人值守」。"
     ],
     "featured": true,
-    "order": 2
+    "order": 2,
+    "coverSmall": "/projects/smart-tutor/teacher-board-mobile-640w.webp"
   },
   {
     "id": "research-lab",
@@ -148,17 +258,53 @@
     "standfirst": "给「拿到数据的第一小时」设计的工具：上传即得数据画像、可检验的研究问题与真实执行的统计检验，每个结论都带效应量、前提校验与可复现脚本。给学生的作业、给研究者的初稿、给评审者的方法展示。",
     "status": "live",
     "repoUrl": "https://github.com/lii-lii321/research-lab",
-    "stack": ["Python", "SciPy", "Streamlit", "scikit-learn", "arXiv API"],
+    "stack": [
+      "Python",
+      "SciPy",
+      "Streamlit",
+      "scikit-learn",
+      "arXiv API"
+    ],
     "cover": "/projects/research-lab/ui_flow.webp",
     "shots": [
-      { "src": "/projects/research-lab/ui_flow.webp", "caption": "五阶段研究流程", "width": 1200, "height": 750 },
-      { "src": "/projects/research-lab/ui_ml.webp", "caption": "ML 基线与实验追踪", "width": 1200, "height": 750 },
-      { "src": "/projects/research-lab/ui_agent.webp", "caption": "Agent 界面", "width": 1200, "height": 750 }
+      {
+        "src": "/projects/research-lab/ui_flow.webp",
+        "caption": "五阶段研究流程",
+        "width": 1200,
+        "height": 750
+      },
+      {
+        "src": "/projects/research-lab/ui_ml.webp",
+        "caption": "ML 基线与实验追踪",
+        "width": 1200,
+        "height": 750
+      },
+      {
+        "src": "/projects/research-lab/ui_agent.webp",
+        "caption": "Agent 界面",
+        "width": 1200,
+        "height": 750
+      }
     ],
     "metrics": [
-      { "num": "5", "unit": "阶段", "label": "全自动流水线", "baseline": "画像 → 问题 → 计划 → 检验 → 报告" },
-      { "num": "3", "unit": "个", "label": "使用入口", "baseline": "Streamlit 界面 / CLI / Python API" },
-      { "num": "100", "unit": "%", "label": "检验可复现", "baseline": "原始 p 值入库 + 复现脚本" }
+      {
+        "num": "5",
+        "unit": "阶段",
+        "label": "全自动流水线",
+        "baseline": "画像 → 问题 → 计划 → 检验 → 报告"
+      },
+      {
+        "num": "3",
+        "unit": "个",
+        "label": "使用入口",
+        "baseline": "Streamlit 界面 / CLI / Python API"
+      },
+      {
+        "num": "100",
+        "unit": "%",
+        "label": "检验可复现",
+        "baseline": "原始 p 值入库 + 复现脚本"
+      }
     ],
     "problem": [
       "数据分析最贵的不是计算，是「从数据到结论」之间那些说不清的步骤：该问什么问题、用什么检验、前提满足了吗、结论多可信。教科书讲方法，工具帮计算，中间的「实验设计」全靠自己悟。",
@@ -187,10 +333,22 @@
       }
     ],
     "decisions": [
-      { "title": "方法白名单，而不是让模型自由发挥", "body": "AI 只能在白名单方法里选（t 检验、Mann-Whitney、置换检验……），白名单之外的结论不给出。这是「懂统计」和「像懂统计」的分界线。" },
-      { "title": "前提校验失败就降级并明说", "body": "正态性、独立性不满足时自动降级到非参数方法并写入报告。宁可给一个保守的结论，不给一个好看的 p 值。" },
-      { "title": "一切入库：原始 p 值、来源标注、复现脚本", "body": "每个检验的方法来源（llm / rule）、原始统计量与复现脚本都进实验追踪库。评审者能核查，是报告可信的前提。" },
-      { "title": "一个服务层，三个入口", "body": "Streamlit 界面、CLI、Python API 共享同一套 services 层。交互用户、脚本用户、Notebook 用户看到的是同一份逻辑，不会出现「界面能跑 CLI 不行」的分裂。" }
+      {
+        "title": "方法白名单，而不是让模型自由发挥",
+        "body": "AI 只能在白名单方法里选（t 检验、Mann-Whitney、置换检验……），白名单之外的结论不给出。这是「懂统计」和「像懂统计」的分界线。"
+      },
+      {
+        "title": "前提校验失败就降级并明说",
+        "body": "正态性、独立性不满足时自动降级到非参数方法并写入报告。宁可给一个保守的结论，不给一个好看的 p 值。"
+      },
+      {
+        "title": "一切入库：原始 p 值、来源标注、复现脚本",
+        "body": "每个检验的方法来源（llm / rule）、原始统计量与复现脚本都进实验追踪库。评审者能核查，是报告可信的前提。"
+      },
+      {
+        "title": "一个服务层，三个入口",
+        "body": "Streamlit 界面、CLI、Python API 共享同一套 services 层。交互用户、脚本用户、Notebook 用户看到的是同一份逻辑，不会出现「界面能跑 CLI 不行」的分裂。"
+      }
     ],
     "outcome": [
       "三个入口覆盖三类用户：Streamlit 五标签页全流程、CLI 管道接入、Python API 自由组合服务层",
@@ -201,7 +359,8 @@
       "自动选检验方法最容易翻车的地方是前提校验（正态性、独立性）：前提不满足时宁可降级到非参数方法并明说，也不能硬跑 t 检验出一个好看的 p 值。"
     ],
     "featured": false,
-    "order": 3
+    "order": 3,
+    "coverSmall": "/projects/research-lab/ui_flow-640w.webp"
   },
   {
     "id": "travel-atlas",
@@ -213,12 +372,33 @@
     "summary": "本站：照片扔进文件夹就自动长出相册与足迹地图的静态站，Astro + ECharts，零外部地图服务。",
     "standfirst": "「照片即数据源」的实验：照片按旅行放进文件夹，构建管线自动压缩抽样、读 EXIF、生成缩略图、聚合地点，在 ECharts 地图上点亮足迹。后来它升级成了整个个人站——你现在看到的就是它。",
     "status": "live",
-    "stack": ["Astro", "React", "ECharts", "sharp", "exifr"],
+    "stack": [
+      "Astro",
+      "React",
+      "ECharts",
+      "sharp",
+      "exifr"
+    ],
     "cover": "/projects/travel-atlas/cover.webp",
     "metrics": [
-      { "num": "11", "unit": "本", "label": "旅行相册", "baseline": "592 张照片，原始图库 6700+ 张自动抽样" },
-      { "num": "8", "unit": "个", "label": "省级地区点亮", "baseline": "全部来自真实行程" },
-      { "num": "0", "unit": "个", "label": "首页 island", "baseline": "渐进增强脚本 <1 KB" }
+      {
+        "num": "11",
+        "unit": "本",
+        "label": "旅行相册",
+        "baseline": "592 张照片，原始图库 6700+ 张自动抽样"
+      },
+      {
+        "num": "8",
+        "unit": "个",
+        "label": "省级地区点亮",
+        "baseline": "全部来自真实行程"
+      },
+      {
+        "num": "0",
+        "unit": "个",
+        "label": "首页 island",
+        "baseline": "渐进增强脚本 <1 KB"
+      }
     ],
     "problem": [
       "旅行照片散落在手机和硬盘里——6700 多张、45GB，「整理相册」永远排在待办最后一名。添加一次旅行的成本必须低到「建文件夹、丢照片」，地图才会一直活着。",
@@ -242,10 +422,22 @@
       }
     ],
     "decisions": [
-      { "title": "所有智能发生在构建时", "body": "静态托管免费可靠，约束倒逼架构：EXIF 解析、缩略图、地点聚合全部在构建时完成，页面只认数据。运行时除了 4 个交互 island，零计算。" },
-      { "title": "均匀抽样，而不是精选", "body": "单册 60 张按文件序等距取样——无监督、可复现、零人工。牺牲「每张都是大片」，换来添加一次旅行的成本是一条配置。" },
-      { "title": "GeoJSON 本地化，零地图服务", "body": "地图数据构建时打进站点，不请求任何瓦片服务：访客隐私、国内访问质量、第三方依赖三个问题一次解决。" },
-      { "title": "保留 EXIF 贯穿两级管线", "body": "ingest 压缩时 withMetadata 保留拍摄信息，build-photos 二次读取。相机型号与拍摄时间因此成为相册页的真实数据，而不是手填的装饰。" }
+      {
+        "title": "所有智能发生在构建时",
+        "body": "静态托管免费可靠，约束倒逼架构：EXIF 解析、缩略图、地点聚合全部在构建时完成，页面只认数据。运行时除了 4 个交互 island，零计算。"
+      },
+      {
+        "title": "均匀抽样，而不是精选",
+        "body": "单册 60 张按文件序等距取样——无监督、可复现、零人工。牺牲「每张都是大片」，换来添加一次旅行的成本是一条配置。"
+      },
+      {
+        "title": "GeoJSON 本地化，零地图服务",
+        "body": "地图数据构建时打进站点，不请求任何瓦片服务：访客隐私、国内访问质量、第三方依赖三个问题一次解决。"
+      },
+      {
+        "title": "保留 EXIF 贯穿两级管线",
+        "body": "ingest 压缩时 withMetadata 保留拍摄信息，build-photos 二次读取。相机型号与拍摄时间因此成为相册页的真实数据，而不是手填的装饰。"
+      }
     ],
     "outcome": [
       "添加一次旅行 = 行程配置里加一条 + 跑一次脚本",

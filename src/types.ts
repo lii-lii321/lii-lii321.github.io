@@ -123,6 +123,8 @@ export interface Project {
   pull?: string;
   /** 封面截图（真实产品截图 URL，如 /projects/<id>/cover.webp）；缺省时显示占位块 */
   cover?: string;
+  /** 封面 640w 小档（ingest-shots 生成）；首页精选卡等小尺寸槽位用，缺省回退 cover */
+  coverSmall?: string;
   /** 详情页截图画廊（真实产品截图）；width/height 为产物真实像素（ingest-shots 入库时写回），
    *  详情页按真实比例完整展示、不裁切 */
   shots?: { src: string; caption: string; width?: number; height?: number }[];

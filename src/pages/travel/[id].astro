@@ -6,6 +6,7 @@
  * - 照片区：PhotoGrid 瀑布流（只加载缩略图）+ Lightbox 灯箱（原图浏览）。
  */
 import Base from '../../layouts/Base.astro';
+import { coverSrcset } from '../../components/gallery/utils';
 import PhotoGrid from '../../components/gallery/PhotoGrid.astro';
 import Lightbox from '../../components/gallery/Lightbox.tsx';
 import MiniMap from '../../components/map/MiniMap';
@@ -84,17 +85,7 @@ const sceneChips = groupScenes
     <section class="relative mt-10 overflow-hidden rounded-[14px]">
       <img
         src={coverPhoto?.thumb ?? trip.cover}
-        srcset={
-          coverPhoto
-            ? [
-                `${coverPhoto.thumb} 640w`,
-                coverPhoto.thumb2x && `${coverPhoto.thumb2x} 1280w`,
-                `${trip.cover} ${coverPhoto.width}w`,
-              ]
-                .filter((s): s is string => Boolean(s))
-                .join(', ')
-            : undefined
-        }
+        srcset={coverPhoto ? coverSrcset(coverPhoto, trip.cover) : undefined}
         sizes="(min-width: 1280px) 1200px, 100vw"
         alt=""
         aria-hidden="true"
