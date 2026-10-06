@@ -4,6 +4,7 @@
 // eyebrow → 衬线标题 → 描述 → 3 个数字（天蓝）→「打开足迹地图 →」（琥珀色）。
 // 右侧为最新旅行封面图，左下角叠一行等宽经纬度。
 import type { Trip } from '../../types';
+import { coverSrcset } from '../gallery/utils';
 import { getCoverPhoto } from './utils';
 
 interface Props {
@@ -68,15 +69,7 @@ const numbers = [
         cover && trip ? (
           <img
             src={cover.thumb}
-            srcset={
-              [
-                `${cover.thumb} 640w`,
-                cover.thumb2x && `${cover.thumb2x} 1280w`,
-                `${trip.cover} ${cover.width}w`,
-              ]
-                .filter((s): s is string => Boolean(s))
-                .join(', ')
-            }
+            srcset={coverSrcset(cover, trip.cover)}
             sizes="(min-width: 1024px) 420px, 100vw"
             alt={`${trip.title} —— ${trip.place.name}`}
             width={cover.width}

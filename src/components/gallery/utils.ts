@@ -48,3 +48,18 @@ export function planFold(groupSizes: number[], limit: number): FoldPlan {
 export function sectionCountText(total: number, visible: number): string {
   return visible < total ? `已展示 ${visible} / 共 ${total} 张` : `${total} 张`;
 }
+
+/** 封面 srcset：640/1280 缩略图两档 + 原图整档（thumb2x 缺省时跳过）。
+ *  TravelIsland（首页）与相册页头图共用同一拼接口径，避免两处漂移。 */
+export function coverSrcset(
+  photo: { thumb: string; thumb2x?: string; width: number },
+  fallbackSrc: string,
+): string {
+  return [
+    `${photo.thumb} 640w`,
+    photo.thumb2x && `${photo.thumb2x} 1280w`,
+    `${fallbackSrc} ${photo.width}w`,
+  ]
+    .filter((s): s is string => Boolean(s))
+    .join(', ');
+}

@@ -3,7 +3,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { groupByScene, planFold, sectionCountText } from '../src/components/gallery/utils.ts';
+import { coverSrcset, groupByScene, planFold, sectionCountText } from '../src/components/gallery/utils.ts';
 import type { Photo } from '../src/types';
 
 const photo = (scene: string | null): Photo => ({
@@ -64,4 +64,15 @@ test('sectionCountText：部分折叠如实计数，全可见显示总数', () =
   assert.equal(sectionCountText(28, 14), '已展示 14 / 共 28 张');
   assert.equal(sectionCountText(22, 22), '22 张');
   assert.equal(sectionCountText(10, 0), '已展示 0 / 共 10 张');
+});
+
+test('coverSrcset：三档拼接，thumb2x 缺省时跳过 1280w 档', () => {
+  assert.equal(
+    coverSrcset({ thumb: 'a-640.webp', thumb2x: 'a-1280.webp', width: 4032 }, 'a.jpg'),
+    'a-640.webp 640w, a-1280.webp 1280w, a.jpg 4032w',
+  );
+  assert.equal(
+    coverSrcset({ thumb: 'a-640.webp', width: 4032 }, 'a.jpg'),
+    'a-640.webp 640w, a.jpg 4032w',
+  );
 });

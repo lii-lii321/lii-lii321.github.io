@@ -38,7 +38,7 @@ const { projects, total } = Astro.props;
             {
               p.cover ? (
                 <img
-                  src={p.cover}
+                  src={p.coverSmall ?? p.cover}
                   alt={`${p.title} 界面截图`}
                   width={400}
                   height={250}

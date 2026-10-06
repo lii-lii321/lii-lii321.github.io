@@ -168,9 +168,19 @@ export default function Lightbox({ photos, albumTitle }: Props) {
           <p className="hidden min-w-0 truncate text-xs text-white/70 md:block">
             {photo.scene && <span className="text-white/90">{photo.scene}</span>}
             {photo.scene && hasExif && <span className="mx-2">·</span>}
-            {photo.takenAt && <span>📅 {formatTakenAt(photo.takenAt)}</span>}
+            {photo.takenAt && (
+              <span>
+                <span aria-hidden="true">📅 </span>
+                {formatTakenAt(photo.takenAt)}
+              </span>
+            )}
             {photo.takenAt && photo.camera && <span className="mx-2">·</span>}
-            {photo.camera && <span>📷 {photo.camera}</span>}
+            {photo.camera && (
+              <span>
+                <span aria-hidden="true">📷 </span>
+                {photo.camera}
+              </span>
+            )}
           </p>
         )}
         <button
