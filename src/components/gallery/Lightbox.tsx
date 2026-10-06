@@ -10,7 +10,6 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent } from 'react';
-import type { Photo } from '../../types';
 
 /** PhotoGrid 派发的打开事件名（保持与 PhotoGrid.astro 中一致） */
 const OPEN_EVENT = 'gallery:open';
@@ -19,8 +18,20 @@ interface OpenEventDetail {
   index: number;
 }
 
+/** 灯箱消费的照片字段子集：island props 会被整体序列化进 HTML，
+ *  调用处只传这五个字段（width/height/thumb2x/gps 不进灯箱，别带上） */
+interface LightboxPhoto {
+  /** 原图 URL（灯箱内 <img> 与相邻预加载用） */
+  src: string;
+  /** 16 宽 WebP 模糊占位 data URI（原图加载期间的背景） */
+  blur: string;
+  takenAt: string | null;
+  camera: string | null;
+  scene: string | null;
+}
+
 interface Props {
-  photos: Photo[];
+  photos: LightboxPhoto[];
   albumTitle: string;
 }
 

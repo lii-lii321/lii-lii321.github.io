@@ -190,8 +190,14 @@ const sceneChips = groupScenes
       <PhotoGrid photos={trip.photos} albumTitle={trip.title} />
     </section>
 
-    <!-- 灯箱 island：全屏原图浏览 + 键盘/按钮切换 -->
-    <Lightbox client:load photos={trip.photos} albumTitle={trip.title} />
+    <!-- 灯箱 island：全屏原图浏览 + 键盘/按钮切换。
+         props 只传灯箱消费的五个字段——island props 会被整体序列化进 HTML，
+         width/height/thumb2x/gps 是死重（每本相册页约省 25% 载荷） -->
+    <Lightbox
+      client:load
+      photos={trip.photos.map(({ src, blur, takenAt, camera, scene }) => ({ src, blur, takenAt, camera, scene }))}
+      albumTitle={trip.title}
+    />
 
     <!-- 上一本 / 下一本相册 -->
     <nav class="mt-[var(--spacing-sec)] grid border-t border-rule sm:grid-cols-2 sm:divide-x sm:divide-rule" aria-label="上一本 / 下一本相册">

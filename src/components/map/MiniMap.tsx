@@ -30,7 +30,13 @@ function loadGeo(view: 'china' | 'world'): Promise<void> {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();
     })
-    .then((geo) => echarts.registerMap(view, geo as never));
+    .then((geo) => echarts.registerMap(view, geo as never))
+    .catch((err) => {
+      // 失败不缓存 rejected Promise：清掉标记让下次 loadGeo 重新发起，
+      // 与 TravelMap 的「错误态非终态」同一不变量（否则错误会被永久缓存）
+      geoCache.delete(view);
+      throw err;
+    });
   geoCache.set(view, task);
   return task;
 }
