@@ -10,6 +10,7 @@
  */
 import type { Photo } from '../../types';
 import PhotoItem from './PhotoItem.astro';
+import { groupByScene } from './utils';
 
 interface Props {
   photos: Photo[];
@@ -18,12 +19,12 @@ interface Props {
 
 const { photos, albumTitle } = Astro.props;
 
-/** 按连续区段分组的子景点（photos 有序，同一景点的抽样天然连续）；无子景点时只有一个 null 组 */
-const groups: { scene: string | null; start: number; items: Photo[] }[] = [];
-photos.forEach((photo, index) => {
-  const last = groups[groups.length - 1];
-  if (last && last.scene === (photo.scene ?? null)) last.items.push(photo);
-  else groups.push({ scene: photo.scene ?? null, start: index, items: [photo] });
+// 按连续区段分组的子景点；start 是每组首张的全局序号（锚点序号与 travel/[id] 的 sceneChips 一致）
+let cursor = 0;
+const groups = groupByScene(photos).map((g) => {
+  const group = { scene: g.scene, start: cursor, items: g.items };
+  cursor += g.items.length;
+  return group;
 });
 const hasScenes = groups.length > 1;
 ---
@@ -90,6 +91,9 @@ const hasScenes = groups.length > 1;
 <script>
   // 照片墙增强：① 末行 grow 归零（残行不拉伸成巨图）；② 超过 24 张时折叠 + 「查看更多」。
   // 无 JS 时全部照片直接展示（渐进增强）。
+  // 折叠计划与计数文案抽在 ./utils（纯函数，tests/gallery-utils.test.ts 覆盖）
+  import { planFold, sectionCountText } from './utils';
+
   const LIMIT = 24;
 
   function setupGrid(grid: HTMLElement) {
@@ -114,9 +118,7 @@ const hasScenes = groups.length > 1;
         const visible = lis.filter((li) => !li.hidden).length;
         section.hidden = visible === 0;
         const counter = section.querySelector<HTMLElement>('p.meta');
-        if (counter) {
-          counter.textContent = visible < total ? `已展示 ${visible} / 共 ${total} 张` : `${total} 张`;
-        }
+        if (counter) counter.textContent = sectionCountText(total, visible);
       }
     }
 
@@ -136,8 +138,15 @@ const hasScenes = groups.length > 1;
     const hashHitsScene = Boolean(hashTarget && grid.contains(hashTarget));
 
     if (allLis.length > LIMIT && more && btn && !hashHitsScene) {
-      allLis.forEach((li, i) => {
-        if (i >= LIMIT) li.hidden = true;
+      // 折叠计划（纯函数 planFold）：按全局序号截断，每组得到可见数
+      const { visiblePerGroup } = planFold(
+        uls.map((ul) => ul.children.length),
+        LIMIT,
+      );
+      uls.forEach((ul, gi) => {
+        Array.from(ul.children).forEach((li, i) => {
+          (li as HTMLElement).hidden = i >= visiblePerGroup[gi];
+        });
       });
       more.classList.remove('hidden');
       const remaining = allLis.length - LIMIT;

@@ -21,7 +21,8 @@ export interface Photo {
   src: string;
   /** 640 宽 WebP 缩略图 URL，如 "/photos/2025-yunnan/thumbs/01.webp" */
   thumb: string;
-  /** 1280 宽 WebP 中间档缩略图 URL（封面 srcset 第二档）；旧管线数据可能缺失，消费端需容错 */
+  /** 1280 宽 WebP 中间档缩略图 URL（封面 srcset 第二档）；仅对真实宽 ≥1280 的原图生成，
+   *  旧管线数据与窄图缺失该字段，消费端需容错 */
   thumb2x?: string;
   /** 16 宽 WebP 模糊占位图，data:image/webp;base64,... 形式，可直接放进 img/CSS */
   blur: string;
@@ -122,8 +123,9 @@ export interface Project {
   pull?: string;
   /** 封面截图（真实产品截图 URL，如 /projects/<id>/cover.webp）；缺省时显示占位块 */
   cover?: string;
-  /** 详情页截图画廊（真实产品截图） */
-  shots?: { src: string; caption: string }[];
+  /** 详情页截图画廊（真实产品截图）；width/height 为产物真实像素（ingest-shots 入库时写回），
+   *  详情页按真实比例完整展示、不裁切 */
+  shots?: { src: string; caption: string; width?: number; height?: number }[];
   problem: string[];
   approach: ProjectStep[];
   /** 「02 — 做法」中的引用块之后的「关键决策」（可选） */
