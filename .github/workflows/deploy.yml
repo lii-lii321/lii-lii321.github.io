@@ -24,10 +24,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install, check, build, audit, and upload site
-        uses: withastro/action@v3
+        uses: withastro/action@v5
         with:
-          # 质量门禁：类型检查 → 测试 → 构建 → 死链审计，任一失败则不部署
-          buildCommand: npm run check && npm test && npm run build && node scripts/audit-links.mjs
+          # 质量门禁：类型检查 → 测试 → 构建 → 死链审计，任一失败则不部署。
+          # 注意：build-cmd 是 v5 才有的输入——v3 只认 node-version/package-manager/path，
+          # 此前写的 buildCommand 会被 Actions 静默忽略，门禁实际从未运行
+          node-version: 24
+          build-cmd: npm run check && npm test && npm run build && node scripts/audit-links.mjs
 
   deploy:
     needs: build
