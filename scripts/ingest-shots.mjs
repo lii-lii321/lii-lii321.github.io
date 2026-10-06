@@ -1,6 +1,7 @@
 /**
  * 项目截图入库（一次性工具，可重跑）：从三个真实仓库拷贝 UI 截图，
- * 压缩为 WebP（≤1200px）到 public/projects/<id>/，供项目详情页与首页精选行使用。
+ * 压缩为 WebP（≤1200px）到 public/projects/<id>/，供项目详情页与首页精选行使用；
+ * 并把产物真实宽高写回 src/data/projects.json 的 shots（详情页按真实比例完整展示、不裁切）。
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -41,6 +42,9 @@ const SHOTS = [
   },
 ];
 
+/** 本轮入库的产物尺寸（src → width/height），收尾统一写回 projects.json */
+const sizeBySrc = new Map();
+
 for (const { id, repo, files } of SHOTS) {
   const outDir = path.join(OUT_ROOT, id);
   fs.mkdirSync(outDir, { recursive: true });
@@ -52,7 +56,28 @@ for (const { id, repo, files } of SHOTS) {
     }
     const out = path.join(outDir, name.replace(/\.png$/i, '.webp'));
     await sharp(src).resize({ width: 1200, withoutEnlargement: true }).webp({ quality: 80 }).toFile(out);
-    console.log(`[ok] /projects/${id}/${path.basename(out)}  ${caption}`);
+    const meta = await sharp(out).metadata();
+    sizeBySrc.set(`/projects/${id}/${path.basename(out)}`, { width: meta.width, height: meta.height });
+    console.log(`[ok] /projects/${id}/${path.basename(out)}  ${meta.width}x${meta.height}  ${caption}`);
   }
 }
-console.log('截图入库完成。');
+
+// 写回 projects.json：按 src 匹配，给 shots 补产物真实宽高（缺失或比例变化时以实测为准）
+const PROJECTS_JSON = new URL('../src/data/projects.json', import.meta.url).pathname.replace(
+  /^\/([A-Za-z]:)/,
+  '$1',
+);
+const projectsData = JSON.parse(fs.readFileSync(PROJECTS_JSON, 'utf8'));
+let updated = 0;
+for (const proj of projectsData) {
+  for (const shot of proj.shots ?? []) {
+    const size = sizeBySrc.get(shot.src);
+    if (size) {
+      shot.width = size.width;
+      shot.height = size.height;
+      updated++;
+    }
+  }
+}
+fs.writeFileSync(PROJECTS_JSON, JSON.stringify(projectsData, null, 2) + '\n');
+console.log(`截图入库完成：${updated} 条 shots 宽高已写回 src/data/projects.json。`);

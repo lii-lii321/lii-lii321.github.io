@@ -179,8 +179,9 @@ const sceneChips = groupScenes
         </dl>
       </div>
       <div class="min-h-[220px] overflow-hidden rounded-[14px] border border-rule bg-paper">
-        <!-- client:idle：小地图在折叠线下方，推迟到浏览器空闲再水合，避免水合即拉整份 GeoJSON -->
-        <MiniMap client:idle trip={trip} />
+        <!-- client:idle：小地图在折叠线下方，推迟到浏览器空闲再水合，避免水合即拉整份 GeoJSON；
+             props 只传 place，避免把整本照片数组序列化进 island -->
+        <MiniMap client:idle place={trip.place} />
       </div>
     </section>
 

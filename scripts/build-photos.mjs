@@ -161,13 +161,18 @@ async function main() {
         .webp({ quality: 80 })
         .toFile(path.join(outThumbDir, thumbBase));
 
-      // 中间档：1280 宽 WebP（同目录，文件名带 .1280 后缀）
+      // 中间档：1280 宽 WebP（同目录，文件名带 .1280 后缀）。
+      // 仅对真实宽 ≥1280 的原图生成——更窄的图放大只会失真，且当前 11 本封面全是 1600w，
+      // 窄图的 1280w 没有任何 srcset 消费者（消费端对缺失的 thumb2x 已有容错，自动退回两档）
       const thumbMediumBase = `${path.basename(fileName, path.extname(fileName))}.1280.webp`;
-      await sharp(buffer)
-        .rotate()
-        .resize({ width: MEDIUM_WIDTH })
-        .webp({ quality: 80 })
-        .toFile(path.join(outThumbDir, thumbMediumBase));
+      const thumb2x = width >= MEDIUM_WIDTH ? `/photos/${id}/thumbs/${thumbMediumBase}` : null;
+      if (thumb2x) {
+        await sharp(buffer)
+          .rotate()
+          .resize({ width: MEDIUM_WIDTH })
+          .webp({ quality: 80 })
+          .toFile(path.join(outThumbDir, thumbMediumBase));
+      }
 
       // 模糊占位：16 宽 WebP，base64 data URI
       const blurBuffer = await sharp(buffer).rotate().resize({ width: BLUR_WIDTH }).webp({ quality: 40 }).toBuffer();
@@ -179,7 +184,7 @@ async function main() {
       photos.push({
         src: `/photos/${id}/${fileName}`,
         thumb: `/photos/${id}/thumbs/${thumbBase}`,
-        thumb2x: `/photos/${id}/thumbs/${thumbMediumBase}`,
+        ...(thumb2x ? { thumb2x } : {}),
         blur,
         width,
         height,

@@ -120,21 +120,24 @@ const next = idx < projects.length - 1 ? projects[idx + 1] : null;
       project.shots && project.shots.length > 0 && (
         <section class="mt-12" aria-label="界面截图">
           <p class="meta">Screens</p>
-          <div class={`mt-4 grid gap-4 ${project.shots.length >= 4 ? 'sm:grid-cols-2' : 'sm:grid-cols-2'}`}>
-            {project.shots.map((shot) => (
-              <figure class="min-w-0">
-                <img
-                  src={shot.src}
-                  alt={`${project.title} · ${shot.caption}`}
-                  width={1200}
-                  height={750}
-                  loading="lazy"
-                  decoding="async"
-                  class="w-full rounded-[4px] border border-rule bg-paper-2 object-cover object-top"
-                />
-                <figcaption class="meta mt-2 normal-case">{shot.caption}</figcaption>
-              </figure>
-            ))}
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            {
+              project.shots.map((shot) => (
+                <figure class="min-w-0">
+                  {/* 真实宽高（ingest-shots 入库写回）+ h-auto：按真实比例完整展示不裁切，与照片墙同一哲学 */}
+                  <img
+                    src={shot.src}
+                    alt={`${project.title} · ${shot.caption}`}
+                    width={shot.width}
+                    height={shot.height}
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-auto rounded-[4px] border border-rule bg-paper-2"
+                  />
+                  <figcaption class="meta mt-2 normal-case">{shot.caption}</figcaption>
+                </figure>
+              ))
+            }
           </div>
         </section>
       )
