@@ -1,0 +1,27 @@
+---
+// 区块头（design-taste 重塑）：超大等宽编号（accent）+ 眉题 + 衬线标题，
+// 右侧可选链接槽（「全部 xx →」）。杂志目录风的视觉路标。
+interface Props {
+  /** 区块编号，如 "01" */
+  index: string;
+  eyebrow: string;
+  title: string;
+}
+const { index, eyebrow, title } = Astro.props;
+---
+
+<div class="flex flex-wrap items-end justify-between gap-4">
+  <div class="flex items-start gap-4 md:gap-6">
+    <span
+      class="font-mono text-4xl font-semibold leading-[0.9] text-accent md:text-6xl"
+      aria-hidden="true"
+    >
+      {index}
+    </span>
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="h2 mt-2">{title}</h2>
+    </div>
+  </div>
+  <slot name="right" />
+</div>

@@ -71,7 +71,7 @@ const next = idx < projects.length - 1 ? projects[idx + 1] : null;
 
     <!-- ④ 01 — 问题 -->
     <section class="mt-[var(--spacing-sec)]" aria-labelledby="problem-title">
-      <p class="meta">01</p>
+      <p class="font-mono text-3xl font-semibold leading-none text-accent" aria-hidden="true">01</p>
       <h2 id="problem-title" class="h2 mt-2">问题</h2>
       <div class="mt-6 max-w-[68ch] space-y-4 leading-[1.9] text-ink-2">
         {project.problem.map((p) => <p>{p}</p>)}
@@ -145,7 +145,7 @@ const next = idx < projects.length - 1 ? projects[idx + 1] : null;
 
     <!-- ⑥ 02 — 做法：编号步骤 60px | 1fr -->
     <section class="mt-[var(--spacing-sec)]" aria-labelledby="approach-title">
-      <p class="meta">02</p>
+      <p class="font-mono text-3xl font-semibold leading-none text-accent" aria-hidden="true">02</p>
       <h2 id="approach-title" class="h2 mt-2">做法</h2>
       <ol class="mt-8 border-t border-rule">
         {
@@ -182,7 +182,7 @@ const next = idx < projects.length - 1 ? projects[idx + 1] : null;
 
     <!-- ⑦ 03 — 结果：悬浮编辑风数字（无卡片容器——墨色顶线 + 大衬线数字，这里的容器是噪音） -->
     <section class="mt-[var(--spacing-sec)]" aria-labelledby="outcome-title">
-      <p class="meta">03</p>
+      <p class="font-mono text-3xl font-semibold leading-none text-accent" aria-hidden="true">03</p>
       <h2 id="outcome-title" class="h2 mt-2">结果</h2>
       <dl class="mt-8 grid gap-x-10 gap-y-8 border-t border-ink pt-6 md:grid-cols-3">
         {
@@ -214,7 +214,7 @@ const next = idx < projects.length - 1 ? projects[idx + 1] : null;
     {
       project.pitfalls.length > 0 && (
         <section class="mt-[var(--spacing-sec)]" aria-labelledby="pitfalls-title">
-          <p class="meta">04</p>
+          <p class="font-mono text-3xl font-semibold leading-none text-accent" aria-hidden="true">04</p>
           <h2 id="pitfalls-title" class="h2 mt-2">踩过的坑</h2>
           <details class="pitfalls group mt-6 max-w-[68ch] rounded-[4px] border border-rule">
             <summary class="flex cursor-pointer list-none items-center justify-between gap-4 bg-paper-2 px-6 py-4 text-sm font-medium text-ink">

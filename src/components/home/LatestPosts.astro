@@ -1,6 +1,7 @@
 ---
 // 首页「最新文章」区块（规格 §8.1.4）：区块头 + 3 条 PostRow（dense 密度）。
 import PostRow from '../blog/PostRow.astro';
+import SectionHead from '../common/SectionHead.astro';
 
 interface PostLike {
   href: string;
@@ -17,13 +18,9 @@ const { posts } = Astro.props;
 ---
 
 <section aria-labelledby="latest-posts-title">
-  <div class="flex flex-wrap items-end justify-between gap-4">
-    <div>
-      <p class="eyebrow">Writing</p>
-      <h2 id="latest-posts-title" class="h2 mt-3">最新文章</h2>
-    </div>
-    <a href="/blog" class="meta transition-colors hover:text-accent">全部文章 →</a>
-  </div>
+  <SectionHead index="02" eyebrow="Writing" title="最新文章">
+    <a slot="right" href="/blog" class="meta pb-1 transition-colors hover:text-accent">全部文章 →</a>
+  </SectionHead>
 
   <div class="mt-6 border-t border-rule">
     {

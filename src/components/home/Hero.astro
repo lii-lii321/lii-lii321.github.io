@@ -1,49 +1,88 @@
 ---
-// Hero（规格 §8.1.1）：状态胶囊（呼吸绿点）+ Display 衬线大标题两行（第二行弱化）
-// + Lede 导语 + 3 个 CTA + 等宽 meta 行。纯文字，无封面图（封面移入 TravelIsland）。
+// Hero（规格 §8.1.1 + design-taste 重塑）：
+// 左列：状态胶囊 + Display 两行大标题 + Lede + CTA（一主一辅一静默）+ meta 行（含坐标签名）；
+// 右列：最新一次旅行的「拍立得」卡——真实照片 + 纸白边框 + 轻微旋转 + 等宽标注，
+// 是首屏的视觉锚点，也是旅行板块的预告（hover 回正，transform-only 动画）。
+import type { Trip } from '../../types';
 import { siteConfig } from '../../config/site';
+import { formatDate, getCoverPhoto } from './utils';
+
+interface Props {
+  /** 最新一次旅行；无数据时隐藏拍立得 */
+  trip: Trip | null;
+}
+
+const { trip } = Astro.props;
+const cover = trip ? getCoverPhoto(trip) : null;
 
 // 定位句按逗号拆成两行展示（无逗号则单行）
 const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
 ---
 
-<section class="pt-[var(--spacing-sec)]">
-  <p class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ink-2">
-    <span class="pulse inline-block h-2 w-2 rounded-full bg-ok" aria-hidden="true"></span>
-    {siteConfig.availability} · {siteConfig.location}
-  </p>
+<section class="grid items-center gap-12 pt-[var(--spacing-sec)] lg:grid-cols-[1.15fr_0.85fr]">
+  <div>
+    <p class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ink-2">
+      <span class="pulse inline-block h-2 w-2 rounded-full bg-ok" aria-hidden="true"></span>
+      {siteConfig.availability} · {siteConfig.location}
+    </p>
 
-  <h1 class="display mt-7">
-    {
-      titleLines.map((line, i) => (
-        <span class={`block ${i > 0 ? 'text-ink-3' : ''}`}>{line}</span>
-      ))
-    }
-  </h1>
+    <h1 class="display mt-7">
+      {
+        titleLines.map((line, i) => (
+          <span class={`block ${i > 0 ? 'text-ink-3' : ''}`}>{line}</span>
+        ))
+      }
+    </h1>
 
-  <p class="lede mt-8">
-    你好，我是 {siteConfig.name}——在这里写我做的东西、踩过的坑，也存着我去过的地方。
-  </p>
+    <p class="lede mt-8">
+      你好，我是 {siteConfig.name}——在这里写我做的东西、踩过的坑，也存着我去过的地方。
+    </p>
 
-  {/* 一主一辅一静默：主 CTA 唯一，简历降为安静文字链（避免等权按钮互相争夺点击） */}
-  <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-    <a href="/projects" class="btn-primary">看我的项目</a>
-    <a href="/blog" class="btn-outline">读最新文章</a>
-    <a
-      href={siteConfig.resumeUrl}
-      class="meta inline-flex items-center gap-1 normal-case transition-colors hover:text-accent"
-    >
-      下载简历 ↓
-    </a>
+    {/* 一主一辅一静默：主 CTA 唯一，简历降为安静文字链（避免等权按钮互相争夺点击） */}
+    <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <a href="/projects" class="btn-primary">看我的项目</a>
+      <a href="/blog" class="btn-outline">读最新文章</a>
+      <a
+        href={siteConfig.resumeUrl}
+        class="meta inline-flex items-center gap-1 normal-case transition-colors hover:text-accent"
+      >
+        下载简历 ↓
+      </a>
+    </div>
+
+    <p class="meta mt-10 normal-case">
+      <span>{siteConfig.location} · 30.57°N 104.06°E</span>
+      <span aria-hidden="true"> · </span>
+      <span>{siteConfig.title}</span>
+      <span aria-hidden="true"> · </span>
+      <span>React · Vue · Python</span>
+      <span aria-hidden="true"> · </span>
+      <span>本站最后更新 {siteConfig.updatedAt}</span>
+    </p>
   </div>
 
-  <p class="meta mt-10 normal-case">
-    <span>{siteConfig.location} · 30.57°N 104.06°E</span>
-    <span aria-hidden="true"> · </span>
-    <span>{siteConfig.title}</span>
-    <span aria-hidden="true"> · </span>
-    <span>React · Vue · Python</span>
-    <span aria-hidden="true"> · </span>
-    <span>本站最后更新 {siteConfig.updatedAt}</span>
-  </p>
+  {/* 拍立得：首屏视觉锚点。真实比例展示（width/height 属性定比例，不裁切），
+      hover 回正 + 纸感投影，transform-only 动画 */}
+  {
+    trip && cover && (
+      <figure class="group relative mx-auto w-full max-w-[340px] rotate-[2deg] rounded-[4px] border border-rule bg-white p-3 pb-12 transition-transform duration-300 ease-out hover:rotate-0 lg:max-w-none">
+        <img
+          src={cover.thumb}
+          srcset={`${cover.thumb} 640w, ${trip.cover} ${cover.width}w`}
+          sizes="(min-width: 1024px) 440px, (min-width: 640px) 60vw, 85vw"
+          alt={`${trip.title} —— ${trip.place.name}`}
+          width={cover.width}
+          height={cover.height}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="h-auto w-full"
+          style={`background-image:url(${cover.blur});background-size:cover;background-position:center`}
+        />
+        <figcaption class="meta absolute bottom-4 left-4 normal-case">
+          {trip.title} · {formatDate(trip.date)}
+        </figcaption>
+      </figure>
+    )
+  }
 </section>
