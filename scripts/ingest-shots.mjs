@@ -13,7 +13,7 @@ const OUT_ROOT = new URL('../public/projects/', import.meta.url).pathname.replac
 const SHOTS = [
   {
     id: 'smart-tutor',
-    repo: 'D:\\smart_tutor\\docs\\images',
+    repo: 'D:\\My_Project\\smart_tutor\\docs\\images',
     files: [
       ['teacher-board-mobile.png', '教员橱窗地图 · 公开获客页'],
       ['admin-batch-import-desktop.png', 'AI 批量导入 · 71 单一次识别'],
@@ -23,7 +23,7 @@ const SHOTS = [
   },
   {
     id: 'math-tutor-rag',
-    repo: 'D:\\Math_Tutor_RAG\\docs\\screenshots',
+    repo: 'D:\\My_Project\\Math_Tutor_RAG\\docs\\screenshots',
     files: [
       ['notebook.png', '错题本'],
       ['review.png', 'SM-2 闪卡复习'],
@@ -33,7 +33,7 @@ const SHOTS = [
   },
   {
     id: 'research-lab',
-    repo: 'D:\\research-lab\\docs\\images',
+    repo: 'D:\\My_Project\\research-lab\\docs\\images',
     files: [
       ['ui_flow.png', '研究流程'],
       ['ui_ml.png', 'ML 基线与实验追踪'],
