@@ -25,13 +25,25 @@ const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
     你好，我是 {siteConfig.name}——在这里写我做的东西、踩过的坑，也存着我去过的地方。
   </p>
 
-  <div class="mt-10 flex flex-wrap gap-3">
+  {/* 一主一辅一静默：主 CTA 唯一，简历降为安静文字链（避免等权按钮互相争夺点击） */}
+  <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
     <a href="/projects" class="btn-primary">看我的项目</a>
     <a href="/blog" class="btn-outline">读最新文章</a>
-    <a href={siteConfig.resumeUrl} class="btn-outline">下载简历</a>
+    <a
+      href={siteConfig.resumeUrl}
+      class="meta inline-flex items-center gap-1 normal-case transition-colors hover:text-accent"
+    >
+      下载简历 ↓
+    </a>
   </div>
 
   <p class="meta mt-10 normal-case">
-    {siteConfig.title} · React · Vue · Python · 本站最后更新 {siteConfig.updatedAt}
+    <span>{siteConfig.location} · 30.57°N 104.06°E</span>
+    <span aria-hidden="true"> · </span>
+    <span>{siteConfig.title}</span>
+    <span aria-hidden="true"> · </span>
+    <span>React · Vue · Python</span>
+    <span aria-hidden="true"> · </span>
+    <span>本站最后更新 {siteConfig.updatedAt}</span>
   </p>
 </section>
