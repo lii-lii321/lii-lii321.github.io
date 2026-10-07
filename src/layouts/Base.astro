@@ -189,10 +189,10 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
               {siteConfig.availability}
             </p>
           </div>
-          <!-- 站点 -->
+          <!-- 站点：入口多（9 个），列内用双列网格保持四列高度均衡 -->
           <nav aria-label="站点">
             <p class="meta">站点</p>
-            <ul class="mt-4 space-y-2.5 text-sm">
+            <ul class="mt-4 grid grid-cols-2 gap-x-5 gap-y-2.5 text-sm">
               {
                 navLinks.map((link) => (
                   <li>
