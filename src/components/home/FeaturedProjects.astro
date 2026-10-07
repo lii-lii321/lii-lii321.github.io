@@ -3,6 +3,7 @@
 // 右列：16:10 截图占位 + 右对齐指标 chips；整行 hover 项目名转 accent。
 import WorkRow from '../project/WorkRow.astro';
 import Pill from '../common/Pill.astro';
+import SectionHead from '../common/SectionHead.astro';
 import type { Project } from '../../types';
 
 interface Props {
@@ -13,13 +14,9 @@ const { projects, total } = Astro.props;
 ---
 
 <section aria-labelledby="featured-title">
-  <div class="flex flex-wrap items-end justify-between gap-4">
-    <div>
-      <p class="eyebrow">Selected Work</p>
-      <h2 id="featured-title" class="h2 mt-3">精选项目</h2>
-    </div>
-    <a href="/projects" class="meta transition-colors hover:text-accent">全部 {total} 个项目 →</a>
-  </div>
+  <SectionHead index="01" eyebrow="Selected Work" title="精选项目">
+    <a slot="right" href="/projects" class="meta pb-1 transition-colors hover:text-accent">全部 {total} 个项目 →</a>
+  </SectionHead>
 
   <div class="mt-6 border-t border-rule">
     {

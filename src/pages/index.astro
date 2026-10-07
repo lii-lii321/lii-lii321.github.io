@@ -38,7 +38,7 @@ const latestTrip = trips[0] ?? null;
 
 <Base description={`${siteConfig.name}，${siteConfig.title}。${siteConfig.tagline} 项目、文章、履历与旅行足迹。`}>
   <div class="flex flex-col gap-[var(--spacing-sec)]">
-    <Hero />
+    <Hero trip={latestTrip} />
 
     <StatBand items={siteConfig.stats} />
 

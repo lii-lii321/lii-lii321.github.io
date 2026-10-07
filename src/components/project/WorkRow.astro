@@ -22,11 +22,17 @@ const statusColor = { live: 'bg-ok', archived: 'bg-ink-3', wip: 'bg-amber' } as 
 
 <a
   href={href}
-  class={`group grid grid-cols-[36px_1fr] gap-x-5 border-b border-rule transition-colors hover:bg-paper-2 md:grid-cols-[56px_1.15fr_1fr] md:gap-x-8 ${
+  class={`group grid grid-cols-[44px_1fr] gap-x-5 border-b border-rule transition-colors hover:bg-paper-2 md:grid-cols-[72px_1.15fr_1fr] md:gap-x-8 ${
     dense ? 'py-6' : 'py-[34px] md:py-[38px]'
   }`}
 >
-  <span class="meta pt-1.5" aria-hidden="true">{index}</span>
+  {/* 超大等宽编号：杂志目录的路标（装饰性，aria-hidden） */}
+  <span
+    class="font-mono text-2xl font-medium leading-none text-accent/70 transition-colors group-hover:text-accent md:text-4xl"
+    aria-hidden="true"
+  >
+    {index}
+  </span>
 
   <div class="min-w-0">
     <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
