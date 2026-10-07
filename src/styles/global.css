@@ -57,6 +57,13 @@ html {
   color: #fff;
 }
 
+/* 无障碍地板：统一键盘焦点环（:where 零特异性，组件可按需覆盖） */
+:where(a, button, [role="button"], summary, input, textarea, select):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 @layer components {
   /* 容器：1280px + 40px 边距（移动 20px） */
   .wrap {
@@ -68,38 +75,44 @@ html {
     @apply font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-ink-3;
   }
 
-  /* 元信息：等宽 11–12.5px 微字距大写 */
+  /* 元信息：等宽 11–12.5px 微字距大写；等宽数字让日期/计数纵向对齐 */
   .meta {
     @apply font-mono text-[11.5px] uppercase tracking-[0.04em] text-ink-3;
+    font-variant-numeric: tabular-nums;
   }
 
-  /* 排版层级（规格 §5） */
+  /* 排版层级（规格 §5）；标题防孤字（balance），导语优化断行（pretty） */
   .display {
     @apply font-serif font-bold text-ink;
     font-size: clamp(2.9rem, 7.4vw, 6.2rem);
     line-height: 0.98;
     letter-spacing: -0.025em;
+    text-wrap: balance;
   }
   .h1 {
     @apply font-serif font-bold text-ink;
     font-size: clamp(2.1rem, 4.6vw, 3.6rem);
     line-height: 1.08;
+    text-wrap: balance;
   }
   .h2 {
     @apply font-serif font-semibold text-ink;
     font-size: clamp(1.5rem, 2.7vw, 2.1rem);
     line-height: 1.18;
+    text-wrap: balance;
   }
   .h3 {
     @apply font-serif font-semibold text-ink;
     font-size: 1.2rem;
     line-height: 1.35;
+    text-wrap: balance;
   }
   .lede {
     @apply font-sans text-ink-2;
     font-size: clamp(1.05rem, 1.5vw, 1.22rem);
     line-height: 1.72;
     max-width: 56ch;
+    text-wrap: pretty;
   }
 
   /* 状态 / 技术栈胶囊（文字块圆角一律 0，胶囊例外） */
@@ -194,6 +207,7 @@ html {
   font-family: var(--font-serif);
   color: var(--color-ink);
   scroll-margin-top: 132px; /* sticky 目录锚点偏移 */
+  text-wrap: balance;
 }
 .prose-editorial h2 {
   font-size: 1.6rem;
@@ -208,6 +222,7 @@ html {
 }
 .prose-editorial p {
   margin: 1.1em 0;
+  text-wrap: pretty;
 }
 .prose-editorial ul,
 .prose-editorial ol {
