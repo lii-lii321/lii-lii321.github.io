@@ -36,7 +36,8 @@ const hasScenes = groups.length > 1;
           <section id={`scene-${gi}`} class="mb-10 last:mb-0 scroll-mt-28" aria-label={group.scene ?? albumTitle}>
             {group.scene && (
               <div class="mb-4 flex items-baseline justify-between border-b border-rule pb-2">
-                <h3 class="h3">{group.scene}</h3>
+                {/* h2 而非 h3：相册页 h1 之下直接是分组标题，跳级会被 heading-order 审计扣分；class 不变视觉一致 */}
+                <h2 class="h3">{group.scene}</h2>
                 <p class="meta">{group.items.length} 张</p>
               </div>
             )}

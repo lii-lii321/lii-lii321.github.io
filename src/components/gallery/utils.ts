@@ -64,3 +64,20 @@ export function coverSrcset(
     .filter((s): s is string => Boolean(s))
     .join(', ');
 }
+
+/** 相册页头图背景 srcset：aria-hidden 纯装饰（压着 ink 渐变），档位封顶 1280w——
+ *  不给 full/原图档，否则桌面 retina 会按 sizes 需求挑中原图 JPG（最重 990KB 级），
+ *  移动端 Lighthouse 实测 1280w 封顶也让相册页 LCP 显著下降。Lighthouse 修 Top 项，2026-10-13。
+ *  窄原图（<1280w）无 thumb2x 档，自然落回原图整档。 */
+export function headerSrcset(
+  photo: { thumb: string; thumb2x?: string; width: number },
+  fallbackSrc: string,
+): string {
+  return [
+    `${photo.thumb} 640w`,
+    photo.thumb2x && `${photo.thumb2x} 1280w`,
+    `${fallbackSrc} ${photo.width}w`,
+  ]
+    .filter((s): s is string => Boolean(s))
+    .join(', ');
+}
