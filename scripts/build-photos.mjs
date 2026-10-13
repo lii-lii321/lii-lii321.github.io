@@ -2,7 +2,7 @@
  * 照片数据管线（幂等，可反复运行）：
  * 1. 扫描 photos/<相册id>/album.json 相册描述；
  * 2. 用 exifr 读取每张照片的 EXIF（拍摄时间 / 相机型号 / GPS），缺失时对应字段为 null；
- * 3. 用 sharp 生成 640/1280 宽两档 WebP 缩略图与 16 宽模糊 base64 占位图；
+ * 3. 用 sharp 生成 640/1280 宽两档 WebP 缩略图、原图同宽灯箱显示档 WebP 与 16 宽模糊 base64 占位图；
  * 4. 原图与缩略图复制到 public/photos/<id>/；
  * 5. 聚合生成 src/data/travels.json（国家/省份去重计数 + 照片总数）。
  *
@@ -174,6 +174,19 @@ async function main() {
           .toFile(path.join(outThumbDir, thumbMediumBase));
       }
 
+      // 灯箱显示档：与原图同宽的 WebP 重编码（不缩放，只换更高压缩率的编码）。
+      // 灯箱（含相邻两张预加载）是全站最重的加载点。同宽重编码实测全量减重约 27%
+      // （重型照片多为高噪点，压缩空间有限；对比过 webp q72/effort6 与 avif q50，
+      // 编码时间翻数倍只多换 10–15%，不划算）。产物经 .gitignore 排除入库，
+      // CI 跑 npm run build 时由本步骤重新生成；消费端（Lightbox / coverSrcset）
+      // 对缺失该字段回退原图，旧数据兼容
+      const fullBase = `${path.basename(fileName, path.extname(fileName))}.full.webp`;
+      await sharp(buffer)
+        .rotate()
+        .webp({ quality: 80 })
+        .toFile(path.join(outThumbDir, fullBase));
+      const full = `/photos/${id}/thumbs/${fullBase}`;
+
       // 模糊占位：16 宽 WebP，base64 data URI
       const blurBuffer = await sharp(buffer).rotate().resize({ width: BLUR_WIDTH }).webp({ quality: 40 }).toBuffer();
       const blur = `data:image/webp;base64,${blurBuffer.toString('base64')}`;
@@ -185,6 +198,7 @@ async function main() {
         src: `/photos/${id}/${fileName}`,
         thumb: `/photos/${id}/thumbs/${thumbBase}`,
         ...(thumb2x ? { thumb2x } : {}),
+        full,
         blur,
         width,
         height,
@@ -194,7 +208,7 @@ async function main() {
         scene: (sceneMap && sceneMap[fileName]) || null,
       });
       const exifInfo = takenAt || camera || gps ? '已读取 EXIF' : '无 EXIF（takenAt/camera/gps 为 null）';
-      console.log(`  - ${fileName}：缩略图 OK · 模糊占位 OK · ${exifInfo}`);
+      console.log(`  - ${fileName}：缩略图 OK · 显示档 OK · 模糊占位 OK · ${exifInfo}`);
     }
 
     if (photos.length === 0) {

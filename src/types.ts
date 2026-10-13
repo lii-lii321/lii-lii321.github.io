@@ -24,6 +24,9 @@ export interface Photo {
   /** 1280 宽 WebP 中间档缩略图 URL（封面 srcset 第二档）；仅对真实宽 ≥1280 的原图生成，
    *  旧管线数据与窄图缺失该字段，消费端需容错 */
   thumb2x?: string;
+  /** 灯箱显示档：与原图同宽的 WebP 重编码 URL（不缩放、零分辨率损失，实测平均减重约 27%）。
+   *  产物不入库（.gitignore 排除，构建时由 build-photos 重新生成）；旧数据可能缺失，消费端回退 src */
+  full?: string;
   /** 16 宽 WebP 模糊占位图，data:image/webp;base64,... 形式，可直接放进 img/CSS */
   blur: string;
   /** 原图宽（像素） */

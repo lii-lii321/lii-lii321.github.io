@@ -3,7 +3,7 @@
  * 单次旅行相册页 /travel/<id>（浅色适配版）
  * - getStaticPaths 由 src/data/travels.json 的 trips 生成（每个 trip 一个静态页）；
  * - 相册头：大封面背景（墨色渐变压底保证文字对比）+ 标题 + 日期 + 地点 + 描述 + 标签；
- * - 照片区：PhotoGrid 瀑布流（只加载缩略图）+ Lightbox 灯箱（原图浏览）。
+ * - 照片区：PhotoGrid 瀑布流（只加载缩略图）+ Lightbox 灯箱（显示档浏览，缺失回退原图）。
  */
 import Base from '../../layouts/Base.astro';
 import { coverSrcset } from '../../components/gallery/utils';
@@ -181,12 +181,19 @@ const sceneChips = groupScenes
       <PhotoGrid photos={trip.photos} albumTitle={trip.title} />
     </section>
 
-    <!-- 灯箱 island：全屏原图浏览 + 键盘/按钮切换。
-         props 只传灯箱消费的五个字段——island props 会被整体序列化进 HTML，
+    <!-- 灯箱 island：全屏照片浏览（显示档优先，缺失回退原图）+ 键盘/按钮切换。
+         props 只传灯箱消费的六个字段——island props 会被整体序列化进 HTML，
          width/height/thumb2x/gps 是死重（每本相册页约省 25% 载荷） -->
     <Lightbox
       client:load
-      photos={trip.photos.map(({ src, blur, takenAt, camera, scene }) => ({ src, blur, takenAt, camera, scene }))}
+      photos={trip.photos.map(({ src, full, blur, takenAt, camera, scene }) => ({
+        src,
+        full,
+        blur,
+        takenAt,
+        camera,
+        scene,
+      }))}
       albumTitle={trip.title}
     />
 

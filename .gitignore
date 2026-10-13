@@ -2,6 +2,8 @@
 node_modules/
 dist/
 .astro/
+# 照片灯箱显示档：build-photos 每次构建重新生成（同宽 WebP 重编码），不入库
+public/photos/*/thumbs/*.full.webp
 
 # 构建与本地日志
 build.log

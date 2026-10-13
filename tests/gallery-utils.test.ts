@@ -66,13 +66,17 @@ test('sectionCountText：部分折叠如实计数，全可见显示总数', () =
   assert.equal(sectionCountText(10, 0), '已展示 0 / 共 10 张');
 });
 
-test('coverSrcset：三档拼接，thumb2x 缺省时跳过 1280w 档', () => {
+test('coverSrcset：四档拼接，thumb2x/full 缺省时跳过对应档', () => {
+  assert.equal(
+    coverSrcset({ thumb: 'a-640.webp', thumb2x: 'a-1280.webp', full: 'a.full.webp', width: 4032 }, 'a.jpg'),
+    'a-640.webp 640w, a-1280.webp 1280w, a.full.webp 4032w, a.jpg 4032w',
+  );
   assert.equal(
     coverSrcset({ thumb: 'a-640.webp', thumb2x: 'a-1280.webp', width: 4032 }, 'a.jpg'),
     'a-640.webp 640w, a-1280.webp 1280w, a.jpg 4032w',
   );
   assert.equal(
-    coverSrcset({ thumb: 'a-640.webp', width: 4032 }, 'a.jpg'),
-    'a-640.webp 640w, a.jpg 4032w',
+    coverSrcset({ thumb: 'a-640.webp', width: 1000 }, 'a.jpg'),
+    'a-640.webp 640w, a.jpg 1000w',
   );
 });
