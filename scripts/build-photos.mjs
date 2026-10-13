@@ -163,14 +163,16 @@ async function main() {
 
       // 中间档：1280 宽 WebP（同目录，文件名带 .1280 后缀）。
       // 仅对真实宽 ≥1280 的原图生成——更窄的图放大只会失真，且当前 11 本封面全是 1600w，
-      // 窄图的 1280w 没有任何 srcset 消费者（消费端对缺失的 thumb2x 已有容错，自动退回两档）
+      // 窄图的 1280w 没有任何 srcset 消费者（消费端对缺失的 thumb2x 已有容错，自动退回两档）。
+      // 质量用 75 而非缩略图的 80：该档主要被相册头图/封面在大屏选中，q75 体积再降约 15%
+      // 且压着渐变的装饰背景无感（Lighthouse 相册页 LCP 修复，2026-10-13）
       const thumbMediumBase = `${path.basename(fileName, path.extname(fileName))}.1280.webp`;
       const thumb2x = width >= MEDIUM_WIDTH ? `/photos/${id}/thumbs/${thumbMediumBase}` : null;
       if (thumb2x) {
         await sharp(buffer)
           .rotate()
           .resize({ width: MEDIUM_WIDTH })
-          .webp({ quality: 80 })
+          .webp({ quality: 75 })
           .toFile(path.join(outThumbDir, thumbMediumBase));
       }
 

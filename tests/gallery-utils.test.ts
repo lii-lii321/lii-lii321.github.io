@@ -3,7 +3,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { coverSrcset, groupByScene, planFold, sectionCountText } from '../src/components/gallery/utils.ts';
+import { coverSrcset, groupByScene, headerSrcset, planFold, sectionCountText } from '../src/components/gallery/utils.ts';
 import type { Photo } from '../src/types';
 
 const photo = (scene: string | null): Photo => ({
@@ -77,6 +77,17 @@ test('coverSrcset：四档拼接，thumb2x/full 缺省时跳过对应档', () =>
   );
   assert.equal(
     coverSrcset({ thumb: 'a-640.webp', width: 1000 }, 'a.jpg'),
+    'a-640.webp 640w, a.jpg 1000w',
+  );
+});
+
+test('headerSrcset：头图封顶 1280w，不含 full/原图外的整档；窄原图自然回退', () => {
+  assert.equal(
+    headerSrcset({ thumb: 'a-640.webp', thumb2x: 'a-1280.webp', width: 1600 }, 'a.jpg'),
+    'a-640.webp 640w, a-1280.webp 1280w, a.jpg 1600w',
+  );
+  assert.equal(
+    headerSrcset({ thumb: 'a-640.webp', width: 1000 }, 'a.jpg'),
     'a-640.webp 640w, a.jpg 1000w',
   );
 });
