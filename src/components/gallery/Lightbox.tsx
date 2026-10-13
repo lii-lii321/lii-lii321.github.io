@@ -3,7 +3,8 @@
  * - 打开：点击静态网格项后，由 PhotoGrid 派发 gallery:open 自定义事件驱动；
  * - 切换：← / → 方向键或屏幕左右按钮，循环播放；
  * - 关闭：Esc、右上角按钮或点击空白遮罩；
- * - 只在灯箱内加载原图（src），并预加载相邻两张原图；
+ * - 只在灯箱内加载显示档（full：与原图同宽的 WebP 重编码，实测平均减重约 27%；
+ *   字段缺失时回退原图 src），并预加载相邻两张显示档；
  * - 照片有 EXIF（takenAt / camera）时展示，没有则整行隐藏；
  * - 打开期间锁定 body 滚动，blur 占位图作为原图加载时的背景；
  * - 打开时焦点移入对话框、Tab 焦点圈闭在对话框内、关闭时归还给触发元素。
@@ -19,10 +20,12 @@ interface OpenEventDetail {
 }
 
 /** 灯箱消费的照片字段子集：island props 会被整体序列化进 HTML，
- *  调用处只传这五个字段（width/height/thumb2x/gps 不进灯箱，别带上） */
+ *  调用处只传这六个字段（width/height/thumb2x/gps 不进灯箱，别带上） */
 interface LightboxPhoto {
-  /** 原图 URL（灯箱内 <img> 与相邻预加载用） */
+  /** 原图 URL（full 缺失时的回退） */
   src: string;
+  /** 显示档 URL：与原图同宽的 WebP 重编码（构建时生成）；缺失时灯箱退回 src */
+  full?: string;
   /** 16 宽 WebP 模糊占位 data URI（原图加载期间的背景） */
   blur: string;
   takenAt: string | null;
@@ -34,6 +37,9 @@ interface Props {
   photos: LightboxPhoto[];
   albumTitle: string;
 }
+
+/** 灯箱 <img> 实际加载的档位：显示档优先，缺失回退原图 */
+const displaySrc = (photo: LightboxPhoto) => photo.full ?? photo.src;
 
 /** ISO 时间串 → “2025 年 4 月 12 日 08:30”；解析失败时原样返回。
  *  takenAt 是拍摄地「墙钟时间」按 UTC 序列化的（约定见 build-photos.mjs），
@@ -125,14 +131,14 @@ export default function Lightbox({ photos, albumTitle }: Props) {
     };
   }, [index]);
 
-  // 预加载相邻两张原图，让切换更顺滑
+  // 预加载相邻两张显示档，让切换更顺滑
   useEffect(() => {
     if (index === null || count < 2) return;
     for (const delta of [-1, 1]) {
       const neighbor = photos[(index + delta + count) % count];
       if (neighbor) {
         const img = new Image();
-        img.src = neighbor.src;
+        img.src = displaySrc(neighbor);
       }
     }
   }, [index, photos, count]);
@@ -193,11 +199,11 @@ export default function Lightbox({ photos, albumTitle }: Props) {
         </button>
       </div>
 
-      {/* 图片区：原图只在灯箱内加载，blur 占位图作为加载背景 */}
+      {/* 图片区：显示档只在灯箱内加载，blur 占位图作为加载背景 */}
       <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-12 sm:px-24">
         <img
           key={photo.src}
-          src={photo.src}
+          src={displaySrc(photo)}
           alt={`${albumTitle} · 第 ${index + 1} 张`}
           className="max-h-full max-w-full rounded-lg object-contain"
           style={{

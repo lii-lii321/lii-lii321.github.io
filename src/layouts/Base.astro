@@ -41,10 +41,34 @@ const navLinks = [
 
 const year = new Date().getFullYear();
 
-// canonical 与 OG 绝对链接依赖 astro.config 的 site（当前为占位域名，上线前替换）
+// canonical 与 OG 绝对链接依赖 astro.config 的 site（已上线域名 lii-lii321.github.io）
 const site = Astro.site ?? new URL('https://lii-lii321.github.io');
 const canonical = new URL(Astro.url.pathname, site);
 const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
+// og:image:alt 描述分享图内容；页面标题是最贴近的可用文案（首页用 tagline）
+const ogImageAlt = title ?? siteConfig.tagline;
+// 首页 WebSite + SearchAction 结构化数据：搜索页启动时读取 ?q=（search.astro），
+// 深链真实可用，搜索引擎才有资格在结果里挂站内搜索框
+const homeJsonLd =
+  path === '/'
+    ? JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: siteConfig.name,
+        alternateName: siteConfig.enName,
+        url: site.href,
+        description: siteConfig.tagline,
+        inLanguage: 'zh-CN',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: new URL('/search?q={search_term_string}', site).href,
+          },
+          'query-input': 'required name=search_term_string',
+        },
+      }).replace(/</g, '\\u003c')
+    : null;
 ---
 
 <!doctype html>
@@ -64,11 +88,15 @@ const ogImage = new URL(ogImageProp ?? '/og-default.png', site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:locale" content="zh_CN" />
     <meta property="og:site_name" content={siteConfig.name} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    {homeJsonLd && <script type="application/ld+json" set:html={homeJsonLd} />}
     <title>{fullTitle}</title>
   </head>
 

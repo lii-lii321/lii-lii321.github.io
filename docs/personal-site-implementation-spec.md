@@ -2,8 +2,8 @@
 
 > **交付对象**：zcode（落代码的 agent）
 > **文档版本**：v1 · 2026-10-02
-> **目标仓库**：`D:\Traveling`（Astro 5 + React 19 + Tailwind v4 静态站）
-> **视觉参考稿**：`D:\Traveling\docs\ui-design-personal-site-2026-10-02.html`（本地双击打开，含 7 个可切换页面）
+> **目标仓库**：`D:\My_Project\Traveling`（Astro 5 + React 19 + Tailwind v4 静态站；2026-10-12 自 D:\Traveling 迁入）
+> **视觉参考稿**：`D:\My_Project\Traveling\docs\ui-design-personal-site-2026-10-02.html`（本地双击打开，含 7 个可切换页面）
 
 ---
 
