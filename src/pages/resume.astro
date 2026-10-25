@@ -12,17 +12,18 @@ const year = new Date().getFullYear();
 ---
 
 <Base title="简历" description={`${siteConfig.name}的中文简历：数据科学在读，全栈 / AI 应用开发者，开放实习与远程协作。`}>
-  <section class="pt-14">
+  <!-- 页首区（眉题/大标题/按钮）仅屏幕态：打印直接从简历页眉开始 -->
+  <section class="pt-14 print:hidden">
     <p class="eyebrow">Resume</p>
     <h1 class="h1 mt-4">中文简历</h1>
-    <div class="mt-6 flex flex-wrap gap-3 print:hidden">
+    <div class="mt-6 flex flex-wrap gap-3">
       <button type="button" class="btn-primary" onclick="print()">打印 / 存为 PDF</button>
       <a href="/resume.pdf" class="btn-outline">英文版 PDF ↓</a>
     </div>
   </section>
 
-  <!-- 简历正文：A4 宽度容器，打印态撑满 -->
-  <article class="resume-sheet mt-10 mb-[var(--spacing-sec)] rounded-[10px] border border-rule bg-white px-8 py-10 sm:px-12 print:rounded-none print:border-0">
+  <!-- 简历正文：A4 宽度容器，打印态去边框撑满、零上边距 -->
+  <article class="resume-sheet mt-10 mb-[var(--spacing-sec)] rounded-[10px] border border-rule bg-white px-8 py-10 sm:px-12 print:mt-0 print:mb-0 print:rounded-none print:border-0">
     <!-- 页眉：姓名 / 定位 / 联系 + 头像 -->
     <header class="flex items-start justify-between gap-6 border-b-2 border-ink pb-6">
       <div class="min-w-0">
@@ -114,18 +115,33 @@ const year = new Date().getFullYear();
   </article>
 
   <style>
-    /* A4 打印态：页边距交给 @page，简历容器去边框撑满、字号收紧保单页 */
+    /* A4 打印态：页边距交给 @page；简历容器去边框撑满。
+       实测（无头 Edge 打印 /resume）12.5px + 原间距会溢出第 2 页，
+       压缩为 11.5px + 收紧区块距/行高后单页收纳 */
     @media print {
       @page {
         size: A4;
-        margin: 14mm;
+        margin: 12mm;
       }
       .resume-sheet {
         max-width: none;
         padding: 0;
-        font-size: 12.5px;
+        font-size: 11.5px;
       }
-      /* 打印时不显示站内链接地址后缀（global.css 的规则只作用于 .prose-editorial，这里不继承） */
+      .resume-sheet section {
+        margin-top: 0.9rem;
+      }
+      .resume-sheet header {
+        padding-bottom: 0.7rem;
+      }
+      .resume-sheet footer {
+        margin-top: 1rem;
+        padding-top: 0.7rem;
+      }
+      .resume-sheet p,
+      .resume-sheet li {
+        line-height: 1.55;
+      }
     }
   </style>
 </Base>

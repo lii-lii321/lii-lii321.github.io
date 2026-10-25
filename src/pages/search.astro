@@ -43,6 +43,14 @@ const index: SearchItem[] = [
 ];
 
 const serialized = JSON.stringify(index);
+
+// 热门标签（构建时统计，top 8）：空查询时的起手入口，零运行时开销
+const tagCounts = new Map<string, number>();
+for (const item of index) for (const t of item.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+const hotTags = [...tagCounts.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 8)
+  .map(([t]) => t);
 ---
 
 <Base title="搜索" description="搜索全站的文章、项目与相册。">
@@ -65,6 +73,37 @@ const serialized = JSON.stringify(index);
 
     <p id="search-stats" class="meta mt-4 normal-case" aria-live="polite"></p>
     <ul id="search-results" class="mt-4 border-t border-rule"></ul>
+
+    <!-- 空查询起手区：最近搜索（localStorage，仅本机）+ 热门标签 -->
+    <div id="search-idle" class="mt-8 space-y-6">
+      <div id="idle-history" hidden>
+        <p class="meta">
+          最近搜索
+          <button
+            type="button"
+            id="history-clear"
+            class="ml-2 cursor-pointer font-mono text-[11px] text-ink-3 underline underline-offset-2 hover:text-accent"
+          >
+            清除
+          </button>
+        </p>
+        <ul id="history-chips" class="mt-3 flex flex-wrap gap-2"></ul>
+      </div>
+      <div>
+        <p class="meta">热门标签</p>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {
+            hotTags.map((t) => (
+              <li>
+                <button type="button" data-search-term={t} class="chip cursor-pointer hover:border-accent hover:text-accent">
+                  #{t}
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
 
     <template id="search-row">
       <li>
@@ -94,6 +133,64 @@ const serialized = JSON.stringify(index);
     const list = document.getElementById('search-results');
     const stats = document.getElementById('search-stats');
     const rowTpl = document.getElementById('search-row') as HTMLTemplateElement | null;
+    const idle = document.getElementById('search-idle');
+    const historyBox = document.getElementById('idle-history');
+    const historyList = document.getElementById('history-chips');
+
+    // 搜索历史：localStorage 最近 5 条（仅本机，无外传）；读失败按无历史处理
+    const HISTORY_KEY = 'search-history';
+    const readHistory = (): string[] => {
+      try {
+        const raw = localStorage.getItem(HISTORY_KEY);
+        const arr = raw ? (JSON.parse(raw) as unknown) : [];
+        return Array.isArray(arr) ? arr.filter((x): x is string => typeof x === 'string').slice(0, 5) : [];
+      } catch {
+        return [];
+      }
+    };
+    const writeHistory = (q: string) => {
+      const next = [q, ...readHistory().filter((x) => x !== q)].slice(0, 5);
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+      } catch {
+        /* 隐私模式等写入失败时静默放弃，不影响搜索 */
+      }
+    };
+
+    /** 空查询起手区：渲染历史 chips（textContent 防注入），无历史时隐藏该组 */
+    const renderIdle = () => {
+      if (!historyBox || !historyList) return;
+      const history = readHistory();
+      historyBox.hidden = history.length === 0;
+      historyList.innerHTML = '';
+      for (const term of history) {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset.searchTerm = term;
+        btn.className = 'chip cursor-pointer hover:border-accent hover:text-accent';
+        btn.textContent = term;
+        li.appendChild(btn);
+        historyList.appendChild(li);
+      }
+    };
+
+    // 历史 / 热门 chips 共用委托：点击 → 填入搜索框重搜（URL 同步由 render 完成）
+    idle?.addEventListener('click', (event) => {
+      const btn = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-search-term]') : null;
+      if (!btn || !input) return;
+      input.value = btn.dataset.searchTerm ?? '';
+      render();
+      input.focus();
+    });
+    document.getElementById('history-clear')?.addEventListener('click', () => {
+      try {
+        localStorage.removeItem(HISTORY_KEY);
+      } catch {
+        /* ignore */
+      }
+      renderIdle();
+    });
 
     const render = () => {
       if (!input || !list || !stats || !rowTpl) return;
@@ -103,6 +200,8 @@ const serialized = JSON.stringify(index);
       if (q.trim().length === 0) {
         list.innerHTML = '';
         stats.textContent = `索引 ${items.length} 条，等待输入。`;
+        if (idle) idle.hidden = false;
+        renderIdle();
         return;
       }
       const hits = items
@@ -112,6 +211,9 @@ const serialized = JSON.stringify(index);
         .slice(0, 12);
       stats.textContent = `「${q.trim()}」命中 ${hits.length} 条`;
       list.innerHTML = '';
+      if (idle) idle.hidden = true;
+      // 命中才进历史（避免误击键留下无意义词条）
+      if (hits.length > 0) writeHistory(q.trim());
 
       // 关键词高亮：先转义再替换（顺序约定见 utils），正则元字符与 HTML 特殊字符都处理
       const pattern = buildHighlightPattern(q);

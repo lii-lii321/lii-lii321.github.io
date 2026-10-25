@@ -16,6 +16,31 @@ import { siteConfig } from '../config/site';
       <a href="/travel" class="btn-outline">去看足迹地图</a>
       <a href="/blog" class="btn-outline">读点文章</a>
     </div>
+    <!-- 断链转搜索：从 URL 末段提取疑似关键词（有字母/数字且 ≥2 字符才提示），帮访客找回内容 -->
+    <p id="nf-hint" class="mt-8 hidden text-sm text-ink-2">
+      是不是想找：<a
+        id="nf-search"
+        class="chip !text-accent hover:!border-accent"
+        href="/search"
+      ></a>
+      <span class="meta ml-2 normal-case">（已按关键词预填站内搜索）</span>
+    </p>
+    <script>
+      const segments = location.pathname.split('/').filter(Boolean);
+      const last = segments[segments.length - 1] ?? '';
+      const term = decodeURIComponent(last)
+        .replace(/\.\w{1,5}$/, '') // 去文件扩展名（xxx.html）
+        .replace(/[-_+]+/g, ' ') // 连字符/下划线转空格（my-post → my post）
+        .replace(/^\d+$/, '') // 纯数字段（分页等）丢弃
+        .trim();
+      const hint = document.getElementById('nf-hint');
+      const link = document.getElementById('nf-search') as HTMLAnchorElement | null;
+      if (term.length >= 2 && hint && link) {
+        link.textContent = `「${term}」`;
+        link.href = `/search?q=${encodeURIComponent(term)}`;
+        hint.classList.remove('hidden');
+      }
+    </script>
     <p class="meta mt-12 normal-case">
       {siteConfig.name} · {siteConfig.location}
     </p>

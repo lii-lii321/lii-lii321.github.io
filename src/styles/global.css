@@ -434,9 +434,10 @@ a.tag-link:hover {
 
 /* ── A4 可打印排版（规格 §3「可打印排版」）────────────────────────── */
 @media print {
-  /* 隐藏交互设施：导航、页脚、返回顶部、灯箱、进度条、筛选 chips */
-  header,
-  footer,
+  /* 隐藏交互设施：站点导航/页脚（body 直接子级——简历页内部的 header/footer 不受影响）、
+     返回顶部、灯箱、进度条、筛选 chips */
+  body > header,
+  body > footer,
   #back-to-top,
   #read-progress,
   details,
@@ -445,9 +446,13 @@ a.tag-link:hover {
   nav[aria-label='上一本 / 下一本相册'] {
     display: none !important;
   }
-  /* 纸面本色、黑字、正文铺满 */
+  /* 纸面本色、黑字、正文铺满；清掉屏幕态的满屏拉伸（min-h-screen/flex-1 会把内容顶出第 2 页） */
   body {
     background: #fff;
+    min-height: 0 !important;
+  }
+  body > main {
+    display: block !important;
   }
   .wrap {
     max-width: none;
