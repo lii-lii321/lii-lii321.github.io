@@ -4,6 +4,10 @@ description: "家教中介的真实工作流活在微信聊天记录里。smart_
 pubDate: 2026-10-04
 category: "工程"
 tags: ["AI", "LLM", "数据建模"]
+cover: "/projects/smart-tutor/admin-batch-import-desktop.webp"
+coverAlt: "AI 批量导入界面：71 单一次识别"
+coverWidth: 1200
+coverHeight: 750
 featured: false
 draft: false
 ---

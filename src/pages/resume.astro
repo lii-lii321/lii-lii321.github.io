@@ -1,0 +1,131 @@
+---
+// 中文简历 /resume（屏幕可读 + A4 打印两态）。
+// 数据全部引用 site.ts / projects.json 真实事实，与站点其余页面同源——
+// 更新经历只改 site.ts，本页与英文 PDF（scripts/make-resume.mjs）各自取数。
+// 打印：Ctrl+P 即得 A4 版式（@media print 隐藏站头尾与本页工具条，global.css 已有基础）。
+import Base from '../layouts/Base.astro';
+import { siteConfig } from '../config/site';
+import projects from '../data/projects.json';
+
+const featuredProjects = [...projects].sort((a, b) => a.order - b.order);
+const year = new Date().getFullYear();
+---
+
+<Base title="简历" description={`${siteConfig.name}的中文简历：数据科学在读，全栈 / AI 应用开发者，开放实习与远程协作。`}>
+  <section class="pt-14">
+    <p class="eyebrow">Resume</p>
+    <h1 class="h1 mt-4">中文简历</h1>
+    <div class="mt-6 flex flex-wrap gap-3 print:hidden">
+      <button type="button" class="btn-primary" onclick="print()">打印 / 存为 PDF</button>
+      <a href="/resume.pdf" class="btn-outline">英文版 PDF ↓</a>
+    </div>
+  </section>
+
+  <!-- 简历正文：A4 宽度容器，打印态撑满 -->
+  <article class="resume-sheet mt-10 mb-[var(--spacing-sec)] rounded-[10px] border border-rule bg-white px-8 py-10 sm:px-12 print:rounded-none print:border-0">
+    <!-- 页眉：姓名 / 定位 / 联系 + 头像 -->
+    <header class="flex items-start justify-between gap-6 border-b-2 border-ink pb-6">
+      <div class="min-w-0">
+        <h2 class="font-serif text-3xl font-bold text-ink">{siteConfig.name}</h2>
+        <p class="mt-2 text-sm text-ink-2">{siteConfig.title} · {siteConfig.tagline}</p>
+        <p class="mt-2 font-mono text-xs text-ink-3">
+          成都 · {siteConfig.github.replace('https://', '')} · {siteConfig.email} · lii-lii321.github.io
+        </p>
+      </div>
+      <img
+        src="/portrait.jpg"
+        alt=""
+        width="96"
+        height="128"
+        class="w-24 shrink-0 rounded-[4px] border border-rule object-cover"
+      />
+    </header>
+
+    <!-- 教育 -->
+    <section class="mt-7">
+      <h3 class="meta border-b border-rule pb-1.5">教育背景</h3>
+      {siteConfig.education.map((e) => (
+        <div class="mt-3 flex flex-wrap items-baseline justify-between gap-x-4">
+          <p class="text-sm font-semibold text-ink">{e.school} · {e.what}</p>
+          <p class="meta normal-case">{e.period}</p>
+          <p class="w-full text-sm leading-relaxed text-ink-2">{e.note}</p>
+        </div>
+      ))}
+    </section>
+
+    <!-- 项目（siteConfig.timeline 与 projects.json 同源；用 timeline 的量化成果） -->
+    <section class="mt-7">
+      <h3 class="meta border-b border-rule pb-1.5">开源项目（全部可运行）</h3>
+      {siteConfig.timeline.map((t) => (
+        <div class="mt-4">
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+            <p class="text-sm font-semibold text-ink">{t.org} — {t.role}</p>
+            <p class="meta normal-case">{t.start} – {t.end}</p>
+          </div>
+          <p class="mt-1 text-sm leading-relaxed text-ink-2">{t.desc}</p>
+          <ul class="mt-1.5 space-y-1 text-sm text-ink-2">
+            {t.outcomes.map((o) => (
+              <li class="flex gap-2"><span class="text-accent" aria-hidden="true">·</span>{o}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <div class="mt-4">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+          <p class="text-sm font-semibold text-ink">Traveling 个人站 — 独立开发者</p>
+          <p class="meta normal-case">2026</p>
+        </div>
+        <ul class="mt-1.5 space-y-1 text-sm text-ink-2">
+          <li class="flex gap-2"><span class="text-accent" aria-hidden="true">·</span>592 张照片 / 11 本相册全管线自动化入库；首页 Lighthouse 100·100·100·100</li>
+          <li class="flex gap-2"><span class="text-accent" aria-hidden="true">·</span>归档 / 标签 / 全站搜索三大件（构建期索引 + 3KB 运行时），RSS 全文输出</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 技能 -->
+    <section class="mt-7">
+      <h3 class="meta border-b border-rule pb-1.5">技能</h3>
+      <dl class="mt-3 space-y-1.5">
+        {siteConfig.stack.map((s) => (
+          <div class="flex gap-4 text-sm">
+            <dt class="meta w-20 shrink-0 pt-0.5">{s.name}</dt>
+            <dd class="text-ink-2">{s.items.join(' / ')}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <!-- 精选文章 -->
+    <section class="mt-7">
+      <h3 class="meta border-b border-rule pb-1.5">精选文章（lii-lii321.github.io）</h3>
+      <ul class="mt-3 space-y-1 text-sm text-ink-2">
+        <li>· 把微信群变成结构化订单：smart_tutor 的 AI 解析管道</li>
+        <li>· 6700 张旅行照片的自动化入库：抽样、压缩与一条 HEIC 坑</li>
+        <li>· RAG 检索质量：从 bad case 到评测集</li>
+        <li>· 把个人站做到零客户端 JS：Astro Islands 实践</li>
+      </ul>
+    </section>
+
+    <!-- 页脚 STATUS -->
+    <footer class="mt-8 flex flex-wrap items-baseline justify-between gap-x-6 border-t-2 border-ink pt-4">
+      <p class="text-sm font-semibold text-accent">状态：开放实习与远程协作</p>
+      <p class="meta normal-case">更新于 {year}-10 · 完整细节见 lii-lii321.github.io</p>
+    </footer>
+  </article>
+
+  <style>
+    /* A4 打印态：页边距交给 @page，简历容器去边框撑满、字号收紧保单页 */
+    @media print {
+      @page {
+        size: A4;
+        margin: 14mm;
+      }
+      .resume-sheet {
+        max-width: none;
+        padding: 0;
+        font-size: 12.5px;
+      }
+      /* 打印时不显示站内链接地址后缀（global.css 的规则只作用于 .prose-editorial，这里不继承） */
+    }
+  </style>
+</Base>

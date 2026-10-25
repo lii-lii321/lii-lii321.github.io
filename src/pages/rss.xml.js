@@ -39,7 +39,8 @@ export async function GET(context) {
         categories: [post.data.category, ...post.data.tags],
         link: `/blog/${post.id}/`,
         content: absolute,
-        customData: `<media:content url="${new URL('/og-default.png', origin)}" medium="image" />`,
+        // 题图优先（各文章 frontmatter cover），无题图回退全站默认分享图
+        customData: `<media:content url="${new URL(post.data.cover ?? '/og-default.png', origin)}" medium="image" />`,
       };
     }),
   );

@@ -4,6 +4,10 @@ description: "「感觉不准」是 RAG 项目最贵的技术债。这篇讲我�
 pubDate: 2025-08-14
 category: "工程"
 tags: ["RAG", "检索", "评测"]
+cover: "/projects/math-tutor-rag/notebook.webp"
+coverAlt: "错题本界面：结构化解析与语义搜索"
+coverWidth: 1200
+coverHeight: 800
 featured: true
 draft: false
 ---

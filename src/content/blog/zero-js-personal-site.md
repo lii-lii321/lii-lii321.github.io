@@ -4,6 +4,10 @@ description: "重做个人站时我给自己立了一条规矩：能用服务端
 pubDate: 2025-10-02
 category: "架构"
 tags: ["Astro", "性能", "静态站"]
+cover: "/og-default.png"
+coverAlt: "站点分享图：数字带展示文章/项目/照片/相册数"
+coverWidth: 1200
+coverHeight: 630
 featured: false
 draft: false
 ---

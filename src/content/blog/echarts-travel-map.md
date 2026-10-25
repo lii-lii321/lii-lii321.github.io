@@ -4,6 +4,10 @@ description: "去过的地方在地图上点亮、照片地点变成光点、点
 pubDate: 2025-06-20
 category: "工程"
 tags: ["ECharts", "可视化", "GeoJSON"]
+cover: "/projects/travel-atlas/cover.webp"
+coverAlt: "足迹地图封面：可点亮的旅行地图"
+coverWidth: 1200
+coverHeight: 1600
 featured: false
 draft: false
 ---

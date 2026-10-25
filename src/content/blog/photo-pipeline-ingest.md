@@ -4,6 +4,10 @@ description: "原始图库 45.7GB、6746 张照片，把它们变成站上 11 �
 pubDate: 2026-10-03
 category: "工程"
 tags: ["sharp", "EXIF", "静态站"]
+cover: "/photos/shanxi-huashan/02.jpg"
+coverAlt: "华山相册照片，入库管线产物之一"
+coverWidth: 1600
+coverHeight: 1200
 featured: false
 draft: false
 ---

@@ -14,6 +14,11 @@ export interface PostEntry {
     updatedDate?: Date;
     category: '工程' | '架构' | '随笔' | '开源';
     tags: string[];
+    /** 题图（与 content.config.ts schema 对应）；缺省文章无题图 */
+    cover?: string;
+    coverAlt?: string;
+    coverWidth?: number;
+    coverHeight?: number;
     featured: boolean;
     draft: boolean;
   };
