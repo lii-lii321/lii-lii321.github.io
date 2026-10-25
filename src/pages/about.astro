@@ -38,6 +38,7 @@ const facts = [
       jobTitle: siteConfig.title,
       description: siteConfig.tagline,
       email: `mailto:${siteConfig.email}`,
+      image: new URL('/portrait.jpg', Astro.site ?? 'https://lii-lii321.github.io').toString(),
       url: new URL('/about', Astro.site ?? 'https://lii-lii321.github.io').toString(),
       sameAs: [siteConfig.github],
     })}
@@ -46,14 +47,17 @@ const facts = [
   <!-- ① 头部两栏：左头像 + 2×2 事实表；右定位 + 3 段自我介绍 + 2 按钮 -->
   <section class="grid gap-12 pt-14 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
     <div class="order-2 flex flex-col gap-8 lg:order-1">
-      <!-- 头像占位：3:4 竖版，替换 public/portrait.* 后改为 <img> -->
-      <div
-        class="flex aspect-[3/4] w-full max-w-[320px] items-center justify-center rounded-[4px] border border-rule bg-paper-2"
-        role="img"
-        aria-label="头像占位：请在 public/ 放入 portrait.jpg 并在此替换"
-      >
-        <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-3">Portrait</span>
-      </div>
+      {/* 头像：public/portrait.jpg（295×393，3:4 证件照）；/about 首屏 LCP 元素，eager + 高优先级 */}
+      <img
+        src="/portrait.jpg"
+        alt="李云强的证件照"
+        width="295"
+        height="393"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        class="aspect-[3/4] w-full max-w-[320px] rounded-[4px] border border-rule object-cover"
+      />
       <dl class="grid grid-cols-2 gap-x-6 gap-y-5">
         {
           facts.map((f) => (
