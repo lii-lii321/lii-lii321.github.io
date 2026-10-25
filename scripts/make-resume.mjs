@@ -3,7 +3,7 @@
  * 内容为真实项目与经历的英文快照（base-14 字体不支持中文嵌入；
  * 中文正式简历请用 Word / 飞书等排版导出后直接覆盖 public/resume.pdf）。
  * 页眉右侧嵌入 public/portrait.jpg 证件照（DCTDecode 直嵌 JPEG）。
- * 数字与 src/data/projects.json 同源核对（287 测试 / 6 LLM / 71 单 / 592 张）。
+ * 数字与 src/data/projects.json 同源核对（287 测试 / 6 LLM / 71 单 / 532 张）。
  */
 import { writeFileSync, readFileSync } from 'node:fs';
 
@@ -87,7 +87,7 @@ bullet('100% reproducible: raw p-values archived with reproduction scripts; Stre
 
 y -= 7;
 text('Traveling (this website) - Zero-JS personal site  (2026)', { font: 'F1', size: 9.8 });
-bullet('592 photos / 11 albums auto-ingested from a 6,700+ photo library; 0 KB client-side JS on the homepage.');
+bullet('532 photos / 10 albums auto-ingested from a 6,700+ photo library; 0 KB client-side JS on the homepage.');
 bullet('Lighthouse 100/100/100/100 on the homepage; hover prefetch site-wide.');
 
 // ── SKILLS ───────────────────────────────────────────────────

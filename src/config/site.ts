@@ -9,7 +9,7 @@ import projectsData from "../data/projects.json";
 import type { TravelData, Project } from "../types";
 
 /** 数字带 / 文案与数据同源的依据：照片数、相册数、省份/国家数全部来自管线产物，
- *  构建 时计算，杜绝「站点数字与事实脱节」（此前手写 340 张，实际已 592 张）。 */
+   *  构建时计算，杜绝「站点数字与事实脱节」（此前手写 340 张，实际已 532 张）。 */
 const travelStats = (travelsData as TravelData).stats;
 const projectCount = (projectsData as Project[]).length;
 
@@ -39,7 +39,7 @@ export const siteConfig = {
   bio: [
     "西南石油大学数据科学与大数据技术专业在读，全栈与 AI 应用开发者。做过家教订单匹配平台 smart_tutor、基于视觉大模型与 RAG 的智能错题本 Math_Tutor_RAG、从一份 CSV 自动产出可复现研究报告的 research-lab——全部开源在 GitHub 上，点开就能跑。",
     "我习惯把工程实践沉淀成文章：RAG 检索质量怎么做评测、个人站怎么做到零客户端 JS、六千多张旅行照片怎么自动变成相册和地图。这个站本身也是一次实践——首页零客户端 JS，照片丢进文件夹就能自动长出足迹。",
-    "不写代码的时候在旅行。去过的地方整理成了 11 本相册，钉在足迹地图的 8 个省级地区上——那也是这个站最初的起点。",
+    "不写代码的时候在旅行。去过的地方整理成了 10 本相册，钉在足迹地图的 8 个省级地区上——那也是这个站最初的起点。",
   ],
   /** 所在地（西南石油大学位于成都） */
   location: "中国 · 成都",
@@ -120,7 +120,7 @@ export const siteConfig = {
 
   /** Now（首页与 /now 同源展示；只写可核实的此刻） */
   now: [
-    { key: "Building", text: "个人站 Traveling 长跑：46 页 / 592 张照片上线，首页 Lighthouse 100·100·100·100，继续打磨体验" },
+    { key: "Building", text: "个人站 Traveling 长跑：46 页 / 532 张照片上线，首页 Lighthouse 100·100·100·100，继续打磨体验" },
     { key: "Learning", text: "RAG 检索质量评测：已从「感觉不准」走到可复现指标并写成文章，方法正回流到 Math_Tutor_RAG" },
     { key: "Reading", text: "《Designing Data-Intensive Applications》第二遍" },
     { key: "Next", text: "青城后山 HEIC 相册补录（照片重导出后走 ingest 管线入库）" },
