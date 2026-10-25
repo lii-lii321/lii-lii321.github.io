@@ -51,7 +51,7 @@ export const siteConfig = {
   githubUser: "lii-lii321",
   /** 联系邮箱（真实） */
   email: "3028410005@qq.com",
-  /** 简历 PDF：放在 public/ 下（public/resume.pdf，⚠️ 需要你自己提供） */
+  /** 简历 PDF：public/resume.pdf（scripts/make-resume.mjs 生成——真实内容 + 证件照，英文版） */
   resumeUrl: "/resume.pdf",
   /** 站点最后更新日期（构建时从 git 派生，git 不可用时回退兜底值） */
   updatedAt: deriveUpdatedAt(),
@@ -118,11 +118,12 @@ export const siteConfig = {
     },
   ],
 
-  /** Now（首页 3 行摘要） */
+  /** Now（首页与 /now 同源展示；只写可核实的此刻） */
   now: [
-    { key: "Building", text: "迭代 Math_Tutor_RAG：掌握度引擎与 Agent 工具编排" },
+    { key: "Building", text: "个人站 Traveling 长跑：46 页 / 592 张照片上线，首页 Lighthouse 100·100·100·100，继续打磨体验" },
+    { key: "Learning", text: "RAG 检索质量评测：已从「感觉不准」走到可复现指标并写成文章，方法正回流到 Math_Tutor_RAG" },
     { key: "Reading", text: "《Designing Data-Intensive Applications》第二遍" },
-    { key: "Learning", text: "RAG 检索质量评测：把「感觉不准」变成可复现指标" },
+    { key: "Next", text: "青城后山 HEIC 相册补录（照片重导出后走 ingest 管线入库）" },
   ],
 } as const;
 

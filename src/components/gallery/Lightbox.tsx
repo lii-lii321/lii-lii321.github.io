@@ -189,6 +189,16 @@ export default function Lightbox({ photos, albumTitle }: Props) {
             )}
           </p>
         )}
+        {/* 原图找回：灯箱默认显示显示档（full），这里给未压缩原图的下载入口（full 缺失时当前显示的就是原图） */}
+        <a
+          href={photo.src}
+          download
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white/85 transition-colors hover:border-white hover:text-white"
+        >
+          原图 ↗
+        </a>
         <button
           type="button"
           onClick={close}

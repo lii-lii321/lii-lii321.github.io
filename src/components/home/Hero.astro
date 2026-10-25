@@ -65,7 +65,7 @@ const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
       hover 回正 + 纸感投影，transform-only 动画 */}
   {
     trip && cover && (
-      <figure class="group relative mx-auto w-full max-w-[340px] rotate-[2deg] rounded-[4px] border border-rule bg-white p-3 pb-12 transition-transform duration-300 ease-out hover:rotate-0 lg:max-w-none">
+      <figure class="group relative mx-auto w-full max-w-[340px] rotate-[2deg] rounded-[4px] border border-rule bg-white p-3 pb-12 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out hover:rotate-0 lg:max-w-none">
         <img
           src={cover.thumb}
           srcset={`${cover.thumb} 640w, ${trip.cover} ${cover.width}w`}

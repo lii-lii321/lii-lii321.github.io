@@ -191,6 +191,8 @@ html {
   .nav-panel {
     animation: none;
   }
+  /* JS 驱动的平滑滚动（返回顶部）在 Base.astro 里按同一媒体查询降级；
+   * 拍立得等 hover 位移过渡用 Tailwind motion-safe: 变体只在允许动效时挂 */
 }
 
 /* ── 文章正文排版（规格 §8.5，全部元素都要落到样式） ─────────────────── */

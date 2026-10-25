@@ -80,6 +80,10 @@ const homeJsonLd =
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#FBFAF7" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" type="application/rss+xml" title={fullTitle} href={new URL('/rss.xml', site)} />
     <!-- OG / Twitter card -->
@@ -353,7 +357,13 @@ const homeJsonLd =
           },
           { passive: true },
         );
-        btn.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+        // 系统开启「减少动态」时降级为瞬时跳转（CSS 动画见 global.css 的 reduced-motion 块）
+        btn.addEventListener('click', () =>
+          scrollTo({
+            top: 0,
+            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          }),
+        );
         update();
       }
     </script>
