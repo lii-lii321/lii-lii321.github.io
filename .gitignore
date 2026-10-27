@@ -21,5 +21,6 @@ build.log
 # 编辑器/系统
 Thumbs.db
 .DS_Store
-.workbuddy/  
-".tmp-swap/"  
+.workbuddy/
+# workflow 子代理的临时工作目录
+.tmp-swap/
