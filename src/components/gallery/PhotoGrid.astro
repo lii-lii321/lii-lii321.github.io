@@ -92,10 +92,15 @@ const hasScenes = groups.length > 1;
 <script>
   // 照片墙增强：① 末行 grow 归零（残行不拉伸成巨图）；② 超过 24 张时折叠 + 「查看更多」。
   // 无 JS 时全部照片直接展示（渐进增强）。
-  // 折叠计划与计数文案抽在 ./utils（纯函数，tests/gallery-utils.test.ts 覆盖）
+  // 折叠计划与计数文案抽在 ./utils（纯函数，tests/gallery-utils.test.ts 覆盖）。
+  // View Transitions 下模块脚本只执行一次：全局监听注册在顶层，每页数据存 state Map，
+  // astro:page-load 时对新 DOM 重建（先 clear 防止旧页面网格的引用滞留）。
   import { planFold, sectionCountText } from './utils';
 
   const LIMIT = 24;
+
+  /** 每个网格的增强能力：末行归零重排、展开全部、「查看更多」容器（null = 未折叠） */
+  const state = new Map<HTMLElement, { relayout(): void; expandAll(): void; more: HTMLElement | null }>();
 
   function setupGrid(grid: HTMLElement) {
     const uls = Array.from(grid.querySelectorAll<HTMLUListElement>('.jrow'));
@@ -157,19 +162,6 @@ const hasScenes = groups.length > 1;
       syncSections();
     }
 
-    // 子景点锚点 chips：目标分区可能初始整组折叠隐藏，点击先展开、浏览器随后照常完成锚点跳转
-    document.addEventListener('click', (event) => {
-      const anchor =
-        event.target instanceof Element
-          ? event.target.closest<HTMLAnchorElement>('a[href^="#scene-"]')
-          : null;
-      if (!anchor) return;
-      const target = document.getElementById(anchor.hash.slice(1));
-      if (!target || !grid.contains(target)) return;
-      if (!more || more.classList.contains('hidden')) return; // 未处于折叠态，无需展开
-      expandAll();
-    });
-
     // ① 末行 grow 归零：按 offsetTop 分行，仅最后一行还原为自然宽度；
     // 折叠中的条目 display:none、offsetTop 恒为 0，需跳过，否则会被误判成末行
     function relayout() {
@@ -197,19 +189,47 @@ const hasScenes = groups.length > 1;
     }
 
     relayout();
-    let timer: ReturnType<typeof setTimeout>;
-    window.addEventListener('resize', () => {
-      clearTimeout(timer);
-      timer = setTimeout(relayout, 120);
-    });
-    window.addEventListener('load', relayout);
+    state.set(grid, { relayout, expandAll, more: more ?? null });
   }
 
-  document.querySelectorAll<HTMLElement>('.photogrid').forEach(setupGrid);
+  // 子景点锚点 chips 委托（顶层一次注册）：目标分区折叠隐藏时先展开再跳转
+  document.addEventListener('click', (event) => {
+    const anchor =
+      event.target instanceof Element
+        ? event.target.closest<HTMLAnchorElement>('a[href^="#scene-"]')
+        : null;
+    if (!anchor) return;
+    const target = document.getElementById(anchor.hash.slice(1));
+    if (!target) return;
+    for (const [grid, s] of state) {
+      if (!grid.contains(target)) continue;
+      if (!s.more || s.more.classList.contains('hidden')) return; // 未处于折叠态，无需展开
+      s.expandAll();
+      return;
+    }
+  });
+
+  // 窗口尺寸变化 / 页面资源就绪后的重排（顶层一次注册，遍历当前页网格）
+  let resizeTimer: ReturnType<typeof setTimeout>;
+  const relayoutAll = () => {
+    for (const s of state.values()) s.relayout();
+  };
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(relayoutAll, 120);
+  });
+  // View Transitions 换页后 window load 不会再触发——用 page-load + 延时兜底图片加载后的布局稳定
+  window.addEventListener('load', relayoutAll);
+  document.addEventListener('astro:page-load', () => {
+    state.clear();
+    document.querySelectorAll<HTMLElement>('.photogrid').forEach(setupGrid);
+    setTimeout(relayoutAll, 300);
+  });
 </script>
 
 <script>
-  // 事件委托：点击任意网格项，向 Lightbox 岛广播打开事件（带打开下标）
+  // 事件委托（顶层一次注册）：点击任意网格项，向 Lightbox 岛广播打开事件（带打开下标）。
+  // View Transitions 换页后新 DOM 的 data-gallery-index 自动被本委托覆盖，无需重绑。
   document.addEventListener('click', (event) => {
     const target =
       event.target instanceof Element

@@ -219,38 +219,42 @@ const related = posts
     >
     </div>
     <script>
-      const bar = document.getElementById('read-progress');
-      if (bar) {
-        let ticking = false;
-        const update = () => {
-          ticking = false;
-          const doc = document.documentElement;
-          const max = doc.scrollHeight - doc.clientHeight;
-          const ratio = max > 0 ? Math.min(1, doc.scrollTop / max) : 0;
-          bar.style.transform = `scaleX(${ratio})`;
-        };
-        addEventListener(
-          'scroll',
-          () => {
-            if (!ticking) {
-              ticking = true;
-              requestAnimationFrame(update);
-            }
-          },
-          { passive: true },
-        );
-        update();
-      }
+      // 阅读进度条：滚动监听全局只挂一次，进度条元素按页重查（View Transitions 换页后 DOM 是新的）
+      let progressTicking = false;
+      const updateProgress = () => {
+        progressTicking = false;
+        const bar = document.getElementById('read-progress');
+        if (!bar) return;
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - doc.clientHeight;
+        const ratio = max > 0 ? Math.min(1, doc.scrollTop / max) : 0;
+        bar.style.transform = `scaleX(${ratio})`;
+      };
+      addEventListener(
+        'scroll',
+        () => {
+          if (!progressTicking) {
+            progressTicking = true;
+            requestAnimationFrame(updateProgress);
+          }
+        },
+        { passive: true },
+      );
+      document.addEventListener('astro:page-load', updateProgress);
     </script>
     <script>
-      // 给每个代码块注入复制按钮（pre 已是 relative 定位，按钮浮在工具条上）
-      document.querySelectorAll('.prose-editorial pre').forEach((pre) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.dataset.copyCode = '';
-        btn.textContent = '复制';
-        btn.className = 'code-copy';
-        pre.appendChild(btn);
+      // 给每个代码块注入复制按钮（pre 已是 relative 定位，按钮浮在工具条上）。
+      // astro:page-load 重入（View Transitions 换页）时先查重，防止重复注入
+      document.addEventListener('astro:page-load', () => {
+        document.querySelectorAll('.prose-editorial pre').forEach((pre) => {
+          if (pre.querySelector('.code-copy')) return;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.copyCode = '';
+          btn.textContent = '复制';
+          btn.className = 'code-copy';
+          pre.appendChild(btn);
+        });
       });
     </script>
     <script>

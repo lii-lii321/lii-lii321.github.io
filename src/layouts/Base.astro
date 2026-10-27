@@ -4,6 +4,7 @@
 // 页脚 4 列 + 底栏（版权 / 构建说明 / 最后更新 / RSS）。
 // 移动端（≤768px，Tailwind md 断点）链接收进汉堡下滑面板。
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import { siteConfig } from '../config/site';
 
 interface Props {
@@ -74,6 +75,7 @@ const homeJsonLd =
 <!doctype html>
 <html lang="zh-CN">
   <head>
+    <ClientRouter />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
@@ -299,17 +301,19 @@ const homeJsonLd =
     </footer>
 
     <script>
-      // 汉堡菜单：≤900px 时展开 / 收起下滑面板
-      const toggle = document.getElementById('nav-toggle');
-      const panel = document.getElementById('nav-panel');
-      if (toggle && panel) {
+      // 汉堡菜单：≤900px 时展开 / 收起下滑面板。
+      // View Transitions 下模块脚本只执行一次：元素绑定放进 astro:page-load 对每次换页的新 DOM 重做
+      document.addEventListener('astro:page-load', () => {
+        const toggle = document.getElementById('nav-toggle');
+        const panel = document.getElementById('nav-panel');
+        if (!toggle || !panel) return;
         toggle.addEventListener('click', () => {
           const open = panel.hidden;
           panel.hidden = !open;
           toggle.setAttribute('aria-expanded', String(open));
           toggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
         });
-      }
+      });
     </script>
     <!-- 返回顶部：滚动超过一屏后浮现 -->
     <button
@@ -339,24 +343,27 @@ const homeJsonLd =
     </script>
 
     <script>
-      const btn = document.getElementById('back-to-top');
-      if (btn) {
-        let ticking = false;
-        const update = () => {
-          ticking = false;
-          const show = document.documentElement.scrollTop > window.innerHeight;
-          btn.style.display = show ? 'flex' : 'none';
-        };
-        addEventListener(
-          'scroll',
-          () => {
-            if (!ticking) {
-              ticking = true;
-              requestAnimationFrame(update);
-            }
-          },
-          { passive: true },
-        );
+      // 返回顶部：滚动超过一屏后浮现。滚动监听全局只挂一次（内部按页重查按钮），按钮点击按页重绑
+      let topTicking = false;
+      const updateTopBtn = () => {
+        topTicking = false;
+        const btn = document.getElementById('back-to-top');
+        if (!btn) return;
+        btn.style.display = document.documentElement.scrollTop > window.innerHeight ? 'flex' : 'none';
+      };
+      addEventListener(
+        'scroll',
+        () => {
+          if (!topTicking) {
+            topTicking = true;
+            requestAnimationFrame(updateTopBtn);
+          }
+        },
+        { passive: true },
+      );
+      document.addEventListener('astro:page-load', () => {
+        const btn = document.getElementById('back-to-top');
+        if (!btn) return;
         // 系统开启「减少动态」时降级为瞬时跳转（CSS 动画见 global.css 的 reduced-motion 块）
         btn.addEventListener('click', () =>
           scrollTo({
@@ -364,8 +371,28 @@ const homeJsonLd =
             behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
           }),
         );
-        update();
-      }
+        updateTopBtn();
+      });
+    </script>
+
+    <script>
+      // 滚动进场：IO 观察 data-reveal 元素，进入视口加 .revealed（样式在 global.css）。
+      // 隐藏态样式挂在 html.js-reveal 作用域下——无 JS 时内容直接可见，reduced-motion 时媒体查询豁免
+      document.documentElement.classList.add('js-reveal');
+      const revealIo = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              revealIo.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.08 },
+      );
+      document.addEventListener('astro:page-load', () => {
+        document.querySelectorAll('[data-reveal]:not(.revealed)').forEach((el) => revealIo.observe(el));
+      });
     </script>
   </body>
 </html>

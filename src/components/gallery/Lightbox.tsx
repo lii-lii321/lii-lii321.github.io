@@ -155,7 +155,7 @@ export default function Lightbox({ photos, albumTitle }: Props) {
     <div
       ref={dialogRef}
       tabIndex={-1}
-      className="fixed inset-0 z-[100] flex flex-col bg-night/95 backdrop-blur-sm"
+      className="lb-shell fixed inset-0 z-[100] flex flex-col bg-night/95 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label={`浏览照片：${albumTitle}`}

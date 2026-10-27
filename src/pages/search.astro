@@ -125,17 +125,10 @@ const hotTags = [...tagCounts.entries()]
 
   <script>
     // 加权匹配与关键词高亮的纯函数在 ../components/search/utils
-    // （tests/search-utils.test.ts 覆盖，含「先转义再替换」的安全顺序约定）
+    // （tests/search-utils.test.ts 覆盖，含「先转义再替换」的安全顺序约定）。
+    // View Transitions 下模块脚本只执行一次：纯 localStorage 逻辑留在顶层，DOM 绑定全部
+    // 放进 astro:page-load，对每次换页的新输入框 / 结果列表重新接管
     import { score, buildHighlightPattern, highlight, type SearchItem } from '../components/search/utils';
-
-    const items: SearchItem[] = JSON.parse(document.getElementById('search-index')?.textContent ?? '[]');
-    const input = document.getElementById('search-input') as HTMLInputElement | null;
-    const list = document.getElementById('search-results');
-    const stats = document.getElementById('search-stats');
-    const rowTpl = document.getElementById('search-row') as HTMLTemplateElement | null;
-    const idle = document.getElementById('search-idle');
-    const historyBox = document.getElementById('idle-history');
-    const historyList = document.getElementById('history-chips');
 
     // 搜索历史：localStorage 最近 5 条（仅本机，无外传）；读失败按无历史处理
     const HISTORY_KEY = 'search-history';
@@ -157,85 +150,96 @@ const hotTags = [...tagCounts.entries()]
       }
     };
 
-    /** 空查询起手区：渲染历史 chips（textContent 防注入），无历史时隐藏该组 */
-    const renderIdle = () => {
-      if (!historyBox || !historyList) return;
-      const history = readHistory();
-      historyBox.hidden = history.length === 0;
-      historyList.innerHTML = '';
-      for (const term of history) {
-        const li = document.createElement('li');
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.dataset.searchTerm = term;
-        btn.className = 'chip cursor-pointer hover:border-accent hover:text-accent';
-        btn.textContent = term;
-        li.appendChild(btn);
-        historyList.appendChild(li);
-      }
-    };
+    document.addEventListener('astro:page-load', () => {
+      const items: SearchItem[] = JSON.parse(document.getElementById('search-index')?.textContent ?? '[]');
+      const input = document.getElementById('search-input') as HTMLInputElement | null;
+      const list = document.getElementById('search-results');
+      const stats = document.getElementById('search-stats');
+      const rowTpl = document.getElementById('search-row') as HTMLTemplateElement | null;
+      const idle = document.getElementById('search-idle');
+      const historyBox = document.getElementById('idle-history');
+      const historyList = document.getElementById('history-chips');
 
-    // 历史 / 热门 chips 共用委托：点击 → 填入搜索框重搜（URL 同步由 render 完成）
-    idle?.addEventListener('click', (event) => {
-      const btn = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-search-term]') : null;
-      if (!btn || !input) return;
-      input.value = btn.dataset.searchTerm ?? '';
-      render();
-      input.focus();
-    });
-    document.getElementById('history-clear')?.addEventListener('click', () => {
-      try {
-        localStorage.removeItem(HISTORY_KEY);
-      } catch {
-        /* ignore */
-      }
-      renderIdle();
-    });
+      /** 空查询起手区：渲染历史 chips（textContent 防注入），无历史时隐藏该组 */
+      const renderIdle = () => {
+        if (!historyBox || !historyList) return;
+        const history = readHistory();
+        historyBox.hidden = history.length === 0;
+        historyList.innerHTML = '';
+        for (const term of history) {
+          const li = document.createElement('li');
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.searchTerm = term;
+          btn.className = 'chip cursor-pointer hover:border-accent hover:text-accent';
+          btn.textContent = term;
+          li.appendChild(btn);
+          historyList.appendChild(li);
+        }
+      };
 
-    const render = () => {
-      if (!input || !list || !stats || !rowTpl) return;
-      const q = input.value;
-      // URL 同步：搜索词写进地址栏（可分享、可回退）
-      history.replaceState(null, '', q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : '/search');
-      if (q.trim().length === 0) {
-        list.innerHTML = '';
-        stats.textContent = `索引 ${items.length} 条，等待输入。`;
-        if (idle) idle.hidden = false;
+      // 历史 / 热门 chips 共用委托：点击 → 填入搜索框重搜（URL 同步由 render 完成）
+      idle?.addEventListener('click', (event) => {
+        const btn = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-search-term]') : null;
+        if (!btn || !input) return;
+        input.value = btn.dataset.searchTerm ?? '';
+        render();
+        input.focus();
+      });
+      document.getElementById('history-clear')?.addEventListener('click', () => {
+        try {
+          localStorage.removeItem(HISTORY_KEY);
+        } catch {
+          /* ignore */
+        }
         renderIdle();
-        return;
+      });
+
+      const render = () => {
+        if (!input || !list || !stats || !rowTpl) return;
+        const q = input.value;
+        // URL 同步：搜索词写进地址栏（可分享、可回退）
+        history.replaceState(null, '', q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : '/search');
+        if (q.trim().length === 0) {
+          list.innerHTML = '';
+          stats.textContent = `索引 ${items.length} 条，等待输入。`;
+          if (idle) idle.hidden = false;
+          renderIdle();
+          return;
+        }
+        const hits = items
+          .map((item) => ({ item, s: score(item, q) }))
+          .filter((x) => x.s > 0)
+          .sort((a, b) => b.s - a.s)
+          .slice(0, 12);
+        stats.textContent = `「${q.trim()}」命中 ${hits.length} 条`;
+        list.innerHTML = '';
+        if (idle) idle.hidden = true;
+        // 命中才进历史（避免误击键留下无意义词条）
+        if (hits.length > 0) writeHistory(q.trim());
+
+        // 关键词高亮：先转义再替换（顺序约定见 utils），正则元字符与 HTML 特殊字符都处理
+        const pattern = buildHighlightPattern(q);
+
+        for (const { item } of hits) {
+          const node = rowTpl.content.cloneNode(true) as DocumentFragment;
+          const row = node.querySelector('[data-row]') as HTMLAnchorElement;
+          row.href = item.url;
+          (node.querySelector('[data-type]') as HTMLElement).textContent = item.type;
+          (node.querySelector('[data-title]') as HTMLElement).innerHTML = highlight(item.title, pattern);
+          (node.querySelector('[data-desc]') as HTMLElement).innerHTML = highlight(item.desc, pattern);
+          (node.querySelector('[data-meta]') as HTMLElement).textContent = item.meta;
+          list.appendChild(node);
+        }
+      };
+
+      input?.addEventListener('input', render);
+      // 支持 /search?q=关键词 深链（相册标签等入口会跳转过来）
+      const initial = new URLSearchParams(location.search).get('q');
+      if (initial && input) {
+        input.value = initial;
       }
-      const hits = items
-        .map((item) => ({ item, s: score(item, q) }))
-        .filter((x) => x.s > 0)
-        .sort((a, b) => b.s - a.s)
-        .slice(0, 12);
-      stats.textContent = `「${q.trim()}」命中 ${hits.length} 条`;
-      list.innerHTML = '';
-      if (idle) idle.hidden = true;
-      // 命中才进历史（避免误击键留下无意义词条）
-      if (hits.length > 0) writeHistory(q.trim());
-
-      // 关键词高亮：先转义再替换（顺序约定见 utils），正则元字符与 HTML 特殊字符都处理
-      const pattern = buildHighlightPattern(q);
-
-      for (const { item } of hits) {
-        const node = rowTpl.content.cloneNode(true) as DocumentFragment;
-        const row = node.querySelector('[data-row]') as HTMLAnchorElement;
-        row.href = item.url;
-        (node.querySelector('[data-type]') as HTMLElement).textContent = item.type;
-        (node.querySelector('[data-title]') as HTMLElement).innerHTML = highlight(item.title, pattern);
-        (node.querySelector('[data-desc]') as HTMLElement).innerHTML = highlight(item.desc, pattern);
-        (node.querySelector('[data-meta]') as HTMLElement).textContent = item.meta;
-        list.appendChild(node);
-      }
-    };
-
-    input?.addEventListener('input', render);
-    // 支持 /search?q=关键词 深链（相册标签等入口会跳转过来）
-    const initial = new URLSearchParams(location.search).get('q');
-    if (initial && input) {
-      input.value = initial;
-    }
-    render();
+      render();
+    });
   </script>
 </Base>

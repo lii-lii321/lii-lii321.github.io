@@ -183,6 +183,52 @@ html {
   }
 }
 
+/* 滚动进场：隐藏态挂在 html.js-reveal 作用域下（Base 脚本添加）——无 JS 时内容直接可见；
+ * 入视口后由 IntersectionObserver 加 .revealed 过渡显现，reduced-motion 由下方媒体查询豁免 */
+@media (prefers-reduced-motion: no-preference) {
+  html.js-reveal [data-reveal]:not(.revealed) {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  html.js-reveal [data-reveal] {
+    transition:
+      opacity 0.55s ease,
+      transform 0.55s ease;
+  }
+  html.js-reveal [data-reveal].revealed {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 灯箱进场：遮罩淡入，图片按 key 重挂载所以每次切换都轻缩放入场 */
+@media (prefers-reduced-motion: no-preference) {
+  .lb-shell {
+    animation: lb-in 0.2s ease-out;
+  }
+  .lb-shell img {
+    animation: lb-img-in 0.26s ease-out;
+  }
+}
+@keyframes lb-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes lb-img-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
