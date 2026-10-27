@@ -22,3 +22,4 @@ build.log
 Thumbs.db
 .DS_Store
 .workbuddy/  
+".tmp-swap/"  
