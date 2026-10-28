@@ -3,7 +3,7 @@
  * 内容为真实项目与经历的英文快照（base-14 字体不支持中文嵌入；
  * 中文正式简历请用 Word / 飞书等排版导出后直接覆盖 public/resume.pdf）。
  * 页眉右侧嵌入 public/portrait.jpg 证件照（DCTDecode 直嵌 JPEG）。
- * 数字与 src/data/projects.json 同源核对（287 测试 / 6 LLM / 71 单 / 532 张）。
+ * 数字与 src/data/projects.json 同源核对（464+ 测试 / 6 LLM / 71 单 / 532 张）。
  */
 import { writeFileSync, readFileSync } from 'node:fs';
 
@@ -72,7 +72,7 @@ section('Open-source Projects (all live and runnable)');
 
 text('Math_Tutor_RAG - Visual-LLM + RAG mistake-notebook  (2025 - present)', { font: 'F1', size: 9.8 });
 text('Photo-to-question capture -> structured parsing -> vector archive -> SM-2 spaced review.');
-bullet('287 automated tests (pytest, CI green); 6 pluggable LLM providers; 10+ feature modules.');
+bullet('464+ automated tests (pytest, CI green); 6 pluggable LLM providers; 10+ feature modules.');
 
 y -= 7;
 text('smart_tutor - Multi-tenant tutoring order matching platform  (2025 - 2026)', { font: 'F1', size: 9.8 });

@@ -16,6 +16,11 @@ draft: false
 
 ## 管道的形状：识别是机器的，入库是人的
 
+<figure>
+  <img src="/projects/smart-tutor/admin-batch-import-desktop.webp" alt="批量导入的校对确认页：AI 一次识别出 71 条订单，逐条可编辑后再确认入库" width="1200" height="750" loading="lazy" decoding="async" />
+  <figcaption>批量导入的校对确认页：AI 一次识别出 71 条订单，逐条可编辑后再确认入库</figcaption>
+</figure>
+
 设计上第一原则就定了：**AI 负责识别，人负责确认**。中介把整段微信聊天记录原样粘贴进来，解析管道一次识别出全部订单——真实环境里实测过一次 71 单——然后进入逐条校对界面，确认无误才入库。
 
 ```text
@@ -38,6 +43,11 @@ draft: false
 识别只是第一步。「初二」「8 年级」「八年级」要在入库时收敛到同一个学期编码，「天府新区」「华阳」要归到同一个区域——否则地图找单和推荐排序的召回永远差一口气。归一化字典是数据建模的一部分，跟着业务一起长，而不是散落在 prompt 里。
 
 ## 和订单状态机的衔接
+
+<figure>
+  <img src="/projects/smart-tutor/admin-financial-desktop.webp" alt="财务流水页：定金、尾款、退款分账汇总，流水明细逐条关联订单号与登记人" width="1200" height="750" loading="lazy" decoding="async" />
+  <figcaption>财务流水页：定金、尾款、退款分账汇总，流水明细逐条关联订单号与登记人</figcaption>
+</figure>
 
 识别入库的订单，接下来走进的是一条完整的状态机：中介发布 → 教员投递 → 试课 → 定金 → 尾款，每一笔钱对应一条财务流水。解析管道保证了「进来的数据是干净的」，状态机保证了「流转的数据是可审计的」——两端合起来，中介的生意才第一次有了完整的数字账本。
 

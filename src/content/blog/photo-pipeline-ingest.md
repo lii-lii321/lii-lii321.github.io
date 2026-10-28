@@ -40,6 +40,11 @@ draft: false
 
 ## 抽样：均匀取样而不是随机
 
+<figure>
+  <img src="/photos/yunnan/thumbs/04.webp" alt="均匀抽样从 2833 张云南原图中等距取出的一张成品：丽江古城夜市，花丛间立着「2025」灯饰" width="1200" height="1600" loading="lazy" decoding="async" />
+  <figcaption>均匀抽样从 2833 张云南原图中等距取出的一张成品：丽江古城夜市，花丛间立着「2025」灯饰</figcaption>
+</figure>
+
 2833 张的云南怎么选出 60 张？随机取样会错过景点分布——照片在文件夹里天然按子文件夹（景点）聚簇，**均匀取样**天然尊重这个分布：
 
 ```js
@@ -77,6 +82,11 @@ sharp(src)
 </div>
 
 ## 结果
+
+<figure>
+  <img src="/photos/shanxi-huashan/thumbs/03.webp" alt="管线成品一例：华山相册中的景区石板步道与上行的游人，压缩至 1600px / q80 后上站的照片" width="1200" height="1600" loading="lazy" decoding="async" />
+  <figcaption>管线成品一例：华山相册中的景区石板步道与上行的游人，压缩至 1600px / q80 后上站的照片</figcaption>
+</figure>
 
 | 环节 | 数字 |
 |---|---|

@@ -15,10 +15,19 @@ interface Props {
 const { trip } = Astro.props;
 const cover = trip ? getCoverPhoto(trip) : null;
 
+// 拍立得是首屏视觉锚点（LCP 元素）：把 640w 缩略图预加载进 head，抢在 CSS 解析前开始取图。
+// Astro 会把组件内的 link 提升进 <head>；srcset 主选档是 640w 缩略图（与 img 的 sizes 匹配）
+const preloadHref = cover?.thumb ?? trip?.cover ?? null;
+
 // 定位句按逗号拆成两行展示（无逗号则单行）
 const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
 ---
 
+{
+  preloadHref && <link rel="preload" as="image" href={preloadHref} imagesrcset={cover ? `${cover.thumb} 640w, ${trip?.cover ?? ''} ${cover.width}w` : undefined} imagesizes="(min-width: 1024px) 440px, (min-width: 640px) 60vw, 85vw" />
+}
+
+{/* 定位句按逗号拆成两行展示（无逗号则单行） */}
 <section class="grid items-center gap-12 pt-[var(--spacing-sec)] lg:grid-cols-[1.15fr_0.85fr]">
   <div>
     <p class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ink-2">

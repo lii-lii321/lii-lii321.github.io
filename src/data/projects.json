@@ -20,10 +20,10 @@
     ],
     "metrics": [
       {
-        "num": "287",
+        "num": "464+",
         "unit": "项",
         "label": "自动化测试",
-        "baseline": "pytest 采集，CI 全绿"
+        "baseline": "pytest 实测（2026-10 实跑对账），CI 全绿"
       },
       {
         "num": "6",
@@ -111,7 +111,7 @@
       }
     ],
     "outcome": [
-      "287 项自动化测试，GitHub Actions CI 全绿",
+      "464+ 项自动化测试（pytest 实测），GitHub Actions CI 全绿",
       "统一 Provider 抽象对接 6 家 LLM，换 AI_BASE_URL 即切换，无 Key 自动进入演示模式",
       "学习日历 90 天热力图、知识共现力导向图、教师端学情总览、一键组卷导出 Word"
     ],

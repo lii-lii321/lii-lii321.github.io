@@ -18,6 +18,11 @@ draft: false
 
 ## 第一步：把 bad case 变成资产
 
+<figure>
+  <img src="/projects/math-tutor-rag/notebook.webp" alt="错题本界面：语义搜索开关下按知识点检索错题，线上 bad case 正是从这里沉淀为评测用例" width="1200" height="800" loading="lazy" decoding="async" />
+  <figcaption>错题本界面：语义搜索开关下按知识点检索错题，线上 bad case 正是从这里沉淀为评测用例</figcaption>
+</figure>
+
 每个用户投诉的 bad case，都是一条免费的评测用例。我们给评测用例定义了三个必填字段：
 
 ```yaml

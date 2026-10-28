@@ -10,7 +10,7 @@
  * - 打开时焦点移入对话框、Tab 焦点圈闭在对话框内、关闭时归还给触发元素。
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent, TouchEvent } from 'react';
 
 /** PhotoGrid 派发的打开事件名（保持与 PhotoGrid.astro 中一致） */
 const OPEN_EVENT = 'gallery:open';
@@ -54,6 +54,8 @@ function formatTakenAt(iso: string): string {
 export default function Lightbox({ photos, albumTitle }: Props) {
   const [index, setIndex] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  /** 触屏滑动起点（null = 未在滑动）；移动端左右滑切换，阈值 48px */
+  const touchStartX = useRef<number | null>(null);
   const count = photos.length;
 
   const close = useCallback(() => setIndex(null), []);
@@ -209,8 +211,22 @@ export default function Lightbox({ photos, albumTitle }: Props) {
         </button>
       </div>
 
-      {/* 图片区：显示档只在灯箱内加载，blur 占位图作为加载背景 */}
-      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-12 sm:px-24">
+      {/* 图片区：显示档只在灯箱内加载，blur 占位图作为加载背景；移动端左右滑切换 */}
+      <div
+        className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-12 sm:px-24"
+        onTouchStart={(event) => {
+          touchStartX.current = event.touches[0]?.clientX ?? null;
+        }}
+        onTouchEnd={(event) => {
+          if (touchStartX.current === null) return;
+          const endX = event.changedTouches[0]?.clientX;
+          if (endX === undefined) return;
+          const dx = endX - touchStartX.current;
+          touchStartX.current = null;
+          // 阈值以上才算滑动，避免轻点误切；水平滑动不干扰点击空白关闭（click 正常触发）
+          if (Math.abs(dx) > 48) step(dx < 0 ? 1 : -1);
+        }}
+      >
         <img
           key={photo.src}
           src={displaySrc(photo)}
@@ -257,7 +273,7 @@ export default function Lightbox({ photos, albumTitle }: Props) {
         className="px-4 py-3 text-center text-xs text-white/50"
         onClick={stopPropagation}
       >
-        ← / → 切换 · Esc 或点击空白处关闭
+        ← / → 或滑动切换 · Esc 或点击空白处关闭
       </p>
     </div>
   );

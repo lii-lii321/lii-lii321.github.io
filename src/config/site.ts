@@ -90,7 +90,7 @@ export const siteConfig = {
       org: "Math_Tutor_RAG · research-lab",
       desc: "迭代基于视觉大模型与 RAG 的智能错题本（拍照录题 → 数学验证 → 向量归档 → SM-2 自适应复习）；同时开发 AI 数据研究工具，把一份 CSV 自动变成可复现的研究报告。",
       outcomes: [
-        "Math_Tutor_RAG 积累 287 项自动化测试（pytest 采集），CI 全绿",
+        "Math_Tutor_RAG 积累 464+ 项自动化测试（pytest 实测，CI 全绿）",
         "research-lab 打通画像 → 研究问题 → 实验计划 → 统计检验 → 报告导出五阶段全自动流水线",
       ],
     },

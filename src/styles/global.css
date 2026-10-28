@@ -437,6 +437,30 @@ html {
 .prose-editorial img {
   border-radius: 4px;
 }
+/* 正文配图 figure：图注用 meta 风格；竖图（高>宽）不全宽撑 68ch——约 62% 宽居中，
+   避免一张 1200x1600 的手机照在正文里占三屏 */
+.prose-editorial figure {
+  margin: 1.8em 0;
+}
+.prose-editorial figure img {
+  height: auto;
+}
+.prose-editorial figure img[height][width] {
+  aspect-ratio: attr(width) / attr(height);
+}
+.prose-editorial figure img[width="1200"][height="1600"] {
+  display: block;
+  max-width: 62%;
+  margin-inline: auto;
+}
+.prose-editorial figcaption {
+  margin-top: 0.6em;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-3);
+}
 
 /* 代码块复制按钮（文章页脚本注入） */
 .code-copy {

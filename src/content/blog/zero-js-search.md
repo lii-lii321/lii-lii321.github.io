@@ -12,6 +12,11 @@ draft: false
 
 ## 索引：构建时生成，页面内嵌
 
+<figure>
+  <img src="/photos/yunnan/thumbs/01.webp" alt="搜「云南」命中的相册条目实拍——丽江古城雪中合影，背景墙上的「世界文化遗产 丽江古城」正是被拍平进 tags 的地点名与省份" width="1200" height="1600" loading="lazy" decoding="async" />
+  <figcaption>搜「云南」命中的相册条目实拍——丽江古城雪中合影，背景墙上的「世界文化遗产 丽江古城」正是被拍平进 tags 的地点名与省份</figcaption>
+</figure>
+
 搜索的第一性原理是：**哪些内容可搜，构建时就知道**。Astro 页面的 frontmatter 里直接把三类内容拍平成同构条目：
 
 ```ts
@@ -34,6 +39,11 @@ interface SearchItem {
 </div>
 
 ## 匹配：多关键词 AND，标题优先
+
+<figure>
+  <img src="/projects/math-tutor-rag/notebook.webp" alt="搜「RAG」命中的项目条目——MathMaster Edu 错题本，「RAG」就写在项目标题里，按文中权重吃满标题 ×4" width="1200" height="800" loading="lazy" decoding="async" />
+  <figcaption>搜「RAG」命中的项目条目——MathMaster Edu 错题本，「RAG」就写在项目标题里，按文中权重吃满标题 ×4</figcaption>
+</figure>
 
 评分函数刻意简单：标题命中 ×4、标签 ×2、描述 ×1，多个关键词取最小分（AND 语义——搜「RAG 评测」不允许只满足一半）：
 
