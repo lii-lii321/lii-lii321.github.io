@@ -15,23 +15,27 @@ interface Props {
   items: readonly ChipItem[];
   /** 默认选中的 value */
   active?: string;
+  /** aria-live 播报的数量词（如「篇文章」「个项目」） */
+  statusLabel?: string;
 }
-const { scope, items, active = 'all' } = Astro.props;
+const { scope, items, active = 'all', statusLabel = '条结果' } = Astro.props;
 ---
 
-<div class="flex flex-wrap gap-2" role="group" aria-label="筛选" data-filter-chips={scope}>
+<div class="flex flex-wrap gap-2" role="group" aria-label="筛选" data-filter-chips={scope} data-filter-status-label={statusLabel}>
   {
     items.map((item) => (
       <button
         type="button"
         data-filter-value={item.value}
         aria-pressed={item.value === active}
-        class="min-h-[44px] cursor-pointer rounded-full border border-rule-2 bg-paper px-4 py-2.5 font-mono text-[11px] tracking-[0.02em] text-ink-2 transition-colors aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-paper hover:border-ink sm:min-h-0 sm:px-3.5 sm:py-1.5"
+        class="min-h-[44px] cursor-pointer rounded-full border border-rule-2 bg-paper px-4 py-2.5 font-mono text-[11px] tracking-[0.02em] text-ink-2 transition-colors aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-paper hover:border-ink md:min-h-0 md:px-3.5 md:py-1.5"
       >
         {item.label} {item.count}
       </button>
     ))
   }
+  {/* 筛选后对读屏播报可见数量（持久 live region + textContent 更新，与 search 页同模式） */}
+  <p class="sr-only" aria-live="polite" data-filter-status></p>
 </div>
 
 <script>
@@ -55,6 +59,7 @@ const { scope, items, active = 'all' } = Astro.props;
     });
     // 空态与分组收束：
     // - 分组（data-filter-group，如文章年份段）内无可见条目时整组隐藏，避免悬空标题；
+    //   组内 [data-filter-count]（如年份头的「N 篇」）随可见条目数更新；
     // - 条目全部被筛掉时显示空态提示（data-filter-empty）；
     // - 非「全部」时隐藏不参与筛选的区块（data-filter-hide，如头条大卡）。
     let visible = 0;
@@ -62,7 +67,10 @@ const { scope, items, active = 'all' } = Astro.props;
       if (!el.hasAttribute('hidden')) visible += 1;
     });
     document.querySelectorAll(`[data-filter-group][data-filter-scope="${scope}"]`).forEach((group) => {
-      group.toggleAttribute('hidden', group.querySelector('[data-filter-item]:not([hidden])') === null);
+      const visibleInGroup = group.querySelectorAll('[data-filter-item]:not([hidden])').length;
+      group.toggleAttribute('hidden', visibleInGroup === 0);
+      const counter = group.querySelector('[data-filter-count]');
+      if (counter) counter.textContent = `${visibleInGroup} 篇`;
     });
     document.querySelectorAll(`[data-filter-empty][data-filter-scope="${scope}"]`).forEach((el) => {
       el.toggleAttribute('hidden', visible > 0);
@@ -70,5 +78,8 @@ const { scope, items, active = 'all' } = Astro.props;
     document.querySelectorAll(`[data-filter-hide][data-filter-scope="${scope}"]`).forEach((el) => {
       el.toggleAttribute('hidden', value !== 'all');
     });
+    // 结果数量播报（aria-live）；量词由组件 prop 经 data 属性传入客户端脚本
+    const status = group.querySelector('[data-filter-status]');
+    if (status) status.textContent = `${visible} ${group.getAttribute('data-filter-status-label') ?? '条结果'}`;
   });
 </script>

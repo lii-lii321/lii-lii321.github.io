@@ -11,7 +11,7 @@ import {
   resolveHighlighted,
   WORLD_NAME_MAP,
 } from '../src/components/map/mapOptions.ts';
-import type { Trip } from '../src/types.ts';
+import type { MapTrip } from '../src/types.ts';
 
 test('normalizeProvinceName：省/市/自治区后缀剥离', () => {
   assert.equal(normalizeProvinceName('云南省'), '云南');
@@ -30,19 +30,15 @@ test('markerSymbolSize：随照片数缓增且封顶', () => {
   assert.equal(markerSymbolSize(10_000), 34); // 封顶
 });
 
-function fakeTrip(id: string, country: string, placeName: string, date: string, photoCount: number): Trip {
+function fakeTrip(id: string, country: string, placeName: string, date: string, photoCount: number): MapTrip {
   return {
     id,
     title: id,
     date,
     tags: [],
-    description: '',
     place: { name: placeName, country, province: null, lng: 100, lat: 25 },
-    cover: '',
-    photos: Array.from({ length: photoCount }, () => ({
-      src: '', thumb: '', blur: '', width: 0, height: 0,
-      takenAt: null, camera: null, gps: null, scene: null,
-    })),
+    photoCount,
+    cover: { thumb: '', blur: '' },
   };
 }
 

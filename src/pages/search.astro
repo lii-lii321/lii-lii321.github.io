@@ -207,16 +207,21 @@ const hotTags = [...tagCounts.entries()]
           renderIdle();
           return;
         }
-        const hits = items
+        const matched = items
           .map((item) => ({ item, s: score(item, q) }))
           .filter((x) => x.s > 0)
-          .sort((a, b) => b.s - a.s)
-          .slice(0, 12);
-        stats.textContent = `「${q.trim()}」命中 ${hits.length} 条`;
+          .sort((a, b) => b.s - a.s);
+        const hits = matched.slice(0, 12);
+        stats.textContent = matched.length > hits.length
+          ? `「${q.trim()}」命中 ${matched.length} 条，显示前 ${hits.length} 条`
+          : `「${q.trim()}」命中 ${hits.length} 条`;
         list.innerHTML = '';
-        if (idle) idle.hidden = true;
-        // 命中才进历史（避免误击键留下无意义词条）
+        // 命中才进历史（避免误击键留下无意义词条）；零结果时保留起手区（历史 + 热门标签）
         if (hits.length > 0) writeHistory(q.trim());
+        if (idle) {
+          idle.hidden = hits.length > 0;
+          if (!idle.hidden) renderIdle();
+        }
 
         // 关键词高亮：先转义再替换（顺序约定见 utils），正则元字符与 HTML 特殊字符都处理
         const pattern = buildHighlightPattern(q);

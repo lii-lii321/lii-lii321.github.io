@@ -183,6 +183,19 @@ html {
   }
 }
 
+/* 汉堡 → X：aria-expanded 驱动（此前只有死代码 transition，图标从不变 X） */
+@media (prefers-reduced-motion: no-preference) {
+  #nav-toggle[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  #nav-toggle[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  #nav-toggle[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
 /* 滚动进场：隐藏态挂在 html.js-reveal 作用域下（Base 脚本添加）——无 JS 时内容直接可见；
  * 入视口后由 IntersectionObserver 加 .revealed 过渡显现，reduced-motion 由下方媒体查询豁免 */
 @media (prefers-reduced-motion: no-preference) {

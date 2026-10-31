@@ -5,7 +5,7 @@
  * 纸白底（paper/paper-3）+ 靛蓝强调（accent）+ 墨色文字（ink/ink-2）。
  */
 import type { EChartsOption } from 'echarts';
-import type { Trip } from '../../types';
+import type { MapTrip } from '../../types';
 
 export type MapView = 'world' | 'china';
 
@@ -281,12 +281,12 @@ export interface PlaceCluster {
   lng: number;
   lat: number;
   /** 该地点的全部旅行（按日期倒序） */
-  trips: Trip[];
+  trips: MapTrip[];
   /** 该地点照片总数 */
   photoCount: number;
 }
 
-export function clusterTripsByPlace(trips: Trip[]): PlaceCluster[] {
+export function clusterTripsByPlace(trips: MapTrip[]): PlaceCluster[] {
   const map = new Map<string, PlaceCluster & { _photos: number }>();
   for (const trip of trips) {
     const key = `${trip.place.country}::${trip.place.name}`;
@@ -306,7 +306,7 @@ export function clusterTripsByPlace(trips: Trip[]): PlaceCluster[] {
       map.set(key, cluster);
     }
     cluster.trips.push(trip);
-    cluster._photos += trip.photos.length;
+    cluster._photos += trip.photoCount;
   }
   const clusters = [...map.values()].map(({ _photos, ...c }) => ({
     ...c,

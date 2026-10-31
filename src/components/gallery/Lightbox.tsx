@@ -169,7 +169,7 @@ export default function Lightbox({ photos, albumTitle }: Props) {
         className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6"
         onClick={stopPropagation}
       >
-        <p className="shrink-0 text-sm font-medium text-white">
+        <p className="shrink-0 text-sm font-medium text-white" aria-live="polite">
           第 {index + 1} / {count} 张
         </p>
         {hasInfo && (

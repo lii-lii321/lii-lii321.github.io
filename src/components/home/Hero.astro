@@ -30,7 +30,7 @@ const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
 {/* 定位句按逗号拆成两行展示（无逗号则单行） */}
 <section class="grid items-center gap-12 pt-[var(--spacing-sec)] lg:grid-cols-[1.15fr_0.85fr]">
   <div>
-    <p class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ink-2">
+    <p class="meta normal-case flex items-center gap-2.5 min-h-[24px] text-ink-2">
       <span class="pulse inline-block h-2 w-2 rounded-full bg-ok" aria-hidden="true"></span>
       {siteConfig.availability} · {siteConfig.location}
     </p>

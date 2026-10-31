@@ -77,6 +77,20 @@ export interface TravelData {
   trips: Trip[];
 }
 
+/** 足迹地图 island 的窄投影：只带地图与卡片实际消费的字段——
+ *  完整 Trip 会把 532 张照片的 blur/takenAt/camera 全部序列化进 HTML（实测 364KB props），
+ *  投影后 props 缩减约 98% */
+export interface MapTrip {
+  id: string;
+  title: string;
+  date: string;
+  place: Place;
+  photoCount: number;
+  tags: string[];
+  /** 封面缩略图与模糊占位（复刻「src 匹配 cover 否则第一张」的既有回退） */
+  cover: { thumb: string; blur: string } | null;
+}
+
 /** src/data/visited.json 的结构（地图点亮名单，手动维护） */
 export interface VisitedData {
   countries: string[];

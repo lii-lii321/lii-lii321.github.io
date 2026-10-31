@@ -47,9 +47,9 @@ const numbers = [
       <dl class="mt-8 flex gap-10">
         {
           numbers.map((n) => (
-            <div>
-              <dd class="font-serif text-3xl font-bold text-sky">{n.num}</dd>
-              <dt class="mt-1 text-sm text-[#e6eaf2]/60">{n.label}</dt>
+            <div class="flex flex-col">
+              <dt class="order-2 mt-1 text-sm text-[#e6eaf2]/60">{n.label}</dt>
+              <dd class="order-1 font-serif text-3xl font-bold text-sky">{n.num}</dd>
             </div>
           ))
         }
@@ -57,7 +57,7 @@ const numbers = [
 
       <a
         href="/travel"
-        class="mt-9 inline-flex items-center gap-2 font-mono text-sm uppercase tracking-[0.08em] text-amber transition-colors hover:text-white"
+        class="meta normal-case mt-9 inline-flex min-h-[24px] items-center gap-2 font-mono text-sm uppercase tracking-[0.08em] text-amber transition-colors hover:text-white"
       >
         打开足迹地图 →
       </a>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN"> <head>
+<meta name="astro-view-transitions-enabled" content="true">
+<meta name="astro-view-transitions-fallback" content="animate">
+<script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.DxD8ucBX.js">
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="「感觉不准」是 RAG 项目最贵的技术债。这篇讲我们如何把主观感受变成三个可复现的指标，以及评测集怎么管才不会腐烂。">
+<meta name="generator" content="Astro v5.18.2">
+<meta name="theme-color" content="#FBFAF7">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="https://lii-lii321.github.io/blog/rag-retrieval-quality/">
+<link rel="alternate" type="application/rss+xml" title="RAG 检索质量：从 bad case 到评测集 · 李云强 · 做产品的工程师，也该写代码。" href="https://lii-lii321.github.io/rss.xml">
+<!-- OG / Twitter card -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAG 检索质量：从 bad case 到评测集 · 李云强 · 做产品的工程师，也该写代码。">
+<meta property="og:description" content="「感觉不准」是 RAG 项目最贵的技术债。这篇讲我们如何把主观感受变成三个可复现的指标，以及评测集怎么管才不会腐烂。">
+<meta property="og:url" content="https://lii-lii321.github.io/blog/rag-retrieval-quality/">
+<meta property="og:image" content="https://lii-lii321.github.io/projects/math-tutor-rag/notebook.webp">
+<meta property="og:image:alt" content="RAG 检索质量：从 bad case 到评测集">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="李云强">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RAG 检索质量：从 bad case 到评测集 · 李云强 · 做产品的工程师，也该写代码。">
+<meta name="twitter:description" content="「感觉不准」是 RAG 项目最贵的技术债。这篇讲我们如何把主观感受变成三个可复现的指标，以及评测集怎么管才不会腐烂。">
+<meta name="twitter:image" content="https://lii-lii321.github.io/projects/math-tutor-rag/notebook.webp">
+<meta name="twitter:image:alt" content="RAG 检索质量：从 bad case 到评测集">
+<title>RAG 检索质量：从 bad case 到评测集 · 李云强 · 做产品的工程师，也该写代码。</title>
+<link rel="stylesheet" href="/_astro/about.Bdmwi0TY.css">
+<script type="module" src="/_astro/page.DTPp-pk-.js">
+</script>
+</head> <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased"> <!-- 无障碍：跳过导航直达主内容 --> <a href="#main" class="sr-only z-[100] rounded-[4px] bg-ink px-4 py-2 text-sm text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+跳到主内容
+</a> <!-- 顶部导航：姓名（衬线）+ 拼音（等宽）｜ 5 入口 ｜ GitHub / Email / 简历 PDF，底部 1px rule --> <header class="sticky top-0 z-50 border-b border-rule bg-paper/90 backdrop-blur"> <nav class="wrap flex h-16 items-center justify-between gap-6" aria-label="主导航"> <!-- 品牌区 --> <a href="/" class="group flex items-baseline gap-2 whitespace-nowrap"> <span class="font-serif text-lg font-bold tracking-wide text-ink group-hover:text-accent"> 李云强 </span> <span class="meta hidden sm:inline">Li Yunqiang</span> </a> <!-- 桌面端链接 --> <ul class="nav-links hidden items-center gap-7 md:flex"> <li> <a href="/" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 首页  </a> </li>
+<li> <a href="/projects" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 项目  </a> </li>
+<li> <a href="/blog" aria-current="page" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 文章 <span class="absolute inset-x-0 -bottom-[21px] h-0.5 bg-accent" aria-hidden="true">
+</span> </a> </li>
+<li> <a href="/about" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 关于  </a> </li>
+<li> <a href="/travel" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 旅行  </a> </li> </ul> <!-- 右侧 CTA：移动端只保留简历按钮 --> <div class="hidden items-center gap-4 md:flex"> <a href="https://github.com/lii-lii321" target="_blank" rel="noopener noreferrer" class="meta transition-colors hover:text-ink">
+GitHub ↗
+</a> <a href="mailto:3028410005@qq.com" class="meta transition-colors hover:text-ink">
+Email
+</a> <a href="/resume" class="chip !border-ink !text-ink hover:!border-accent hover:!text-accent">
+简历
+</a> </div> <!-- 移动端汉堡按钮 --> <button type="button" id="nav-toggle" class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden" aria-expanded="false" aria-controls="nav-panel" aria-label="打开菜单"> <span class="h-px w-5 bg-ink transition-transform" aria-hidden="true">
+</span> <span class="h-px w-5 bg-ink" aria-hidden="true">
+</span> <span class="h-px w-5 bg-ink transition-transform" aria-hidden="true">
+</span> </button> </nav> <!-- 移动端下滑面板 --> <div id="nav-panel" hidden class="nav-panel border-t border-rule bg-paper md:hidden"> <ul class="wrap flex flex-col py-2"> <li> <a href="/" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 首页 </a> </li>
+<li> <a href="/projects" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 项目 </a> </li>
+<li> <a href="/blog" aria-current="page" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 文章 </a> </li>
+<li> <a href="/about" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 关于 </a> </li>
+<li> <a href="/travel" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 旅行 </a> </li> <li class="flex items-center gap-5 py-4"> <a href="https://github.com/lii-lii321" target="_blank" rel="noopener noreferrer" class="meta">GitHub ↗</a> <a href="mailto:3028410005@qq.com" class="meta">Email</a> <a href="/resume" class="chip !border-ink !text-ink ml-auto">简历</a> </li> </ul> </div> </header> <!-- 页面主体（id="main" 供无障碍跳转链接落点，tabindex="-1" 使跳转后焦点可落在主内容） --> <main id="main" tabindex="-1" class="wrap w-full flex-1">   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"RAG 检索质量：从 bad case 到评测集","description":"「感觉不准」是 RAG 项目最贵的技术债。这篇讲我们如何把主观感受变成三个可复现的指标，以及评测集怎么管才不会腐烂。","datePublished":"2025-08-14T00:00:00.000Z","dateModified":"2025-08-14T00:00:00.000Z","image":"https://lii-lii321.github.io/projects/math-tutor-rag/notebook.webp","author":{"@type":"Person","name":"李云强","url":"https://lii-lii321.github.io/about"},"keywords":"RAG, 检索, 评测"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"文章","item":"https://lii-lii321.github.io/blog"},{"@type":"ListItem","position":2,"name":"RAG 检索质量：从 bad case 到评测集"}]}]</script> <article class="pb-[var(--spacing-sec)]"> <nav class="meta flex items-center gap-2 pt-10 normal-case" aria-label="面包屑"> <a href="/blog" class="transition-colors hover:text-accent">文章</a> <span aria-hidden="true">/</span> <span>工程</span> </nav> <header class="mt-8"> <p class="eyebrow">工程</p> <h1 class="h1 mt-4 max-w-[24ch]">RAG 检索质量：从 bad case 到评测集</h1> <p class="mt-6 max-w-[56ch] font-serif text-[1.42rem] leading-relaxed text-ink-2"> 「感觉不准」是 RAG 项目最贵的技术债。这篇讲我们如何把主观感受变成三个可复现的指标，以及评测集怎么管才不会腐烂。 </p> </header> <figure class="mt-10"> <img src="/projects/math-tutor-rag/notebook.webp" alt="错题本界面：结构化解析与语义搜索" width="1200" height="800" loading="eager" fetchpriority="high" decoding="async" class="w-full rounded-[10px] border border-rule object-cover" style="aspect-ratio: 2 / 1;"> <figcaption class="meta mt-3 normal-case">错题本界面：结构化解析与语义搜索</figcaption> </figure> <!-- post-meta 横条：上下 1px rule --> <div class="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-rule py-4"> <time datetime="2025-08-14" class="meta normal-case"> 2025 年 8 月 14 日 </time> <span class="meta normal-case">3 分钟阅读</span> <ul class="flex flex-wrap gap-2"> <li> <a href="/tags/RAG/" class="tag-link chip" aria-label="查看标签 RAG 下的全部文章">
+#RAG </a> </li>
+<li> <a href="/tags/%E6%A3%80%E7%B4%A2/" class="tag-link chip" aria-label="查看标签 检索 下的全部文章">
+#检索 </a> </li>
+<li> <a href="/tags/%E8%AF%84%E6%B5%8B/" class="tag-link chip" aria-label="查看标签 评测 下的全部文章">
+#评测 </a> </li> </ul>  </div> <!-- 两栏：200px 目录 | 正文 --> <div class="mt-12 grid gap-10 lg:grid-cols-[200px_1fr] lg:gap-16"> <aside class="hidden lg:block"> <div class="sticky top-[132px]"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style>
+<script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script>
+<script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script>
+<astro-island uid="24cz9K" prefix="r1" component-url="/_astro/Toc.EACC9_T-.js" component-export="default" renderer-url="/_astro/client.LGetASx6.js" props="{&quot;headings&quot;:[1,[[0,{&quot;id&quot;:[0,&quot;第一步把-bad-case-变成资产&quot;],&quot;text&quot;:[0,&quot;第一步：把 bad case 变成资产&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;第二步三个指标说清楚&quot;],&quot;text&quot;:[0,&quot;第二步：三个指标说清楚&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;第三步让-bad-case-可以回放&quot;],&quot;text&quot;:[0,&quot;第三步：让 bad case 可以回放&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;我们踩过的坑&quot;],&quot;text&quot;:[0,&quot;我们踩过的坑&quot;],&quot;level&quot;:[0,2]}]]]}" ssr client="load" opts="{&quot;name&quot;:&quot;Toc&quot;,&quot;value&quot;:true}" await-children>
+<nav aria-label="目录" class="text-sm">
+<p class="meta mb-3">目录</p>
+<ul class="space-y-1 border-l border-rule">
+<li>
+<a href="#第一步把-bad-case-变成资产" aria-current="true" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-accent font-medium text-accent">第一步：把 bad case 变成资产</a>
+</li>
+<li>
+<a href="#第二步三个指标说清楚" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">第二步：三个指标说清楚</a>
+</li>
+<li>
+<a href="#第三步让-bad-case-可以回放" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">第三步：让 bad case 可以回放</a>
+</li>
+<li>
+<a href="#我们踩过的坑" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">我们踩过的坑</a>
+</li>
+</ul>
+</nav>
+<!--astro:end-->
+</astro-island> </div> </aside> <div class="min-w-0"> <!-- 移动端折叠目录（桌面端用右侧 sticky Toc） --> <details class="mb-8 rounded-[4px] border border-rule bg-paper-2/60 lg:hidden"> <summary class="meta cursor-pointer list-none px-4 py-3">目录（4 节）</summary> <ul class="space-y-1 px-4 pb-4"> <li class> <a href="#第一步把-bad-case-变成资产" class="text-sm text-ink-2 hover:text-accent"> 第一步：把 bad case 变成资产 </a> </li>
+<li class> <a href="#第二步三个指标说清楚" class="text-sm text-ink-2 hover:text-accent"> 第二步：三个指标说清楚 </a> </li>
+<li class> <a href="#第三步让-bad-case-可以回放" class="text-sm text-ink-2 hover:text-accent"> 第三步：让 bad case 可以回放 </a> </li>
+<li class> <a href="#我们踩过的坑" class="text-sm text-ink-2 hover:text-accent"> 我们踩过的坑 </a> </li> </ul> </details> <div class="prose-editorial"> <p>做 RAG 应用最容易陷入的循环是：改一版切分策略 → 自己试几个问题 → 感觉「好像好了一点」→ 上线 → 用户反馈退回原点。<strong>感觉是 RAG 项目里最贵的技术债</strong>，因为它不可复现、不可比较、不可回滚。</p>
+<p>在 <a href="/projects/math-tutor-rag">Math_Tutor_RAG</a> 的检索链路上，真正起作用的从来不是某个聪明的技巧，而是先把评测做对了。这篇把这套方法整理成可以照抄的四步。</p>
+<h2 id="第一步把-bad-case-变成资产">第一步：把 bad case 变成资产</h2>
+<figure>
+  <img src="/projects/math-tutor-rag/notebook.webp" alt="错题本界面：语义搜索开关下按知识点检索错题，线上 bad case 正是从这里沉淀为评测用例" width="1200" height="800" loading="lazy" decoding="async">
+  <figcaption>错题本界面：语义搜索开关下按知识点检索错题，线上 bad case 正是从这里沉淀为评测用例</figcaption>
+</figure>
+<p>每个用户投诉的 bad case，都是一条免费的评测用例。我们给评测用例定义了三个必填字段：</p>
+<pre class="astro-code astro-code-themes vitesse-light" style="background-color:#ffffff;color:#393a34; overflow-x: auto;" tabindex="0" data-language="yaml">
+<code>
+<span class="line">
+<span style="color:#999999">-</span>
+<span style="color:#998418"> id</span>
+<span style="color:#999999">:</span>
+<span style="color:#B56959"> case-0042</span>
+</span>
+<span class="line">
+<span style="color:#998418">  question</span>
+<span style="color:#999999">:</span>
+<span style="color:#B5695977"> "</span>
+<span style="color:#B56959">二次函数顶点式怎么配方？</span>
+<span style="color:#B5695977">"</span>
+</span>
+<span class="line">
+<span style="color:#998418">  expect_sources</span>
+<span style="color:#999999">:</span>
+<span style="color:#999999"> [</span>
+<span style="color:#B5695977">"</span>
+<span style="color:#B56959">课本·必修一·P52</span>
+<span style="color:#B5695977">"</span>
+<span style="color:#999999">,</span>
+<span style="color:#B5695977"> "</span>
+<span style="color:#B56959">教研·二次函数专题·§2</span>
+<span style="color:#B5695977">"</span>
+<span style="color:#999999">]</span>
+</span>
+<span class="line">
+<span style="color:#998418">  must_contain</span>
+<span style="color:#999999">:</span>
+<span style="color:#999999"> [</span>
+<span style="color:#B5695977">"</span>
+<span style="color:#B56959">y = a(x-h)² + k</span>
+<span style="color:#B5695977">"</span>
+<span style="color:#999999">,</span>
+<span style="color:#B5695977"> "</span>
+<span style="color:#B56959">对称轴 x = h</span>
+<span style="color:#B5695977">"</span>
+<span style="color:#999999">]</span>
+</span>
+<span class="line">
+<span style="color:#998418">  note</span>
+<span style="color:#999999">:</span>
+<span style="color:#B5695977"> "</span>
+<span style="color:#B56959">线上投诉的 bad case 原样入库</span>
+<span style="color:#B5695977">"</span>
+</span>
+</code>
+</pre>
+<p>
+<code>expect_sources</code> 是关键——它让「检索对了没有」变成一个可以机判的布尔问题，而不是靠人读一遍生成结果。</p>
+<aside-note>
+<p>评测集要进版本库，和代码一起 review。谁改了切分策略，谁就要对着同一份基准重跑评测，这正是「评测集即代码」的全部含义。</p>
+</aside-note>
+<h2 id="第二步三个指标说清楚">第二步：三个指标说清楚</h2>
+<p>指标不求多，求互相正交：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>回答的问题</th>
+<th>示例目标（按项目自定）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>召回率</td>
+<td>该找的片段找到了吗</td>
+<td>教材原文召回 ≥ 90%</td>
+</tr>
+<tr>
+<td>MRR</td>
+<td>找到的片段排得靠前吗</td>
+<td>首位命中率 ≥ 0.85</td>
+</tr>
+<tr>
+<td>忠实度</td>
+<td>生成是否超出检索内容</td>
+<td>引用可溯源 ≥ 95%</td>
+</tr>
+</tbody>
+</table>
+<p>前两个纯规则可算；忠实度我们用「规则 + 模型」双通道——纯模型打分在不同模型间漂移太大，这一点<mark>踩过很深的坑</mark>，详见文末的坑列表。</p>
+<h2 id="第三步让-bad-case-可以回放">第三步：让 bad case 可以回放</h2>
+<p>评测只是发现问题，定位问题靠回放。每次评测自动留存检索快照，任何一个 bad case 可以一键还原当时的检索过程：</p>
+<pre class="astro-code astro-code-themes vitesse-light" style="background-color:#ffffff;color:#393a34; overflow-x: auto;" tabindex="0" data-language="python">
+<code>
+<span class="line">
+<span style="color:#AB5959">def</span>
+<span style="color:#59873A"> replay</span>
+<span style="color:#999999">(</span>
+<span style="color:#393A34">case_id</span>
+<span style="color:#999999">:</span>
+<span style="color:#998418"> str</span>
+<span style="color:#999999">)</span>
+<span style="color:#999999"> ->
+</span>
+<span style="color:#393A34"> ReplayReport</span>
+<span style="color:#999999">:</span>
+</span>
+<span class="line">
+<span style="color:#393A34">    snapshot </span>
+<span style="color:#999999">=</span>
+<span style="color:#393A34"> store</span>
+<span style="color:#999999">.</span>
+<span style="color:#393A34">load_snapshot</span>
+<span style="color:#999999">(</span>
+<span style="color:#393A34">case_id</span>
+<span style="color:#999999">)</span>
+</span>
+<span class="line">
+<span style="color:#393A34">    chunks </span>
+<span style="color:#999999">=</span>
+<span style="color:#393A34"> retrieve</span>
+<span style="color:#999999">(</span>
+<span style="color:#393A34">snapshot</span>
+<span style="color:#999999">.</span>
+<span style="color:#393A34">question</span>
+<span style="color:#999999">,</span>
+<span style="color:#B07D48"> config</span>
+<span style="color:#999999">=</span>
+<span style="color:#393A34">snapshot</span>
+<span style="color:#999999">.</span>
+<span style="color:#393A34">config</span>
+<span style="color:#999999">)</span>
+</span>
+<span class="line">
+<span style="color:#1E754F">    return</span>
+<span style="color:#393A34"> ReplayReport</span>
+<span style="color:#999999">(</span>
+</span>
+<span class="line">
+<span style="color:#B07D48">        hits</span>
+<span style="color:#999999">=</span>
+<span style="color:#393A34">rank_overlap</span>
+<span style="color:#999999">(</span>
+<span style="color:#393A34">chunks</span>
+<span style="color:#999999">,</span>
+<span style="color:#393A34"> snapshot</span>
+<span style="color:#999999">.</span>
+<span style="color:#393A34">expect_sources</span>
+<span style="color:#999999">),</span>
+</span>
+<span class="line">
+<span style="color:#B07D48">        misses</span>
+<span style="color:#999999">=</span>
+<span style="color:#393A34">diagnose</span>
+<span style="color:#999999">(</span>
+<span style="color:#393A34">snapshot</span>
+<span style="color:#999999">,</span>
+<span style="color:#393A34"> chunks</span>
+<span style="color:#999999">),</span>
+<span style="color:#A0ADA0">  # 切分 / 嵌入 / 排序 三选一归因</span>
+</span>
+<span class="line">
+<span style="color:#999999">    )</span>
+</span>
+</code>
+</pre>
+<p>归因只有三个出口，逼着团队把问题收敛到具体一层：</p>
+<div class="callout">
+<p>
+<strong>经验</strong>：bad case 归因时，先查切分（40% 的案例出在这里），再查嵌入，最后才怀疑排序。顺序错了会在错误的层上调一周参数。</p>
+</div>
+<h2 id="我们踩过的坑">我们踩过的坑</h2>
+<blockquote>
+<p>切分策略一动，指标全线飘红、上线反而变差的经历几乎人人都有——典型原因是评测集没有覆盖内容源的真实分布（扫描版、表格、公式混排各占多少，评测集里就要占多少）。</p>
+</blockquote>
+<p>所以有一条铁律：<strong>评测集的构成必须对齐内容源的构成</strong>。离线指标再好看，分布不对齐就是自欺。</p>
+<hr>
+<p>这套方法后来沉淀进了 <a href="/projects/math-tutor-rag">Math_Tutor_RAG</a>（错题本的 RAG 链路正是用它调优的），欢迎拿来跑你自己的链路。</p> </div> <div class="max-w-[68ch]"> <aside class="mt-14 flex items-center gap-4 border-y border-rule py-6">  <img src="/portrait.jpg" alt="" width="48" height="48" loading="lazy" decoding="async" class="h-12 w-12 shrink-0 rounded-full border border-rule object-cover"> <div class="min-w-0 flex-1"> <p class="text-sm font-medium text-ink">李云强 · 数据科学在读 · 全栈 / AI 应用开发者</p> <p class="mt-1 text-sm text-ink-2">做产品的工程师，也该写代码。</p> </div> <a href="/about" class="meta shrink-0 transition-colors hover:text-accent">更多 →</a> </aside> </div> </div> </div> <!-- 相关文章：同标签优先，其次同分类 --> <section class="mt-[var(--spacing-sec)]" aria-labelledby="related-title"> <p class="eyebrow">Related</p> <h2 id="related-title" class="h2 mt-3">相关文章</h2> <div class="mt-6 border-t border-rule"> <a href="/blog/math-tutor-tests" class="group grid gap-x-6 gap-y-1 border-b border-rule transition-colors hover:bg-paper-2 sm:grid-cols-[110px_1fr_auto] py-5"> <time datetime="2026-10-28T00:00:00.000Z" class="meta pt-1 normal-case">2026.10.28</time> <div class="min-w-0"> <h3 class="font-serif text-[1.15rem] font-semibold leading-snug text-ink transition-colors group-hover:text-accent"> README 上的 287：Math_Tutor_RAG 的测试是怎么长出来的 </h3> <p class="mt-1.5 max-w-[56ch] text-sm leading-relaxed text-ink-2 max-sm:max-w-none line-clamp-2"> 实测对账那天，README 徽章写着 287 个测试，实跑出来是 368。从 41 到 464，这个仓库的测试不是攒出来的，是每一次架构调整逼出来的。 </p> </div> <p class="meta flex items-baseline gap-3 pt-1 sm:flex-col sm:items-end sm:gap-1.5"> <span class="normal-case">9 分钟</span> <span class="text-accent">工程</span> </p> </a>
+<a href="/blog/smart-tutor-journey" class="group grid gap-x-6 gap-y-1 border-b border-rule transition-colors hover:bg-paper-2 sm:grid-cols-[110px_1fr_auto] py-5"> <time datetime="2026-10-28T00:00:00.000Z" class="meta pt-1 normal-case">2026.10.28</time> <div class="min-w-0"> <h3 class="font-serif text-[1.15rem] font-semibold leading-snug text-ink transition-colors group-hover:text-accent"> 先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交 </h3> <p class="mt-1.5 max-w-[56ch] text-sm leading-relaxed text-ink-2 max-sm:max-w-none line-clamp-2"> 多租户家教订单匹配平台 smart_tutor 的从 0 到 1：状态机和资金测试第一天定调，运行一个多月的三端界面 9 月下旬才等到自己的设计系统。335 个提交的先后次序，本身就是设计。 </p> </div> <p class="meta flex items-baseline gap-3 pt-1 sm:flex-col sm:items-end sm:gap-1.5"> <span class="normal-case">8 分钟</span> <span class="text-accent">工程</span> </p> </a> </div> </section> <!-- 阅读进度条（顶部 2px accent，随滚动增长） --> <div id="read-progress" class="fixed inset-x-0 top-0 z-[60] h-0.5 origin-left scale-x-0 bg-accent" aria-hidden="true">
+</div> <script type="module">document.addEventListener("click",async e=>{const t=e.target instanceof Element?e.target.closest("[data-copy-code]"):null;if(!t)return;const n=t.parentElement?.querySelector("code")?.textContent??"";try{await navigator.clipboard.writeText(n),t.textContent="已复制"}catch{t.textContent="复制失败"}setTimeout(()=>t.textContent="复制",1600)});</script> <script type="module">document.addEventListener("astro:page-load",()=>{document.querySelectorAll(".prose-editorial pre").forEach(t=>{if(t.querySelector(".code-copy"))return;const e=document.createElement("button");e.type="button",e.dataset.copyCode="",e.textContent="复制",e.className="code-copy",t.appendChild(e)})});</script> <script type="module">let t=!1;const n=()=>{t=!1;const s=document.getElementById("read-progress");if(!s)return;const e=document.documentElement,r=e.scrollHeight-e.clientHeight,o=r>0?Math.min(1,e.scrollTop/r):0;s.style.transform=`scaleX(${o})`};addEventListener("scroll",()=>{t||(t=!0,requestAnimationFrame(n))},{passive:!0});document.addEventListener("astro:page-load",n);</script> <!-- 上 / 下一篇 --> <nav class="grid border-t border-rule sm:grid-cols-2 sm:divide-x sm:divide-rule" aria-label="上一篇 / 下一篇"> <a href="/blog/echarts-travel-map" class="group py-8 sm:pr-8"> <p class="meta">← 上一篇</p> <p class="h3 mt-2 transition-colors group-hover:text-accent">用 ECharts 画一张可点亮的旅行足迹地图</p> </a> <a href="/blog/zero-js-personal-site" class="group py-8 sm:pl-8 sm:text-right"> <p class="meta">下一篇 →</p> <p class="h3 mt-2 transition-colors group-hover:text-accent">把个人站做到零客户端 JS：Astro Islands 实践</p> </a> </nav> </article>  </main> <!-- 页脚：顶部 1px ink 粗线 + 4 列 + 底栏 --> <footer class="mt-[var(--spacing-sec)]"> <div class="border-t border-ink"> <div class="wrap grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4"> <!-- 品牌 --> <div> <p class="font-serif text-xl font-bold">李云强</p> <p class="mt-3 max-w-[26ch] text-sm leading-relaxed text-ink-2"> 数据科学在读 · 全栈 / AI 应用开发者。做产品的工程师，也该写代码。 </p> <p class="mt-4 flex items-center gap-2 text-sm text-ink-2"> <span class="pulse inline-block h-1.5 w-1.5 rounded-full bg-ok" aria-hidden="true">
+</span> 开放实习与远程协作 </p> </div> <!-- 站点：入口多（9 个），列内用双列网格保持四列高度均衡 --> <nav aria-label="站点"> <p class="meta">站点</p> <ul class="mt-4 grid grid-cols-2 gap-x-5 gap-y-2.5 text-sm"> <li> <a href="/" class="text-ink-2 transition-colors hover:text-accent"> 首页 </a> </li>
+<li> <a href="/projects" class="text-ink-2 transition-colors hover:text-accent"> 项目 </a> </li>
+<li> <a href="/blog" class="text-ink-2 transition-colors hover:text-accent"> 文章 </a> </li>
+<li> <a href="/about" class="text-ink-2 transition-colors hover:text-accent"> 关于 </a> </li>
+<li> <a href="/travel" class="text-ink-2 transition-colors hover:text-accent"> 旅行 </a> </li> <li> <a href="/archives" class="text-ink-2 transition-colors hover:text-accent">归档</a> </li> <li> <a href="/tags" class="text-ink-2 transition-colors hover:text-accent">标签</a> </li> <li> <a href="/search" class="text-ink-2 transition-colors hover:text-accent">搜索</a> </li> <li> <a href="/now" class="text-ink-2 transition-colors hover:text-accent">Now</a> </li> </ul> </nav> <!-- 项目 --> <nav aria-label="项目"> <p class="meta">项目</p> <ul class="mt-4 space-y-2.5 text-sm"> <li>
+<a href="/projects" class="text-ink-2 transition-colors hover:text-accent">全部项目</a>
+</li> <li>
+<a href="/projects/math-tutor-rag" class="text-ink-2 transition-colors hover:text-accent">Math_Tutor_RAG</a>
+</li> <li>
+<a href="/projects/smart-tutor" class="text-ink-2 transition-colors hover:text-accent">smart_tutor</a>
+</li> <li>
+<a href="/projects/travel-atlas" class="text-ink-2 transition-colors hover:text-accent">Traveling 足迹地图</a>
+</li> </ul> </nav> <!-- 联系 --> <div> <p class="meta">联系</p> <ul class="mt-4 space-y-2.5 text-sm"> <li> <a href="https://github.com/lii-lii321" target="_blank" rel="noopener noreferrer" class="text-ink-2 transition-colors hover:text-accent">
+GitHub ↗
+</a> </li> <li> <a href="mailto:3028410005@qq.com" class="text-ink-2 transition-colors hover:text-accent"> 3028410005@qq.com </a> </li> <li> <a href="/resume" class="text-ink-2 transition-colors hover:text-accent">
+简历（中文 / PDF）
+</a> </li> </ul> </div> </div> <!-- 底栏 --> <div class="border-t border-rule"> <div class="wrap flex flex-wrap items-center gap-x-6 gap-y-2 py-5"> <p class="meta normal-case">© 2026 李云强</p> <p class="meta normal-case">本站用 Astro 构建</p> <p class="meta normal-case">最后更新 2026-10-27</p> <a href="/rss.xml" class="meta normal-case transition-colors hover:text-accent">RSS</a> </div> </div> </div> </footer> <script type="module">document.documentElement.classList.add("js-reveal");const r=new IntersectionObserver(e=>{for(const t of e)t.isIntersecting&&(t.target.classList.add("revealed"),r.unobserve(t.target))},{threshold:.08});document.addEventListener("astro:page-load",()=>{document.querySelectorAll("[data-reveal]:not(.revealed)").forEach(e=>r.observe(e))});</script> <!-- 返回顶部：滚动超过一屏后浮现 --> <button type="button" id="back-to-top" class="fixed bottom-6 right-6 z-40 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-rule-2 bg-paper text-ink-2 shadow-[0_1px_2px_rgba(20,20,25,0.05),0_10px_30px_rgba(20,20,25,0.08)] transition-colors hover:border-accent hover:text-accent" aria-label="返回顶部">
+↑
+</button> <script type="module">let t=!1;const n=()=>{t=!1;const e=document.getElementById("back-to-top");e&&(e.style.display=document.documentElement.scrollTop>window.innerHeight?"flex":"none")};addEventListener("scroll",()=>{t||(t=!0,requestAnimationFrame(n))},{passive:!0});document.addEventListener("astro:page-load",()=>{const e=document.getElementById("back-to-top");e&&(e.addEventListener("click",()=>scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})),n())});</script> <script type="module">addEventListener("keydown",t=>{if(t.key!=="/"||t.ctrlKey||t.metaKey||t.altKey)return;const e=t.target;e&&(e.tagName==="INPUT"||e.tagName==="TEXTAREA"||e.isContentEditable)||t.defaultPrevented||e?.closest?.('[role="dialog"]')||(t.preventDefault(),location.href="/search")});</script> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("nav-toggle"),t=document.getElementById("nav-panel");!e||!t||e.addEventListener("click",()=>{const n=t.hidden;t.hidden=!n,e.setAttribute("aria-expanded",String(n)),e.setAttribute("aria-label",n?"关闭菜单":"打开菜单")})});</script> </body> </html>

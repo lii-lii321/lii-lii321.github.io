@@ -1,6 +1,7 @@
 ---
 // 行式文章条目（规格 §9.1 PostRow）：博客列表 + 首页「最新文章」复用。
 // 网格 150px | 1fr | auto：日期（等宽）| 标题 + 摘要 | 阅读时长 + 分类。
+import { formatISO } from './utils';
 interface Props {
   href: string;
   /** Date 对象或 "YYYY-MM-DD" 字符串 */
@@ -23,7 +24,7 @@ const dateText = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')
     dense ? 'py-5' : 'py-[34px] md:py-[38px]'
   }`}
 >
-  <time datetime={d.toISOString()} class="meta pt-1 normal-case">{dateText}</time>
+  <time datetime={formatISO(d)} class="meta pt-1 normal-case group-hover:text-ink-2">{dateText}</time>
   <div class="min-w-0">
     <h3 class="font-serif text-[1.15rem] font-semibold leading-snug text-ink transition-colors group-hover:text-accent">
       {title}
@@ -36,7 +37,7 @@ const dateText = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')
       )
     }
   </div>
-  <p class="meta flex items-baseline gap-3 pt-1 sm:flex-col sm:items-end sm:gap-1.5">
+  <p class="meta group-hover:text-ink-2 flex items-baseline gap-3 pt-1 sm:flex-col sm:items-end sm:gap-1.5">
     <span class="normal-case">{readingTime} 分钟</span>
     <span class="text-accent">{category}</span>
   </p>

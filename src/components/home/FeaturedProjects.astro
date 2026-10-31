@@ -14,8 +14,8 @@ const { projects, total } = Astro.props;
 ---
 
 <section aria-labelledby="featured-title">
-  <SectionHead index="01" eyebrow="Selected Work" title="精选项目">
-    <a slot="right" href="/projects" class="meta pb-1 transition-colors hover:text-accent">全部 {total} 个项目 →</a>
+  <SectionHead index="01" eyebrow="Selected Work" title="精选项目" id="featured-title">
+    <a slot="right" href="/projects" class="meta pt-1.5 -mt-1.5 transition-colors hover:text-accent">全部 {total} 个项目 →</a>
   </SectionHead>
 
   <div class="mt-6 border-t border-rule">
@@ -36,7 +36,7 @@ const { projects, total } = Astro.props;
               p.cover ? (
                 <img
                   src={p.coverSmall ?? p.cover}
-                  alt={`${p.title} 界面截图`}
+                  alt=""
                   width={400}
                   height={250}
                   loading="lazy"
@@ -46,8 +46,7 @@ const { projects, total } = Astro.props;
               ) : (
                 <div
                   class="flex aspect-[16/10] w-40 items-center justify-center rounded-[4px] border border-rule bg-paper-3"
-                  role="img"
-                  aria-label={`${p.title} 截图占位`}
+                  aria-hidden="true"
                 >
                   <span class="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-3">Shot</span>
                 </div>

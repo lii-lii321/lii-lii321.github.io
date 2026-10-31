@@ -24,9 +24,10 @@ function levelColor(level: number): string {
   {
     data.weeks ? (
       <div
-        class="grid grid-flow-col gap-[3px] overflow-x-auto pb-1"
+        class="grid grid-flow-col gap-[3px] overflow-x-auto pb-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         style={`grid-template-rows:repeat(7, 9px);grid-auto-columns:9px`}
         role="img"
+        tabindex="0"
         aria-label={`GitHub 贡献热力图：近一年 ${data.total ?? '?'} 次贡献`}
       >
         {data.weeks.map((week) =>
@@ -46,15 +47,15 @@ function levelColor(level: number): string {
 
   <div>
     <dl class="grid max-w-xs grid-cols-2 gap-x-6 gap-y-5">
-      <div>
-        <dd class="font-serif text-3xl font-bold text-ink">
+      <div class="flex flex-col">
+        <dt class="meta order-2 mt-1 normal-case">近一年贡献</dt>
+        <dd class="order-1 font-serif text-3xl font-bold text-ink">
           {data.total ?? '—'}
         </dd>
-        <dt class="meta mt-1 normal-case">近一年贡献</dt>
       </div>
-      <div>
-        <dd class="font-serif text-3xl font-bold text-ink">{data.user || '—'}</dd>
-        <dt class="meta mt-1 normal-case">GitHub 用户</dt>
+      <div class="flex flex-col">
+        <dt class="meta order-2 mt-1 normal-case">GitHub 用户</dt>
+        <dd class="order-1 font-serif text-3xl font-bold text-ink">{data.user || '—'}</dd>
       </div>
     </dl>
     <p class="mt-5 max-w-[52ch] text-sm leading-relaxed text-ink-2">

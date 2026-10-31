@@ -44,15 +44,15 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
         <p class="lede mt-5">把做过的东西、踩过的坑写成文章。按年份倒序，不设分页。</p>
       </div>
       <div class="flex gap-5 pb-1">
-        <a href="/search" class="meta transition-colors hover:text-accent">搜索 →</a>
-        <a href="/archives" class="meta transition-colors hover:text-accent">归档 →</a>
-        <a href="/tags" class="meta transition-colors hover:text-accent">标签 →</a>
+        <a href="/search" class="meta pt-1.5 -mt-1.5 transition-colors hover:text-accent">搜索 →</a>
+        <a href="/archives" class="meta pt-1.5 -mt-1.5 transition-colors hover:text-accent">归档 →</a>
+        <a href="/tags" class="meta pt-1.5 -mt-1.5 transition-colors hover:text-accent">标签 →</a>
       </div>
     </div>
   </section>
 
   <section class="mt-10" aria-label="分类筛选">
-    <FilterChips scope="blog" items={chips} />
+    <FilterChips scope="blog" items={chips} statusLabel="篇文章" />
   </section>
 
   {
@@ -62,11 +62,10 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
           href={`/blog/${hero.id}`}
           class="group grid gap-8 border border-rule bg-paper p-6 transition-colors hover:bg-paper-2 md:grid-cols-[1.1fr_1fr] md:p-8"
         >
-          {/* 头条配图占位：4:3；有封面后替换为 <img> */}
+          {/* 头条配图占位：4:3；有封面后替换为 <img>（装饰性：标题在相邻 h2 已给出） */}
           <div
             class="flex aspect-[4/3] items-center justify-center rounded-[4px] border border-rule bg-paper-3"
-            role="img"
-            aria-label={`${hero.data.title} 封面占位`}
+            aria-hidden="true"
           >
             <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-3">Cover</span>
           </div>
@@ -89,7 +88,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
         <div class="mb-14 last:mb-0" data-filter-group data-filter-scope="blog">
           <div class="flex items-baseline justify-between border-b border-ink pb-3">
             <h2 class="font-serif text-2xl font-bold text-ink">{year}</h2>
-            <p class="meta">{byYear.get(year)!.length} 篇</p>
+            <p class="meta" data-filter-count>{byYear.get(year)!.length} 篇</p>
           </div>
           <div>
             {byYear.get(year)!.map((post) => (
@@ -109,7 +108,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
       ))
     }
     {/* 空态：FilterChips 脚本在该分类无文章时显示 */}
-    <p class="py-16 text-center text-sm text-ink-2" data-filter-scope="blog" data-filter-empty hidden>
+    <p class="py-16 text-center text-sm text-ink-2" data-filter-scope="blog" data-filter-empty hidden role="status">
       该分类下暂无文章。
     </p>
   </section>

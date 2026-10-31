@@ -123,8 +123,11 @@ const next = idx < projects.length - 1 ? projects[idx + 1] : null;
           <div class="mt-4 grid gap-4 sm:grid-cols-2">
             {
               project.shots.map((shot) => (
-                <figure class="min-w-0">
-                  {/* 真实宽高（ingest-shots 入库写回）+ h-auto：按真实比例完整展示不裁切，与照片墙同一哲学 */}
+                <figure
+                  class:list={['min-w-0', shot.width && shot.height && shot.height > shot.width && 'md:max-w-[62%] md:justify-self-center']}
+                >
+                  {/* 真实宽高（ingest-shots 入库写回）+ h-auto：按真实比例完整展示不裁切，与照片墙同一哲学；
+                      竖图在 md+ 收窄到 62% 居中——390×844 的手机截图全宽会拉到一屏半高 */}
                   <img
                     src={shot.src}
                     alt={`${project.title} · ${shot.caption}`}
@@ -187,13 +190,14 @@ const next = idx < projects.length - 1 ? projects[idx + 1] : null;
       <dl class="mt-8 grid gap-x-10 gap-y-8 border-t border-ink pt-6 md:grid-cols-3">
         {
           project.metrics.map((m) => (
-            <div>
-              <dd class="font-serif text-[2.6rem] font-bold leading-none text-ink tabular-nums">
+            <div class="flex flex-col">
+              {/* dl 内容模型：组内 dt 先于 dd（含 baseline dd）；flex order 保持「数字→标签→基线」视觉 */}
+              <dt class="order-2 mt-3 text-sm text-ink-2">{m.label}</dt>
+              <dd class="order-1 font-serif text-[2.6rem] font-bold leading-none text-ink tabular-nums">
                 {m.num}
                 {m.unit && <small class="ml-1 font-sans text-sm font-normal text-ink-3">{m.unit}</small>}
               </dd>
-              <dt class="mt-3 text-sm text-ink-2">{m.label}</dt>
-              {m.baseline && <dd class="meta mt-2 normal-case">{m.baseline}</dd>}
+              {m.baseline && <dd class="meta order-3 mt-2 normal-case">{m.baseline}</dd>}
             </div>
           ))
         }

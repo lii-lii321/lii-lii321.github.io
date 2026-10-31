@@ -23,10 +23,10 @@ const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeComp
           <li>
             <a
               href={`/tags/${encodeURIComponent(tag)}/`}
-              class="tag-link inline-flex items-baseline gap-2 rounded-full border border-rule-2 bg-paper px-4 py-2"
+              class="tag-link group inline-flex items-baseline gap-2 rounded-full border border-rule-2 bg-paper px-4 py-2"
             >
-              <span class="text-sm text-ink"># {tag}</span>
-              <span class="meta">{count}</span>
+              <span class="text-sm group-hover:text-accent"># {tag}</span>
+              <span class="meta group-hover:text-accent">{count}</span>
             </a>
           </li>
         ))

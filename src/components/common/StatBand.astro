@@ -29,7 +29,9 @@ const { items } = Astro.props;
           <div
             class={`flex flex-col gap-1.5 px-6 py-8 ${i > 0 ? 'border-l border-rule' : ''} max-md:[&:nth-child(3)]:border-l-0 max-md:[&:nth-child(n+3)]:border-t`}
           >
-            <dd class="font-serif text-[2.6rem] font-bold leading-none text-ink">
+            {/* dl 内容模型要求组内 dt 先于 dd：DOM 按 dt→数字→副信息，视觉用 order 保持「数字→标签→副信息」 */}
+            <dt class="order-2 text-sm text-ink-2">{item.label}</dt>
+            <dd class="order-1 font-serif text-[2.6rem] font-bold leading-none text-ink">
               {item.href ? (
                 <a href={item.href} class="transition-colors hover:text-accent" aria-label={`${item.num}${item.unit ?? ''} ${item.label}，点击查看`}>
                   {numInner}
@@ -38,8 +40,7 @@ const { items } = Astro.props;
                 numInner
               )}
             </dd>
-            <dt class="text-sm text-ink-2">{item.label}</dt>
-            {item.sub && <dd class="meta normal-case">{item.sub}</dd>}
+            {item.sub && <dd class="meta order-3 normal-case">{item.sub}</dd>}
           </div>
         );
       })

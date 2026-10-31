@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN"> <head>
+<meta name="astro-view-transitions-enabled" content="true">
+<meta name="astro-view-transitions-fallback" content="animate">
+<script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.DxD8ucBX.js">
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="多租户家教订单匹配平台 smart_tutor 的从 0 到 1：状态机和资金测试第一天定调，运行一个多月的三端界面 9 月下旬才等到自己的设计系统。335 个提交的先后次序，本身就是设计。">
+<meta name="generator" content="Astro v5.18.2">
+<meta name="theme-color" content="#FBFAF7">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="https://lii-lii321.github.io/blog/smart-tutor-journey/">
+<link rel="alternate" type="application/rss+xml" title="先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交 · 李云强 · 做产品的工程师，也该写代码。" href="https://lii-lii321.github.io/rss.xml">
+<!-- OG / Twitter card -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交 · 李云强 · 做产品的工程师，也该写代码。">
+<meta property="og:description" content="多租户家教订单匹配平台 smart_tutor 的从 0 到 1：状态机和资金测试第一天定调，运行一个多月的三端界面 9 月下旬才等到自己的设计系统。335 个提交的先后次序，本身就是设计。">
+<meta property="og:url" content="https://lii-lii321.github.io/blog/smart-tutor-journey/">
+<meta property="og:image" content="https://lii-lii321.github.io/projects/smart-tutor/admin-batch-import-desktop.webp">
+<meta property="og:image:alt" content="先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="李云强">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交 · 李云强 · 做产品的工程师，也该写代码。">
+<meta name="twitter:description" content="多租户家教订单匹配平台 smart_tutor 的从 0 到 1：状态机和资金测试第一天定调，运行一个多月的三端界面 9 月下旬才等到自己的设计系统。335 个提交的先后次序，本身就是设计。">
+<meta name="twitter:image" content="https://lii-lii321.github.io/projects/smart-tutor/admin-batch-import-desktop.webp">
+<meta name="twitter:image:alt" content="先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交">
+<title>先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交 · 李云强 · 做产品的工程师，也该写代码。</title>
+<link rel="stylesheet" href="/_astro/about.Bdmwi0TY.css">
+<script type="module" src="/_astro/page.DTPp-pk-.js">
+</script>
+</head> <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased"> <!-- 无障碍：跳过导航直达主内容 --> <a href="#main" class="sr-only z-[100] rounded-[4px] bg-ink px-4 py-2 text-sm text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+跳到主内容
+</a> <!-- 顶部导航：姓名（衬线）+ 拼音（等宽）｜ 5 入口 ｜ GitHub / Email / 简历 PDF，底部 1px rule --> <header class="sticky top-0 z-50 border-b border-rule bg-paper/90 backdrop-blur"> <nav class="wrap flex h-16 items-center justify-between gap-6" aria-label="主导航"> <!-- 品牌区 --> <a href="/" class="group flex items-baseline gap-2 whitespace-nowrap"> <span class="font-serif text-lg font-bold tracking-wide text-ink group-hover:text-accent"> 李云强 </span> <span class="meta hidden sm:inline">Li Yunqiang</span> </a> <!-- 桌面端链接 --> <ul class="nav-links hidden items-center gap-7 md:flex"> <li> <a href="/" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 首页  </a> </li>
+<li> <a href="/projects" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 项目  </a> </li>
+<li> <a href="/blog" aria-current="page" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 文章 <span class="absolute inset-x-0 -bottom-[21px] h-0.5 bg-accent" aria-hidden="true">
+</span> </a> </li>
+<li> <a href="/about" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 关于  </a> </li>
+<li> <a href="/travel" class="nav-link relative pb-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"> 旅行  </a> </li> </ul> <!-- 右侧 CTA：移动端只保留简历按钮 --> <div class="hidden items-center gap-4 md:flex"> <a href="https://github.com/lii-lii321" target="_blank" rel="noopener noreferrer" class="meta transition-colors hover:text-ink">
+GitHub ↗
+</a> <a href="mailto:3028410005@qq.com" class="meta transition-colors hover:text-ink">
+Email
+</a> <a href="/resume" class="chip !border-ink !text-ink hover:!border-accent hover:!text-accent">
+简历
+</a> </div> <!-- 移动端汉堡按钮 --> <button type="button" id="nav-toggle" class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden" aria-expanded="false" aria-controls="nav-panel" aria-label="打开菜单"> <span class="h-px w-5 bg-ink transition-transform" aria-hidden="true">
+</span> <span class="h-px w-5 bg-ink" aria-hidden="true">
+</span> <span class="h-px w-5 bg-ink transition-transform" aria-hidden="true">
+</span> </button> </nav> <!-- 移动端下滑面板 --> <div id="nav-panel" hidden class="nav-panel border-t border-rule bg-paper md:hidden"> <ul class="wrap flex flex-col py-2"> <li> <a href="/" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 首页 </a> </li>
+<li> <a href="/projects" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 项目 </a> </li>
+<li> <a href="/blog" aria-current="page" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 文章 </a> </li>
+<li> <a href="/about" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 关于 </a> </li>
+<li> <a href="/travel" class="block border-b border-rule py-3 text-sm text-ink-2 aria-[current=page]:font-medium aria-[current=page]:text-ink"> 旅行 </a> </li> <li class="flex items-center gap-5 py-4"> <a href="https://github.com/lii-lii321" target="_blank" rel="noopener noreferrer" class="meta">GitHub ↗</a> <a href="mailto:3028410005@qq.com" class="meta">Email</a> <a href="/resume" class="chip !border-ink !text-ink ml-auto">简历</a> </li> </ul> </div> </header> <!-- 页面主体（id="main" 供无障碍跳转链接落点，tabindex="-1" 使跳转后焦点可落在主内容） --> <main id="main" tabindex="-1" class="wrap w-full flex-1">   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交","description":"多租户家教订单匹配平台 smart_tutor 的从 0 到 1：状态机和资金测试第一天定调，运行一个多月的三端界面 9 月下旬才等到自己的设计系统。335 个提交的先后次序，本身就是设计。","datePublished":"2026-10-28T00:00:00.000Z","dateModified":"2026-10-28T00:00:00.000Z","image":"https://lii-lii321.github.io/projects/smart-tutor/admin-batch-import-desktop.webp","author":{"@type":"Person","name":"李云强","url":"https://lii-lii321.github.io/about"},"keywords":"多租户, 状态机, 测试工程, 项目复盘"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"文章","item":"https://lii-lii321.github.io/blog"},{"@type":"ListItem","position":2,"name":"先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交"}]}]</script> <article class="pb-[var(--spacing-sec)]"> <nav class="meta flex items-center gap-2 pt-10 normal-case" aria-label="面包屑"> <a href="/blog" class="transition-colors hover:text-accent">文章</a> <span aria-hidden="true">/</span> <span>工程</span> </nav> <header class="mt-8"> <p class="eyebrow">工程</p> <h1 class="h1 mt-4 max-w-[24ch]">先有账本，再有设计系统：smart_tutor 从 0 到 1 的 335 个提交</h1> <p class="mt-6 max-w-[56ch] font-serif text-[1.42rem] leading-relaxed text-ink-2"> 多租户家教订单匹配平台 smart_tutor 的从 0 到 1：状态机和资金测试第一天定调，运行一个多月的三端界面 9 月下旬才等到自己的设计系统。335 个提交的先后次序，本身就是设计。 </p> </header> <figure class="mt-10"> <img src="/projects/smart-tutor/admin-batch-import-desktop.webp" alt="AI 批量导入界面：整段微信记录一次识别成待校对订单" width="1200" height="750" loading="eager" fetchpriority="high" decoding="async" class="w-full rounded-[10px] border border-rule object-cover" style="aspect-ratio: 2 / 1;"> <figcaption class="meta mt-3 normal-case">AI 批量导入界面：整段微信记录一次识别成待校对订单</figcaption> </figure> <!-- post-meta 横条：上下 1px rule --> <div class="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-rule py-4"> <time datetime="2026-10-28" class="meta normal-case"> 2026 年 10 月 28 日 </time> <span class="meta normal-case">8 分钟阅读</span> <ul class="flex flex-wrap gap-2"> <li> <a href="/tags/%E5%A4%9A%E7%A7%9F%E6%88%B7/" class="tag-link chip" aria-label="查看标签 多租户 下的全部文章">
+#多租户 </a> </li>
+<li> <a href="/tags/%E7%8A%B6%E6%80%81%E6%9C%BA/" class="tag-link chip" aria-label="查看标签 状态机 下的全部文章">
+#状态机 </a> </li>
+<li> <a href="/tags/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B/" class="tag-link chip" aria-label="查看标签 测试工程 下的全部文章">
+#测试工程 </a> </li>
+<li> <a href="/tags/%E9%A1%B9%E7%9B%AE%E5%A4%8D%E7%9B%98/" class="tag-link chip" aria-label="查看标签 项目复盘 下的全部文章">
+#项目复盘 </a> </li> </ul>  </div> <!-- 两栏：200px 目录 | 正文 --> <div class="mt-12 grid gap-10 lg:grid-cols-[200px_1fr] lg:gap-16"> <aside class="hidden lg:block"> <div class="sticky top-[132px]"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style>
+<script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script>
+<script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script>
+<astro-island uid="17tCKL" prefix="r1" component-url="/_astro/Toc.EACC9_T-.js" component-export="default" renderer-url="/_astro/client.LGetASx6.js" props="{&quot;headings&quot;:[1,[[0,{&quot;id&quot;:[0,&quot;第一天先把三笔账定下来&quot;],&quot;text&quot;:[0,&quot;第一天，先把三笔账定下来&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;批量与去重71-单的地基&quot;],&quot;text&quot;:[0,&quot;批量与去重：71 单的地基&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;9-月plan-台账与在测试里先走一遍三端&quot;],&quot;text&quot;:[0,&quot;9 月：PLAN 台账，与在测试里先走一遍三端&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;9-月-14-日全绿是错觉&quot;],&quot;text&quot;:[0,&quot;9 月 14 日：全绿是错觉&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;收敛门禁然后是设计系统&quot;],&quot;text&quot;:[0,&quot;收敛、门禁，然后是设计系统&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;钱之后是隐私识别之后是语义&quot;],&quot;text&quot;:[0,&quot;钱之后是隐私，识别之后是语义&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;收尾并行展台与安静&quot;],&quot;text&quot;:[0,&quot;收尾：并行、展台与安静&quot;],&quot;level&quot;:[0,2]}]]]}" ssr client="load" opts="{&quot;name&quot;:&quot;Toc&quot;,&quot;value&quot;:true}" await-children>
+<nav aria-label="目录" class="text-sm">
+<p class="meta mb-3">目录</p>
+<ul class="space-y-1 border-l border-rule">
+<li>
+<a href="#第一天先把三笔账定下来" aria-current="true" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-accent font-medium text-accent">第一天，先把三笔账定下来</a>
+</li>
+<li>
+<a href="#批量与去重71-单的地基" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">批量与去重：71 单的地基</a>
+</li>
+<li>
+<a href="#9-月plan-台账与在测试里先走一遍三端" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">9 月：PLAN 台账，与在测试里先走一遍三端</a>
+</li>
+<li>
+<a href="#9-月-14-日全绿是错觉" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">9 月 14 日：全绿是错觉</a>
+</li>
+<li>
+<a href="#收敛门禁然后是设计系统" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">收敛、门禁，然后是设计系统</a>
+</li>
+<li>
+<a href="#钱之后是隐私识别之后是语义" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">钱之后是隐私，识别之后是语义</a>
+</li>
+<li>
+<a href="#收尾并行展台与安静" class="-ml-px block border-l-2 py-1 transition-colors pl-4 border-transparent text-ink-3 hover:border-rule-2 hover:text-ink-2">收尾：并行、展台与安静</a>
+</li>
+</ul>
+</nav>
+<!--astro:end-->
+</astro-island> </div> </aside> <div class="min-w-0"> <!-- 移动端折叠目录（桌面端用右侧 sticky Toc） --> <details class="mb-8 rounded-[4px] border border-rule bg-paper-2/60 lg:hidden"> <summary class="meta cursor-pointer list-none px-4 py-3">目录（7 节）</summary> <ul class="space-y-1 px-4 pb-4"> <li class> <a href="#第一天先把三笔账定下来" class="text-sm text-ink-2 hover:text-accent"> 第一天，先把三笔账定下来 </a> </li>
+<li class> <a href="#批量与去重71-单的地基" class="text-sm text-ink-2 hover:text-accent"> 批量与去重：71 单的地基 </a> </li>
+<li class> <a href="#9-月plan-台账与在测试里先走一遍三端" class="text-sm text-ink-2 hover:text-accent"> 9 月：PLAN 台账，与在测试里先走一遍三端 </a> </li>
+<li class> <a href="#9-月-14-日全绿是错觉" class="text-sm text-ink-2 hover:text-accent"> 9 月 14 日：全绿是错觉 </a> </li>
+<li class> <a href="#收敛门禁然后是设计系统" class="text-sm text-ink-2 hover:text-accent"> 收敛、门禁，然后是设计系统 </a> </li>
+<li class> <a href="#钱之后是隐私识别之后是语义" class="text-sm text-ink-2 hover:text-accent"> 钱之后是隐私，识别之后是语义 </a> </li>
+<li class> <a href="#收尾并行展台与安静" class="text-sm text-ink-2 hover:text-accent"> 收尾：并行、展台与安静 </a> </li> </ul> </details> <div class="prose-editorial"> <p>家教中介的账本过去活在三个地方：微信群的聊天记录、Excel 台账，和中介自己的脑子。2026 年 8 月 20 日，smart_tutor 的第一个提交落库，提交名很朴素：initial-project-snapshot。家教这个方向我其实从年初就在摸——1 月 2 日 Math_Tutor_RAG 的第一行代码，到 9 月 7 日它以 v2.0 推倒重写，那条线解决的是「教」；而 smart_tutor 要装进去的是「生意」：多租户、订单、钱、人。到 10 月 25 日最后一次推送，这个仓库一共留下 335 个提交——8 月 17 个，9 月 241 个，10 月 77 个。这篇文章想讲的不是功能清单，而是这 335 个提交的次序：什么先做，什么押后，为什么。</p>
+<h2 id="第一天先把三笔账定下来">第一天，先把三笔账定下来</h2>
+<p>第一天的提交节奏远比我记忆里的密集：8 月 20 日一天落了 12 个提交，界面就在其中——首日快照的顶层就带着 frontend/ 目录，快照之后紧跟着 logout-to-teacher-login、admin-login-to-dashboard 这样的登录流修正。同一天还落了状态机统一（移除废弃状态，transit 仅允许归档/重开）和「资金流程与权限边界集成测试（7 项）」。</p>
+<p>状态机是订单生意的骨架。中介发布 → 教员投递 → 定金 → 试课 → 尾款——先收定金、再安排试课，这个次序是当天另一个提交用代码钉死的（「强制先定金后试课；补齐资金闭环」），而扯皮永远发生在迁移的边界上——所以第一天的状态机工作从删状态开始：废弃的通道直接封死，转移只留归档和重开两个出口。宁可状态少而硬，不要状态多而软。</p>
+<p>那 7 项资金测试则在第一天就给定金和尾款留好了位置。我的判断是：界面可以推倒，状态机可以扩展，但订单里唯一不能「重来一次」的数据是钱。后来财务流水页长成「定金、尾款、退款分账汇总，流水逐条关联订单号与登记人」的形状，起点就是这 7 项测试画出的边界。</p>
+<p>多租户这个词，我也没打算留到「以后再说」。中介生意的天然形态是一家中介一本台账，平台化意味着先承认一件事：账本和账本之间必须隔得干干净净。第一天的权限边界测试、9 月 12 日 E2E 里的脱敏断言，连同后来彩排里那个 create_tenant 卡死的 500，其实都是同一条线的不同切面——租户隔离不是功能，是前提。</p>
+<h2 id="批量与去重71-单的地基">批量与去重：71 单的地基</h2>
+<p>两天后的「阶段2快照」一次放进五样东西：推荐引擎、批量操作、导入去重、地图看单、MySQL 配置。回头看，真正决定后文的两个词是「批量」和「去重」——它们是后来那条「粘贴 → AI 识别 → 逐条校对 → 入库」管道的地基。真实环境里这条管道实测过一次识别出 71 单——这个数字的出处不是提交史，是站点项目页的数据档案：中介把整段微信聊天记录原样粘进来，逐条核对后入库。批量识别听着炫，但让它敢上生产的是去重——同一条发单在群里被转发三遍，批量导入就必须只落一单。</p>
+<p>去重之外还有归一化这道暗坑。群里有人写「初二」，有人写「8 年级」，还有人写「八年级」——同一条需求三种写法，入库时必须收敛到同一个学期编码，否则地图看单和推荐排序的召回永远差一口气。归一化字典是数据建模的一部分，跟着业务一起长，而不是散落在 prompt 里。</p>
+<p>8 月我只留下了 17 个提交。9 月，节奏变了。</p>
+<h2 id="9-月plan-台账与在测试里先走一遍三端">9 月：PLAN 台账，与在测试里先走一遍三端</h2>
+<p>9 月 6 日两个大提交前后脚落地：一边是密码认证、资金/状态守卫、生产化加固与财务对账能力——定金尾款线上化，在「对账」这个词上补完了最后一块板；另一边是 CI 流水线、token 立即失效、Redis 分布式限流与 Docker 部署配置。</p>
+<figure>
+  <img src="/projects/smart-tutor/admin-financial-desktop.webp" alt="财务流水页：定金、尾款、退款分账汇总，流水明细逐条关联订单号与登记人" width="1200" height="750" loading="lazy" decoding="async">
+  <figcaption>财务流水页：定金、尾款、退款分账汇总，流水明细逐条关联订单号与登记人</figcaption>
+</figure>
+<p>从 9 月 9 日起，我的提交信息里开始出现 [PLAN:xxx] 标签，配套一份 STATE/PLAN 台账，夜里开工、批次推进。台账不是仪式——深夜批次最容易丢的不是代码，是「做到哪了」：STATE 记当下状态，PLAN 记次序，第二天开工的我只需要读文件，不需要回忆。P0-3 是测试基座 conftest：默认 env 注入、每用例独立 SQLite、ASGI 客户端、造数工厂；P0-4 把 alembic check 防模型漂移设为阻塞门禁，外加 pip-audit、npm audit 和 MySQL 迁移 round-trip 任务。9 月 10 日又用 hypothesis 补上 property tests——精算恒等式与状态机全域合法：资金对不对，不靠举例子，靠性质成立。</p>
+<p>值得单独说的是 9 月 12 日的 E2E 扩链：教员注册、建简历、投递，到中介五步审核，再到脱敏断言，全链 8/8 绿。这些测试跑的不是 mock，而是 8 月 20 日就存在的三端界面——从教员橱窗到中介登录进工作台，Playwright 点的都是真实页面。界面早就在了，缺的是把全流程钉进测试。</p>
+<h2 id="9-月-14-日全绿是错觉">9 月 14 日：全绿是错觉</h2>
+<p>彩排日。我在本地用 compose 把全栈演练跑起来，实测抓出 4 个上线阻断级问题：scheduler 缺 OWNER_ACCESS_CODE 直接崩溃循环；create_tenant 和 create_resume 撞上 MissingGreenlet 500——server_default 没有回读，SQLite 测试根本不触发，放到真实环境里，教员建简历必卡死。apply_order 做了同类预防修复，健康检查改 python 探针、mysqldump 补 —no-tablespaces 之后，冒烟 21 项全 PASS。</p>
+<p>同一天还有另一笔诚实账：CI 上的覆盖率一直看着体面，但 SQLAlchemy asyncio 经 greenlet 驱动，路由 handler 在 DB await 之后的整段代码被漏计了。给 coverage 加上 concurrency=greenlet，真实总覆盖率从 57% 修正到 84%。</p>
+<div class="callout">
+<p>
+<strong>教训</strong>：全绿不等于全覆盖，本地全绿更不等于可以上线。这两个真相都不便宜，但都付在彩排里，而不是付在教员点击「提交简历」的那一刻。</p>
+</div>
+<h2 id="收敛门禁然后是设计系统">收敛、门禁，然后是设计系统</h2>
+<p>9 月 15 日的「双轨收敛」是我还给自己的债：init_db 精简为 create_all 加版本戳对齐迁移头，13 个 <em>ensure</em>* DDL 补丁（约 300 行）整体移除。那 13 个补丁是快照期与 9 月初功能波共同攒下的地层——初始快照里就有 <em>ensure</em>，9 月上旬每上一批功能就再补一段 DDL，双轨并存的日子里，迁移脚本和数据库的真实结构是两套说法，7 处漂移就是这么攒出来的。收敛之后 dev.db 重建，alembic check 零漂移，164 个测试全绿。9 月 18 日，SQLAlchemy 2.0 的 Mapped[] 声明迁移完成，类型检查从此有信号，mypy 门禁与覆盖率门禁同日接入。</p>
+<p>9 月 24 日，UI/UX 2.0 的 Batch 01-03 落地：Navy+Slate+Paper 设计系统、登录入口分离、教员首页推荐优先、中介经营工作台、Admin 侧栏响应式。注意提交名里的「2.0」——界面不是新画出来的，是给已经运行了一个多月的三端界面做设计系统化，让「能用」的界面变「统一」。为什么设计系统放在 9 月下旬？因为到这时，状态机、资金流、权限边界、E2E 全链都已经被验证过一遍，界面要遵守的规则已经定型，设计系统才不会一边画图一边发明规则。</p>
+<h2 id="钱之后是隐私识别之后是语义">钱之后是隐私，识别之后是语义</h2>
+<p>10 月 3 日，Mimosa 审计的 19 条发现在这个仓库做了全量裁决基线；同日 ADR-0005 落地家长 PII 静态加密：AES-256-GCM 同列密文、v1: 前缀、读端双格式兼容，导入/唤醒/PATCH 三个写点加密，B 端详情与 address-unlock 按需解密，生产启动强制 PII_ENC_KEY 并带 preflight 体检。读端双格式兼容是给存量数据留的活路：老密文照常能读，新写入一律加密，存量回填迁移幂等可重跑、缺钥跳过——隐私升级不必以停机为代价。11 项加密测试，全量 237 个测试绿。</p>
+<p>回头看这个次序：定金尾款 8 月就有测试护着，家长电话与地址的加密却等到 10 月。不是不在意隐私，而是中介生意的第一层信任是钱不错账，第二层才是电话不外泄——先把会被扯皮的部分钉死，再给不该被看见的部分上锁。</p>
+<p>10 月 12 日起是 AI 三连：自然语言找单、业务知识库向量化、历史订单语义检索。自然语言找单那条我特意在提交里写明「AI 解析条件与数据查询物理隔离」——AI 只负责把人话翻成条件，真正碰数据库的永远是确定性的查询代码。这与批量识别的原则一脉相承：识别是机器的，入库是人的；现在再加一句——找单是语义的，查询是确定性的。</p>
+<h2 id="收尾并行展台与安静">收尾：并行、展台与安静</h2>
+<p>9 月是这条产品线的并行峰值：smart_tutor 的 241 个提交加上 Math_Tutor_RAG 的 139 个，一个月 380 个提交。10 月 7 日，个人站的截图管线把 smart_tutor 连同另外两个仓库一起列为项目截图源——博客成了它的展台。10 月 25 日最后一次推送之后，这个仓库安静了下来。</p>
+<p>今天 10 月 28 日把它写下来，我发现 335 个提交教我的事情，第一天就定了调：先有账本，再有设计系统；先有测试基座，再有门禁；先有次序，再有速度。</p> </div> <div class="max-w-[68ch]"> <aside class="mt-14 flex items-center gap-4 border-y border-rule py-6">  <img src="/portrait.jpg" alt="" width="48" height="48" loading="lazy" decoding="async" class="h-12 w-12 shrink-0 rounded-full border border-rule object-cover"> <div class="min-w-0 flex-1"> <p class="text-sm font-medium text-ink">李云强 · 数据科学在读 · 全栈 / AI 应用开发者</p> <p class="mt-1 text-sm text-ink-2">做产品的工程师，也该写代码。</p> </div> <a href="/about" class="meta shrink-0 transition-colors hover:text-accent">更多 →</a> </aside> </div> </div> </div> <!-- 相关文章：同标签优先，其次同分类 --> <section class="mt-[var(--spacing-sec)]" aria-labelledby="related-title"> <p class="eyebrow">Related</p> <h2 id="related-title" class="h2 mt-3">相关文章</h2> <div class="mt-6 border-t border-rule"> <a href="/blog/math-tutor-tests" class="group grid gap-x-6 gap-y-1 border-b border-rule transition-colors hover:bg-paper-2 sm:grid-cols-[110px_1fr_auto] py-5"> <time datetime="2026-10-28T00:00:00.000Z" class="meta pt-1 normal-case">2026.10.28</time> <div class="min-w-0"> <h3 class="font-serif text-[1.15rem] font-semibold leading-snug text-ink transition-colors group-hover:text-accent"> README 上的 287：Math_Tutor_RAG 的测试是怎么长出来的 </h3> <p class="mt-1.5 max-w-[56ch] text-sm leading-relaxed text-ink-2 max-sm:max-w-none line-clamp-2"> 实测对账那天，README 徽章写着 287 个测试，实跑出来是 368。从 41 到 464，这个仓库的测试不是攒出来的，是每一次架构调整逼出来的。 </p> </div> <p class="meta flex items-baseline gap-3 pt-1 sm:flex-col sm:items-end sm:gap-1.5"> <span class="normal-case">9 分钟</span> <span class="text-accent">工程</span> </p> </a>
+<a href="/blog/wechat-to-orders-pipeline" class="group grid gap-x-6 gap-y-1 border-b border-rule transition-colors hover:bg-paper-2 sm:grid-cols-[110px_1fr_auto] py-5"> <time datetime="2026-10-04T00:00:00.000Z" class="meta pt-1 normal-case">2026.10.04</time> <div class="min-w-0"> <h3 class="font-serif text-[1.15rem] font-semibold leading-snug text-ink transition-colors group-hover:text-accent"> 把微信群变成结构化订单：smart_tutor 的 AI 解析管道 </h3> <p class="mt-1.5 max-w-[56ch] text-sm leading-relaxed text-ink-2 max-sm:max-w-none line-clamp-2"> 家教中介的真实工作流活在微信聊天记录里。smart_tutor 用一条「粘贴 → AI 识别 → 逐条校对 → 入库」的管道，把非结构化文本变成可匹配、可结算的订单。 </p> </div> <p class="meta flex items-baseline gap-3 pt-1 sm:flex-col sm:items-end sm:gap-1.5"> <span class="normal-case">3 分钟</span> <span class="text-accent">工程</span> </p> </a> </div> </section> <!-- 阅读进度条（顶部 2px accent，随滚动增长） --> <div id="read-progress" class="fixed inset-x-0 top-0 z-[60] h-0.5 origin-left scale-x-0 bg-accent" aria-hidden="true">
+</div> <script type="module">document.addEventListener("click",async e=>{const t=e.target instanceof Element?e.target.closest("[data-copy-code]"):null;if(!t)return;const n=t.parentElement?.querySelector("code")?.textContent??"";try{await navigator.clipboard.writeText(n),t.textContent="已复制"}catch{t.textContent="复制失败"}setTimeout(()=>t.textContent="复制",1600)});</script> <script type="module">document.addEventListener("astro:page-load",()=>{document.querySelectorAll(".prose-editorial pre").forEach(t=>{if(t.querySelector(".code-copy"))return;const e=document.createElement("button");e.type="button",e.dataset.copyCode="",e.textContent="复制",e.className="code-copy",t.appendChild(e)})});</script> <script type="module">let t=!1;const n=()=>{t=!1;const s=document.getElementById("read-progress");if(!s)return;const e=document.documentElement,r=e.scrollHeight-e.clientHeight,o=r>0?Math.min(1,e.scrollTop/r):0;s.style.transform=`scaleX(${o})`};addEventListener("scroll",()=>{t||(t=!0,requestAnimationFrame(n))},{passive:!0});document.addEventListener("astro:page-load",n);</script> <!-- 上 / 下一篇 --> <nav class="grid border-t border-rule sm:grid-cols-2 sm:divide-x sm:divide-rule" aria-label="上一篇 / 下一篇"> <a href="/blog/math-tutor-tests" class="group py-8 sm:pr-8"> <p class="meta">← 上一篇</p> <p class="h3 mt-2 transition-colors group-hover:text-accent">README 上的 287：Math_Tutor_RAG 的测试是怎么长出来的</p> </a>  </nav> </article>  </main> <!-- 页脚：顶部 1px ink 粗线 + 4 列 + 底栏 --> <footer class="mt-[var(--spacing-sec)]"> <div class="border-t border-ink"> <div class="wrap grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4"> <!-- 品牌 --> <div> <p class="font-serif text-xl font-bold">李云强</p> <p class="mt-3 max-w-[26ch] text-sm leading-relaxed text-ink-2"> 数据科学在读 · 全栈 / AI 应用开发者。做产品的工程师，也该写代码。 </p> <p class="mt-4 flex items-center gap-2 text-sm text-ink-2"> <span class="pulse inline-block h-1.5 w-1.5 rounded-full bg-ok" aria-hidden="true">
+</span> 开放实习与远程协作 </p> </div> <!-- 站点：入口多（9 个），列内用双列网格保持四列高度均衡 --> <nav aria-label="站点"> <p class="meta">站点</p> <ul class="mt-4 grid grid-cols-2 gap-x-5 gap-y-2.5 text-sm"> <li> <a href="/" class="text-ink-2 transition-colors hover:text-accent"> 首页 </a> </li>
+<li> <a href="/projects" class="text-ink-2 transition-colors hover:text-accent"> 项目 </a> </li>
+<li> <a href="/blog" class="text-ink-2 transition-colors hover:text-accent"> 文章 </a> </li>
+<li> <a href="/about" class="text-ink-2 transition-colors hover:text-accent"> 关于 </a> </li>
+<li> <a href="/travel" class="text-ink-2 transition-colors hover:text-accent"> 旅行 </a> </li> <li> <a href="/archives" class="text-ink-2 transition-colors hover:text-accent">归档</a> </li> <li> <a href="/tags" class="text-ink-2 transition-colors hover:text-accent">标签</a> </li> <li> <a href="/search" class="text-ink-2 transition-colors hover:text-accent">搜索</a> </li> <li> <a href="/now" class="text-ink-2 transition-colors hover:text-accent">Now</a> </li> </ul> </nav> <!-- 项目 --> <nav aria-label="项目"> <p class="meta">项目</p> <ul class="mt-4 space-y-2.5 text-sm"> <li>
+<a href="/projects" class="text-ink-2 transition-colors hover:text-accent">全部项目</a>
+</li> <li>
+<a href="/projects/math-tutor-rag" class="text-ink-2 transition-colors hover:text-accent">Math_Tutor_RAG</a>
+</li> <li>
+<a href="/projects/smart-tutor" class="text-ink-2 transition-colors hover:text-accent">smart_tutor</a>
+</li> <li>
+<a href="/projects/travel-atlas" class="text-ink-2 transition-colors hover:text-accent">Traveling 足迹地图</a>
+</li> </ul> </nav> <!-- 联系 --> <div> <p class="meta">联系</p> <ul class="mt-4 space-y-2.5 text-sm"> <li> <a href="https://github.com/lii-lii321" target="_blank" rel="noopener noreferrer" class="text-ink-2 transition-colors hover:text-accent">
+GitHub ↗
+</a> </li> <li> <a href="mailto:3028410005@qq.com" class="text-ink-2 transition-colors hover:text-accent"> 3028410005@qq.com </a> </li> <li> <a href="/resume" class="text-ink-2 transition-colors hover:text-accent">
+简历（中文 / PDF）
+</a> </li> </ul> </div> </div> <!-- 底栏 --> <div class="border-t border-rule"> <div class="wrap flex flex-wrap items-center gap-x-6 gap-y-2 py-5"> <p class="meta normal-case">© 2026 李云强</p> <p class="meta normal-case">本站用 Astro 构建</p> <p class="meta normal-case">最后更新 2026-10-27</p> <a href="/rss.xml" class="meta normal-case transition-colors hover:text-accent">RSS</a> </div> </div> </div> </footer> <script type="module">document.documentElement.classList.add("js-reveal");const r=new IntersectionObserver(e=>{for(const t of e)t.isIntersecting&&(t.target.classList.add("revealed"),r.unobserve(t.target))},{threshold:.08});document.addEventListener("astro:page-load",()=>{document.querySelectorAll("[data-reveal]:not(.revealed)").forEach(e=>r.observe(e))});</script> <!-- 返回顶部：滚动超过一屏后浮现 --> <button type="button" id="back-to-top" class="fixed bottom-6 right-6 z-40 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-rule-2 bg-paper text-ink-2 shadow-[0_1px_2px_rgba(20,20,25,0.05),0_10px_30px_rgba(20,20,25,0.08)] transition-colors hover:border-accent hover:text-accent" aria-label="返回顶部">
+↑
+</button> <script type="module">let t=!1;const n=()=>{t=!1;const e=document.getElementById("back-to-top");e&&(e.style.display=document.documentElement.scrollTop>window.innerHeight?"flex":"none")};addEventListener("scroll",()=>{t||(t=!0,requestAnimationFrame(n))},{passive:!0});document.addEventListener("astro:page-load",()=>{const e=document.getElementById("back-to-top");e&&(e.addEventListener("click",()=>scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})),n())});</script> <script type="module">addEventListener("keydown",t=>{if(t.key!=="/"||t.ctrlKey||t.metaKey||t.altKey)return;const e=t.target;e&&(e.tagName==="INPUT"||e.tagName==="TEXTAREA"||e.isContentEditable)||t.defaultPrevented||e?.closest?.('[role="dialog"]')||(t.preventDefault(),location.href="/search")});</script> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("nav-toggle"),t=document.getElementById("nav-panel");!e||!t||e.addEventListener("click",()=>{const n=t.hidden;t.hidden=!n,e.setAttribute("aria-expanded",String(n)),e.setAttribute("aria-label",n?"关闭菜单":"打开菜单")})});</script> </body> </html>

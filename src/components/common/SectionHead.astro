@@ -6,8 +6,10 @@ interface Props {
   index: string;
   eyebrow: string;
   title: string;
+  /** 标题 id：外层 section 用 aria-labelledby 指向它（读屏获取区块名） */
+  id?: string;
 }
-const { index, eyebrow, title } = Astro.props;
+const { index, eyebrow, title, id } = Astro.props;
 ---
 
 <div class="flex flex-wrap items-end justify-between gap-4">
@@ -20,7 +22,7 @@ const { index, eyebrow, title } = Astro.props;
     </span>
     <div>
       <p class="eyebrow">{eyebrow}</p>
-      <h2 class="h2 mt-2">{title}</h2>
+      <h2 class="h2 mt-2" id={id}>{title}</h2>
     </div>
   </div>
   <slot name="right" />

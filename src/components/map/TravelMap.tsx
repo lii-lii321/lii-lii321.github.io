@@ -15,7 +15,7 @@ import { EffectScatterChart } from 'echarts/charts';
 import { GeoComponent, TooltipComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import type { EChartsType } from 'echarts/core';
-import type { Trip, VisitedData } from '../../types';
+import type { MapTrip, VisitedData } from '../../types';
 import worldUrl from '../../assets/geo/world.json?url';
 import chinaUrl from '../../assets/geo/china.json?url';
 import {
@@ -37,7 +37,7 @@ interface GeoFeatureCollection {
 type GeoStatus = 'loading' | 'ready' | 'error';
 
 interface Props {
-  trips: Trip[];
+  trips: MapTrip[];
   visited: VisitedData;
 }
 
@@ -216,7 +216,11 @@ export default function TravelMap({ trips, visited }: Props) {
 
       {/* 地图主体 + 覆盖层（加载 / 降级 / 侧面板） */}
       <div className="relative h-[420px] bg-paper sm:h-[520px] lg:h-[580px]">
-        <div ref={containerRef} className="h-full w-full" />
+        <div ref={containerRef} className="h-full w-full" role="img" aria-label="旅行足迹地图" />
+        {/* 常驻 live region：加载/失败状态切换对读屏可见（不随状态卸载） */}
+        <p role="status" className="sr-only">
+          {status[view] === 'loading' ? '地图数据加载中……' : status[view] === 'error' ? `${VIEW_LABEL_CN[view]}数据暂时加载失败` : ''}
+        </p>
 
         {status[view] === 'loading' && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -278,8 +282,8 @@ function PlacePanel({ cluster, onClose }: { cluster: PlaceCluster; onClose: () =
 }
 
 /** 旅行卡片：封面缩略图（模糊占位打底）+ 标题 + 日期 + 照片数 + 标签 */
-function TripCard({ trip }: { trip: Trip }) {
-  const coverPhoto = trip.photos.find((p) => p.src === trip.cover) ?? trip.photos[0];
+function TripCard({ trip }: { trip: MapTrip }) {
+  const coverPhoto = trip.cover;
   return (
     <a
       href={`/travel/${trip.id}`}
@@ -299,7 +303,7 @@ function TripCard({ trip }: { trip: Trip }) {
             alt={trip.title}
             loading="lazy"
             decoding="async"
-            className="h-16 w-24 object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-16 w-24 object-cover transition-transform duration-300 motion-safe:group-hover:scale-105"
           />
         )}
       </div>
@@ -308,7 +312,7 @@ function TripCard({ trip }: { trip: Trip }) {
           {trip.title}
         </h4>
         <p className="mt-1 text-xs text-ink-3">
-          {trip.date} · {trip.photos.length} 张照片
+          {trip.date} · {trip.photoCount} 张照片
         </p>
         {trip.tags.length > 0 && (
           <p className="mt-1.5 flex flex-wrap gap-1">
@@ -334,7 +338,7 @@ function GeoFallback({
   visited,
 }: {
   view: MapView;
-  trips: Trip[];
+  trips: MapTrip[];
   visited: VisitedData;
 }) {
   const chips = view === 'world' ? visited.countries : visited.provinces;
