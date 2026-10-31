@@ -22,5 +22,6 @@ build.log
 Thumbs.db
 .DS_Store
 .workbuddy/
-# workflow 子代理的临时工作目录
+# workflow 子代理的临时工作目录（.tmp-swap=换片/草稿落稿区，.tmp-audit=审读易读版页面）
 .tmp-swap/
+.tmp-audit/
