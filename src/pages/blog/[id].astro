@@ -258,6 +258,34 @@ const related = posts
       });
     </script>
     <script>
+      // 文章配图灯箱：点击正文 figure 里的图片全屏放大（渐进增强——无 JS 时图片原样展示）。
+      // 委托挂在模块层只挂一次；Esc / 点击任意处关闭；astro:page-load 换页后新 DOM 自动被委托覆盖
+      document.addEventListener('click', (event) => {
+        const img = event.target instanceof Element ? event.target.closest('.prose-editorial figure img') : null;
+        if (!img || !(img instanceof HTMLImageElement)) return;
+        event.preventDefault();
+        const overlay = document.createElement('div');
+        overlay.className = 'fig-lightbox';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', img.alt || '文章配图放大查看');
+        const big = document.createElement('img');
+        big.src = img.currentSrc || img.src;
+        big.alt = img.alt;
+        overlay.appendChild(big);
+        const close = () => {
+          overlay.remove();
+          document.removeEventListener('keydown', onKey);
+        };
+        const onKey = (e: KeyboardEvent) => {
+          if (e.key === 'Escape') close();
+        };
+        overlay.addEventListener('click', close);
+        document.addEventListener('keydown', onKey);
+        document.body.appendChild(overlay);
+      });
+    </script>
+    <script>
       // 代码块复制：事件委托，复制后按钮短暂显示「已复制」
       document.addEventListener('click', async (event) => {
         const btn = event.target instanceof Element ? event.target.closest('[data-copy-code]') : null;

@@ -359,6 +359,9 @@ export interface MapOptionParams {
   nameMap: Record<string, string>;
 }
 
+/** 出发地：成都（所有旅程的起点，飞线动画的汇聚源） */
+export const ORIGIN: [number, number] = [104.07, 30.57];
+
 /** 构建某一视图的完整 ECharts option */
 export function buildMapOption(params: MapOptionParams): EChartsOption {
   const { view, clusters, highlighted, nameMap } = params;
@@ -452,6 +455,29 @@ export function buildMapOption(params: MapOptionParams): EChartsOption {
           region: c.province ? `${c.country} · ${c.province}` : c.country,
           tripCount: c.trips.length,
           photoCount: c.photoCount,
+        })) as never,
+      },
+      {
+        // 飞线：从成都出发的弧线流光，指向每一次旅行落点（decorative，不参与 tooltip/交互）
+        name: 'travel-flights',
+        type: 'lines',
+        coordinateSystem: 'geo',
+        zlevel: 1,
+        lineStyle: {
+          color: hexToRgba(highlightColor, 0.32),
+          width: 1.2,
+          curveness: 0.28,
+        },
+        effect: {
+          show: true,
+          period: 5.2,
+          trailLength: 0.22,
+          symbol: 'arrow',
+          symbolSize: 4.5,
+          color: hexToRgba(highlightColor, 0.75),
+        },
+        data: clusters.map((c) => ({
+          coords: [ORIGIN, [c.lng, c.lat] as [number, number]],
         })) as never,
       },
     ],

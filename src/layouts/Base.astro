@@ -397,6 +397,56 @@ const homeJsonLd =
     </script>
 
     <script>
+      // 交互增强（astro:page-load 每页重挂，元素级监听不累积）：
+      // ① 数字带 count-up：进入视口从 0 滚到目标值（无 JS / reduced-motion 时显示原值）
+      // ② 拍立得 3D 视差：pointer:fine 且允许动效时，鼠标跟随轻微倾斜
+      const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+      const countupIo = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            countupIo.unobserve(entry.target);
+            const el = entry.target as HTMLElement;
+            const target = Number(el.dataset.countup);
+            if (!Number.isFinite(target) || matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
+            const duration = 1100;
+            const start = performance.now();
+            const tick = (now: number) => {
+              const t = Math.min(1, (now - start) / duration);
+              el.textContent = String(Math.round(target * easeOut(t)));
+              if (t < 1) requestAnimationFrame(tick);
+            };
+            el.textContent = '0';
+            requestAnimationFrame(tick);
+          }
+        },
+        { threshold: 0.4 },
+      );
+      document.addEventListener('astro:page-load', () => {
+        document.querySelectorAll<HTMLElement>('[data-countup]').forEach((el) => countupIo.observe(el));
+      });
+
+      // 拍立得 3D 视差：仅精确指针（鼠标/触控板）且允许动效；离开时回到初始 2° 旋转
+      document.addEventListener('astro:page-load', () => {
+        if (!matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
+          const base = 'perspective(900px) rotate(2deg)';
+          const onMove = (e: PointerEvent) => {
+            const rect = el.getBoundingClientRect();
+            const px = (e.clientX - rect.left) / rect.width - 0.5;
+            const py = (e.clientY - rect.top) / rect.height - 0.5;
+            el.style.transform = `${base} rotateX(${(-py * 10).toFixed(2)}deg) rotateY(${(px * 12).toFixed(2)}deg) rotate(0deg) translateZ(6px)`;
+          };
+          const onLeave = () => {
+            el.style.transform = base;
+          };
+          el.addEventListener('pointermove', onMove);
+          el.addEventListener('pointerleave', onLeave);
+        });
+      });
+    </script>
+
+    <script>
       // 滚动进场：IO 观察 data-reveal 元素，进入视口加 .revealed（样式在 global.css）。
       // 隐藏态样式挂在 html.js-reveal 作用域下——无 JS 时内容直接可见，reduced-motion 时媒体查询豁免
       document.documentElement.classList.add('js-reveal');

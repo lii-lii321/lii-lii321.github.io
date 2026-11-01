@@ -38,7 +38,7 @@ const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
     <h1 class="display mt-7">
       {
         titleLines.map((line, i) => (
-          <span class={`block ${i > 0 ? 'text-ink-3' : ''}`}>{line}</span>
+          <span class={`hero-line block ${i > 0 ? 'text-ink-3' : ''}`} style={`animation-delay:${i * 0.12}s`}>{line}</span>
         ))
       }
     </h1>
@@ -70,11 +70,15 @@ const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
     </p>
   </div>
 
-  {/* 拍立得：首屏视觉锚点。真实比例展示（width/height 属性定比例，不裁切），
-      hover 回正 + 纸感投影，transform-only 动画 */}
+  {/* 拍立得：首屏视觉锚点。真实比例展示（width/height 属性定比例，不裁切）。
+      data-tilt：鼠标跟随 3D 视差（Base 全局脚本接管 transform，仅 pointer:fine 生效） */}
   {
     trip && cover && (
-      <figure class="group relative mx-auto w-full max-w-[340px] rotate-[2deg] rounded-[4px] border border-rule bg-white p-3 pb-12 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out hover:rotate-0 lg:max-w-none">
+      <figure
+        data-tilt
+        class="group relative mx-auto w-full max-w-[340px] rounded-[4px] border border-rule bg-white p-3 pb-12 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out lg:max-w-none"
+        style="transform:perspective(900px) rotate(2deg)"
+      >
         <img
           src={cover.thumb}
           srcset={`${cover.thumb} 640w, ${trip.cover} ${cover.width}w`}

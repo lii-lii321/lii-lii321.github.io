@@ -11,7 +11,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as echarts from 'echarts/core';
-import { EffectScatterChart } from 'echarts/charts';
+import { EffectScatterChart, LinesChart } from 'echarts/charts';
 import { GeoComponent, TooltipComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import type { EChartsType } from 'echarts/core';
@@ -27,8 +27,8 @@ import {
   type PlaceCluster,
 } from './mapOptions';
 
-// 按需注册：geo + 涟漪散点 + tooltip + canvas 渲染器
-echarts.use([EffectScatterChart, GeoComponent, TooltipComponent, CanvasRenderer]);
+// 按需注册：geo + 涟漪散点 + 飞线 + tooltip + canvas 渲染器
+echarts.use([EffectScatterChart, LinesChart, GeoComponent, TooltipComponent, CanvasRenderer]);
 
 interface GeoFeatureCollection {
   features: { properties?: { name?: string } }[];

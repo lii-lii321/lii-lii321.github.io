@@ -19,12 +19,6 @@ const { items } = Astro.props;
   <dl class="grid grid-cols-2 border-y border-rule md:grid-cols-4">
     {
       items.map((item, i) => {
-        const numInner = (
-          <>
-            {item.num}
-            {item.unit && <small class="ml-1 font-sans text-sm font-normal text-ink-3">{item.unit}</small>}
-          </>
-        );
         return (
           <div
             class={`flex flex-col gap-1.5 px-6 py-8 ${i > 0 ? 'border-l border-rule' : ''} max-md:[&:nth-child(3)]:border-l-0 max-md:[&:nth-child(n+3)]:border-t`}
@@ -34,10 +28,15 @@ const { items } = Astro.props;
             <dd class="order-1 font-serif text-[2.6rem] font-bold leading-none text-ink">
               {item.href ? (
                 <a href={item.href} class="transition-colors hover:text-accent" aria-label={`${item.num}${item.unit ?? ''} ${item.label}，点击查看`}>
-                  {numInner}
+                  {/* data-countup：进入视口时数字从 0 滚动到目标（Base 全局脚本，无 JS 时显示原值） */}
+                  <span data-countup={item.num}>{item.num}</span>
+                  {item.unit && <small class="ml-1 font-sans text-sm font-normal text-ink-3">{item.unit}</small>}
                 </a>
               ) : (
-                numInner
+                <>
+                  <span data-countup={item.num}>{item.num}</span>
+                  {item.unit && <small class="ml-1 font-sans text-sm font-normal text-ink-3">{item.unit}</small>}
+                </>
               )}
             </dd>
             {item.sub && <dd class="meta order-3 normal-case">{item.sub}</dd>}
