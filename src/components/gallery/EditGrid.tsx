@@ -1,17 +1,21 @@
 /**
  * 相册编辑模式 island（client:idle，常驻挂载但仅在 ?edit=1 时渲染界面）：
- * - 网格缩略图拖拽排序、标记隐藏（不上站）、设为封面；
- * - 保存回路二选一：GitHub Contents API 直推仓库（token 存浏览器本地）或导出 order.json 文件；
- * - order.json 由 build-photos 读取：order 重排、hidden 排除、cover 覆盖封面；
+ * - 以「景点组」为单位编辑：组内拖拽排单张顺序；组头拖拽整体换景点次序；
+ *   单张可「移入相邻组」（跨组移动 = 该照片改属于那个景点，随保存写入 scenes.json）；
+ * - 每张可标记隐藏（不上站）、任一张可设为封面；
+ * - 保存回路二选一：GitHub Contents API 直推仓库（token 存浏览器本地）或导出文件；
+ * - 保存时提交 order.json（线性顺序 + hidden + cover）；若组间有移动则同步重写 scenes.json；
  * - 访客（无 ?edit=1）零渲染零请求；token 仅存 localStorage、只建议授予单仓库 Contents 读写。
  */
 import { useMemo, useRef, useState } from 'react';
 
 export interface EditPhoto {
-  /** 文件名，如 047.jpg（order.json 的键） */
+  /** 文件名，如 047.jpg（order.json / scenes.json 的键） */
   name: string;
   /** 640w 缩略图 URL */
   thumb: string;
+  /** 所属子景点（build-photos 从 scenes.json 写入 travels.json）；null = 无分组结构 */
+  scene: string | null;
 }
 
 interface Props {
@@ -21,102 +25,184 @@ interface Props {
   coverName: string;
 }
 
+interface Item {
+  name: string;
+  thumb: string;
+  hidden: boolean;
+}
+interface Group {
+  scene: string | null;
+  items: Item[];
+}
+
 const REPO = 'lii-lii321/lii-lii321.github.io';
 const TOKEN_KEY = 'gh-edit-token';
+
+/** 按连续区段初始化分组（与展示端 groupByScene 同语义） */
+function initGroups(photos: EditPhoto[]): Group[] {
+  const groups: Group[] = [];
+  for (const p of photos) {
+    const last = groups[groups.length - 1];
+    if (last && last.scene === p.scene) last.items.push({ name: p.name, thumb: p.thumb, hidden: false });
+    else groups.push({ scene: p.scene, items: [{ name: p.name, thumb: p.thumb, hidden: false }] });
+  }
+  return groups;
+}
 
 export default function EditGrid({ albumId, photos, coverName }: Props) {
   const editing = useMemo(
     () => typeof location !== 'undefined' && location.search.includes('edit=1'),
     [],
   );
-  const [items, setItems] = useState(() => photos.map((p) => ({ ...p, hidden: false })));
+  const [groups, setGroups] = useState(() => initGroups(photos));
   const [cover, setCover] = useState(coverName);
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [drag, setDrag] = useState<{ gi: number; idx: number } | null>(null);
+  const [groupDrag, setGroupDrag] = useState<number | null>(null);
   const [token, setToken] = useState(() =>
     typeof localStorage !== 'undefined' ? localStorage.getItem(TOKEN_KEY) ?? '' : '',
   );
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
-  const dirtyRef = useRef(false);
+  const sceneDirtyRef = useRef(false);
 
   if (!editing) return null;
 
-  const orderPayload = () => ({
-    order: items.filter((i) => !i.hidden).map((i) => i.name),
-    hidden: items.filter((i) => i.hidden).map((i) => i.name),
-    cover,
-  });
+  const lineOrder = () => groups.flatMap((g) => g.items.map((i) => i.name));
+  const hiddenList = () => groups.flatMap((g) => g.items.filter((i) => i.hidden).map((i) => i.name));
+  /** 组间发生移动后，从当前分组重建 scenes.json 全量映射（null 的照片不入映射） */
+  const scenesFromGroups = () => {
+    const map: Record<string, string> = {};
+    for (const g of groups) {
+      if (g.scene === null) continue;
+      for (const i of g.items) map[i.name] = g.scene;
+    }
+    return map;
+  };
 
-  const markDirty = () => {
-    dirtyRef.current = true;
+  const markDirty = () => setStatus('有未保存的修改');
+
+  /** 组内拖拽落点 */
+  const dropInGroup = (gi: number, toIdx: number) => {
+    if (!drag || drag.gi !== gi) return;
+    setGroups((gs) => {
+      const next = gs.map((g) => ({ ...g, items: [...g.items] }));
+      const [moved] = next[gi].items.splice(drag.idx, 1);
+      let target = toIdx;
+      if (drag.idx < toIdx) target -= 1;
+      next[gi].items.splice(Math.max(0, target), 0, moved);
+      return next;
+    });
+    setDrag(null);
     setStatus('有未保存的修改');
   };
 
-  const onDrop = (to: number) => {
-    if (dragIndex === null || dragIndex === to) return;
-    setItems((list) => {
-      const next = [...list];
-      const [moved] = next.splice(dragIndex, 1);
-      next.splice(to, 0, moved);
+  /** 跨组移动单张（dir = -1 上一组 / +1 下一组）：照片改属于目标组 */
+  const moveToGroup = (gi: number, idx: number, dir: -1 | 1) => {
+    const target = gi + dir;
+    if (target < 0 || target >= groups.length) return;
+    setGroups((gs) => {
+      const next = gs.map((g) => ({ ...g, items: [...g.items] }));
+      const [moved] = next[gi].items.splice(idx, 1);
+      if (next[gi].items.length === 0) next.splice(gi, 1); // 组空则移除，scene 随最后一张走
+      next[target].items.push(moved);
       return next;
     });
-    setDragIndex(null);
-    markDirty();
+    sceneDirtyRef.current = true;
+    setStatus('有未保存的修改（含景点归属变更）');
   };
 
-  const toggleHidden = (idx: number) => {
-    setItems((list) => list.map((it, i) => (i === idx ? { ...it, hidden: !it.hidden } : it)));
-    markDirty();
+  /** 整组换序 */
+  const dropGroupBefore = (targetGi: number) => {
+    if (groupDrag === null || groupDrag === targetGi) return;
+    setGroups((gs) => {
+      const next = [...gs];
+      const [moved] = next.splice(groupDrag, 1);
+      let t = targetGi;
+      if (groupDrag < targetGi) t -= 1;
+      next.splice(Math.max(0, t), 0, moved);
+      return next;
+    });
+    setGroupDrag(null);
+    setStatus('有未保存的修改');
   };
 
-  const makeCover = (idx: number) => {
-    setCover(items[idx].name);
-    markDirty();
+  const toggleHidden = (gi: number, idx: number) => {
+    setGroups((gs) =>
+      gs.map((g, i) =>
+        i === gi ? { ...g, items: g.items.map((it, j) => (j === idx ? { ...it, hidden: !it.hidden } : it)) } : g,
+      ),
+    );
+    setStatus('有未保存的修改');
+  };
+
+  const makeCover = (gi: number, idx: number) => {
+    setCover(groups[gi].items[idx].name);
+    setStatus('有未保存的修改');
   };
 
   const exportJson = () => {
-    const blob = new Blob([JSON.stringify(orderPayload(), null, 2) + '\n'], {
-      type: 'application/json',
-    });
+    const payload = { order: lineOrder(), hidden: hiddenList(), cover };
+    const blob = new Blob([JSON.stringify(payload, null, 2) + '\n'], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'order.json';
     a.click();
     URL.revokeObjectURL(a.href);
-    setStatus('order.json 已导出——发给助手即可落库上线');
+    if (sceneDirtyRef.current) {
+      const sb = new Blob([JSON.stringify(scenesFromGroups(), null, 2) + '\n'], { type: 'application/json' });
+      const b = document.createElement('a');
+      b.href = URL.createObjectURL(sb);
+      b.download = 'scenes.json';
+      b.click();
+      URL.revokeObjectURL(b.href);
+      setStatus('order.json 与 scenes.json 已导出——两个文件都发给我即可落库上线');
+    } else {
+      setStatus('order.json 已导出——发给助手即可落库上线');
+    }
+  };
+
+  /** GitHub Contents API 提交一个文件（自动取 SHA 更新既有文件） */
+  const putFile = async (t: string, path: string, content: string) => {
+    const apiPath = `https://api.github.com/repos/${REPO}/contents/${path}`;
+    const head = await fetch(apiPath, {
+      headers: { Authorization: `Bearer ${t}`, Accept: 'application/vnd.github+json' },
+    });
+    let sha: string | undefined;
+    if (head.ok) sha = ((await head.json()) as { sha?: string }).sha;
+    const res = await fetch(apiPath, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${t}`, Accept: 'application/vnd.github+json' },
+      body: JSON.stringify({
+        message: `编辑模式：调整 ${albumId}（${path.split('/').pop()}）`,
+        content: btoa(unescape(encodeURIComponent(content))),
+        ...(sha ? { sha } : {}),
+      }),
+    });
+    return res.ok;
   };
 
   const saveToGithub = async () => {
-    const t = token.trim();
-    if (!t) {
+    const tok = token.trim();
+    if (!tok) {
       setStatus('请先在下方填入 GitHub token');
       return;
     }
     setSaving(true);
     setStatus('正在提交到 GitHub…');
     try {
-      const apiPath = `https://api.github.com/repos/${REPO}/contents/photos/${albumId}/order.json`;
-      const head = await fetch(apiPath, {
-        headers: { Authorization: `Bearer ${t}`, Accept: 'application/vnd.github+json' },
-      });
-      let sha: string | undefined;
-      if (head.ok) sha = ((await head.json()) as { sha?: string }).sha;
-      const res = await fetch(apiPath, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${t}`, Accept: 'application/vnd.github+json' },
-        body: JSON.stringify({
-          message: `编辑模式：调整 ${albumId} 相册顺序（网页编辑）`,
-          content: btoa(unescape(encodeURIComponent(JSON.stringify(orderPayload(), null, 2) + '\n'))),
-          ...(sha ? { sha } : {}),
-        }),
-      });
-      if (res.ok) {
-        dirtyRef.current = false;
+      const okOrder = await putFile(
+        tok,
+        `photos/${albumId}/order.json`,
+        JSON.stringify({ order: lineOrder(), hidden: hiddenList(), cover }, null, 2) + '\n',
+      );
+      const okScenes = sceneDirtyRef.current
+        ? await putFile(tok, `photos/${albumId}/scenes.json`, JSON.stringify(scenesFromGroups(), null, 2) + '\n')
+        : true;
+      if (okOrder && okScenes) {
+        sceneDirtyRef.current = false;
         setStatus('已提交！GitHub Actions 构建中，约 5 分钟后线上生效');
-      } else if (res.status === 401 || res.status === 403) {
-        setStatus('token 无效或权限不足（需要该仓库的 Contents 读写）');
-      } else {
-        setStatus(`提交失败：HTTP ${res.status}`);
+      } else if (okOrder === false || okScenes === false) {
+        setStatus('提交失败：HTTP 错误（token 无效为 401/403——检查权限或重新生成）');
       }
     } catch {
       setStatus('网络错误，稍后再试');
@@ -134,7 +220,7 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
             onClick={exportJson}
             className="cursor-pointer rounded-full border border-rule-2 bg-paper px-3 py-1.5 font-mono text-[11px] text-ink-2 hover:border-accent hover:text-accent"
           >
-            导出 JSON
+            导出文件
           </button>
           <button
             type="button"
@@ -147,48 +233,70 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
         </div>
       </div>
       <p className="meta mt-2 normal-case">
-        拖动缩略图调序 · 点 ✕ 隐藏（不上站）· 点 ★ 设为封面（当前：{cover}）
-        {status && <span className="ml-2 text-accent">{status}</span>}
+        组内拖动排序 · 拖动景点名整组换序 · 每张的 ▲/▼ 移到相邻景点（会更新归属）· ★ 设封面（当前：{cover}）· ✕ 隐藏
+        {status && <span className="ml-2 font-semibold text-accent">{status}</span>}
       </p>
 
-      <ul className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-8">
-        {items.map((it, idx) => (
-          <li
-            key={it.name}
-            draggable
-            onDragStart={() => setDragIndex(idx)}
+      <div className="mt-4 space-y-6">
+        {groups.map((g, gi) => (
+          <div
+            key={`${g.scene ?? 'none'}-${gi}`}
+            className="rounded-[8px] border border-rule bg-paper p-3"
             onDragOver={(e) => e.preventDefault()}
-            onDrop={() => onDrop(idx)}
-            className={`relative cursor-grab overflow-hidden rounded-[4px] border bg-paper-2 active:cursor-grabbing ${
-              it.name === cover ? 'border-accent' : it.hidden ? 'border-rule-2 opacity-40' : 'border-rule'
-            }`}
+            onDrop={() => dropGroupBefore(gi)}
           >
-            <img src={it.thumb} alt="" width={160} height={120} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover" />
-            <span className="absolute left-1 top-1 rounded bg-black/60 px-1 font-mono text-[10px] text-white">{idx + 1}</span>
-            {it.name === cover && (
-              <span className="absolute right-1 top-1 rounded bg-accent px-1 font-mono text-[10px] text-white">封面</span>
-            )}
-            <div className="flex">
-              <button
-                type="button"
-                onClick={() => makeCover(idx)}
-                className="flex-1 cursor-pointer bg-paper py-1 text-center text-[11px] text-ink-3 hover:text-accent"
-                title="设为封面"
-              >
-                ★
-              </button>
-              <button
-                type="button"
-                onClick={() => toggleHidden(idx)}
-                className="flex-1 cursor-pointer border-l border-rule bg-paper py-1 text-center text-[11px] text-ink-3 hover:text-accent"
-                title={it.hidden ? '恢复显示' : '隐藏（不上站）'}
-              >
-                {it.hidden ? '↩' : '✕'}
-              </button>
+            <div
+              draggable
+              onDragStart={() => setGroupDrag(gi)}
+              onDragEnd={() => setGroupDrag(null)}
+              className="mb-3 flex cursor-grab items-center justify-between border-b border-rule pb-2 active:cursor-grabbing"
+              title="拖动整组换景点顺序"
+            >
+              <h3 className="font-serif text-lg font-semibold text-ink">{g.scene ?? albumTitle(gi)}</h3>
+              <p className="meta">{g.items.length} 张 · {g.scene ? '拖我换序' : '未分组'}</p>
             </div>
-          </li>
+            <ul className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-8">
+              {g.items.map((it, idx) => (
+                <li
+                  key={it.name}
+                  draggable
+                  onDragStart={() => setDrag({ gi, idx })}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.stopPropagation();
+                    dropInGroup(gi, idx);
+                  }}
+                  className={`relative cursor-grab overflow-hidden rounded-[4px] border bg-paper-2 active:cursor-grabbing ${
+                    it.name === cover ? 'border-accent' : it.hidden ? 'border-rule-2 opacity-40' : 'border-rule'
+                  }`}
+                >
+                  <img src={it.thumb} alt="" width={160} height={120} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover" />
+                  <span className="absolute left-1 top-1 rounded bg-black/60 px-1 font-mono text-[10px] text-white">
+                    {groups.slice(0, gi).reduce((a, x) => a + x.items.length, 0) + idx + 1}
+                  </span>
+                  {it.name === cover && (
+                    <span className="absolute right-1 top-1 rounded bg-accent px-1 font-mono text-[10px] text-white">封面</span>
+                  )}
+                  <div className="flex text-center">
+                    <button type="button" onClick={() => moveToGroup(gi, idx, -1)} disabled={gi === 0} className="flex-1 cursor-pointer bg-paper py-1 text-[11px] text-ink-3 hover:text-accent disabled:opacity-30" title="移到上一景点">
+                      ▲
+                    </button>
+                    <button type="button" onClick={() => makeCover(gi, idx)} className="flex-1 cursor-pointer border-x border-rule bg-paper py-1 text-[11px] text-ink-3 hover:text-accent" title="设为封面">
+                      ★
+                    </button>
+                    <button type="button" onClick={() => moveToGroup(gi, idx, 1)} disabled={gi === groups.length - 1} className="flex-1 cursor-pointer bg-paper py-1 text-[11px] text-ink-3 hover:text-accent disabled:opacity-30" title="移到下一景点">
+                      ▼
+                    </button>
+                    <button type="button" onClick={() => toggleHidden(gi, idx)} className="flex-1 cursor-pointer border-l border-rule bg-paper py-1 text-[11px] text-ink-3 hover:text-accent" title={it.hidden ? '恢复显示' : '隐藏（不上站）'}>
+                      {it.hidden ? '↩' : '✕'}
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
+      </div>
 
       <details className="mt-4">
         <summary className="meta cursor-pointer normal-case">GitHub token 设置（首次使用填一次，仅存本浏览器）</summary>
@@ -208,4 +316,9 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
       </details>
     </div>
   );
+}
+
+/** 无分组照片的组标题兜底（按序号命名，避免空标题） */
+function albumTitle(gi: number): string {
+  return `未分组 ${gi + 1}`;
 }

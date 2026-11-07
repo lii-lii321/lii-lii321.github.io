@@ -202,7 +202,7 @@ const sceneChips = groupScenes
     <EditGrid
       client:idle
       albumId={trip.id}
-      photos={trip.photos.map(({ src, thumb }) => ({ name: src.split('/').pop() ?? '', thumb }))}
+      photos={trip.photos.map(({ src, thumb, scene }) => ({ name: src.split('/').pop() ?? '', thumb, scene }))}
       coverName={coverPhoto?.src.split('/').pop() ?? ''}
     />
 
