@@ -111,7 +111,26 @@ async function main() {
   for (let i = 0; i < albumDirs.length; i++) {
     const { id, dir } = albumDirs[i];
     const cfg = await readAlbumConfig(dir, id);
-    const files = await listImages(dir);
+    let files = await listImages(dir);
+
+    // 编辑模式覆盖（photos/<id>/order.json，网页编辑模式生成）：重排 + 隐藏 + 封面覆盖。
+    // 逻辑与 src/components/gallery/utils.ts 的 applyPhotoOrder 保持同构（此处为 mjs 无法复用 ts）
+    const orderPath = path.join(dir, 'order.json');
+    let order = null;
+    try {
+      order = JSON.parse(await fs.readFile(orderPath, 'utf-8'));
+      if (!Array.isArray(order.order)) throw new Error('order 字段缺失');
+      const hiddenSet = new Set(order.hidden ?? []);
+      const listed = order.order.filter((f) => !hiddenSet.has(f) && files.includes(f));
+      const listedSet = new Set(listed);
+      const rest = files.filter((f) => !listedSet.has(f) && !hiddenSet.has(f));
+      files = [...listed, ...rest];
+      console.log(
+        `[照片管线] [${i + 1}/${albumDirs.length}] 应用编辑模式覆盖：顺序 ${order.order.length} 项，隐藏 ${(order.hidden ?? []).length} 张`,
+      );
+    } catch {
+      /* 无 order.json 或格式不符 → 用磁盘默认排序 */
+    }
 
     // 防御：缩略图名只取 basename（01.jpg / 01.png 都会写到 thumbs/01.webp），
     // 同相册内同名不同扩展的图片会互相覆盖，直接报错让作者重命名
@@ -217,9 +236,10 @@ async function main() {
       throw new Error(`相册 ${id} 没有任何图片文件`);
     }
 
-    // cover 必须是相册内真实存在的图片；否则回退到第一张并警告
-    const coverName = files.includes(cfg.cover) ? cfg.cover : files[0];
-    if (!files.includes(cfg.cover)) {
+    // cover：编辑模式 order.cover 优先，其次 album.json；必须是相册内真实存在的图片，否则回退第一张并警告
+    const preferredCover = order?.cover ?? cfg.cover;
+    const coverName = files.includes(preferredCover) ? preferredCover : files[0];
+    if (!files.includes(preferredCover)) {
       console.log(`  ! 警告：cover "${cfg.cover}" 不存在，已回退为 ${coverName}`);
     }
 

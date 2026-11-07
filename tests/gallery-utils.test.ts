@@ -3,7 +3,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { coverSrcset, groupByScene, headerSrcset, planFold, sectionCountText } from '../src/components/gallery/utils.ts';
+import { applyPhotoOrder, coverSrcset, groupByScene, headerSrcset, planFold, sectionCountText } from '../src/components/gallery/utils.ts';
 import type { Photo } from '../src/types';
 
 const photo = (scene: string | null): Photo => ({
@@ -89,5 +89,29 @@ test('headerSrcset：头图封顶 1280w，不含 full/原图外的整档；窄�
   assert.equal(
     headerSrcset({ thumb: 'a-640.webp', width: 1000 }, 'a.jpg'),
     'a-640.webp 640w, a.jpg 1000w',
+  );
+});
+
+test('applyPhotoOrder：order 重排 + hidden 排除 + 未列文件按原序追加', () => {
+  const files = ['01.jpg', '02.jpg', '03.jpg', '04.jpg'];
+  assert.deepEqual(
+    applyPhotoOrder(files, { order: ['03.jpg', '01.jpg'], hidden: [] }),
+    ['03.jpg', '01.jpg', '02.jpg', '04.jpg'],
+  );
+  assert.deepEqual(
+    applyPhotoOrder(files, { order: ['03.jpg', '01.jpg', '02.jpg'], hidden: ['02.jpg'] }),
+    ['03.jpg', '01.jpg', '04.jpg'],
+  );
+  // order 里混入磁盘上不存在的文件名：忽略（容错）
+  assert.deepEqual(
+    applyPhotoOrder(files, { order: ['09.jpg', '02.jpg'], hidden: [] }),
+    ['02.jpg', '01.jpg', '03.jpg', '04.jpg'],
+  );
+  // null（无 order.json）：原样返回
+  assert.deepEqual(applyPhotoOrder(files, null), files);
+  // 全部隐藏：空数组（合法——整册暂不上站）
+  assert.deepEqual(
+    applyPhotoOrder(files, { order: ['01.jpg', '02.jpg', '03.jpg', '04.jpg'], hidden: ['01.jpg', '02.jpg', '03.jpg', '04.jpg'] }),
+    [],
   );
 });

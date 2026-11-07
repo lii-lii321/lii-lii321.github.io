@@ -9,6 +9,7 @@ import Base from '../../layouts/Base.astro';
 import { headerSrcset } from '../../components/gallery/utils';
 import PhotoGrid from '../../components/gallery/PhotoGrid.astro';
 import Lightbox from '../../components/gallery/Lightbox.tsx';
+import EditGrid from '../../components/gallery/EditGrid.tsx';
 import MiniMap from '../../components/map/MiniMap';
 import travelsData from '../../data/travels.json';
 import type { Trip, TravelData } from '../../types';
@@ -195,6 +196,14 @@ const sceneChips = groupScenes
         scene,
       }))}
       albumTitle={trip.title}
+    />
+
+    <!-- 编辑模式 island：仅 ?edit=1 渲染界面（访客零渲染零请求），拖拽排序/隐藏/封面 + order.json 回路 -->
+    <EditGrid
+      client:idle
+      albumId={trip.id}
+      photos={trip.photos.map(({ src, thumb }) => ({ name: src.split('/').pop() ?? '', thumb }))}
+      coverName={coverPhoto?.src.split('/').pop() ?? ''}
     />
 
     <!-- 上一本 / 下一本相册 -->
