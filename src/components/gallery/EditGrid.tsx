@@ -101,14 +101,27 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
     const target = gi + dir;
     if (target < 0 || target >= groups.length) return;
     setGroups((gs) => {
+      const safe = Math.min(idx, gs[gi].items.length - 1); // 防陈旧索引越界
       const next = gs.map((g) => ({ ...g, items: [...g.items] }));
-      const [moved] = next[gi].items.splice(idx, 1);
+      const [moved] = next[gi].items.splice(safe, 1);
+      if (!moved) return gs; // 守卫：取不到就原样返回，绝不丢图
       if (next[gi].items.length === 0) next.splice(gi, 1); // 组空则移除，scene 随最后一张走
-      next[target].items.push(moved);
+      next[Math.min(target, next.length)].items.push(moved);
       return next;
     });
     sceneDirtyRef.current = true;
     setStatus('有未保存的修改（含景点归属变更）');
+  };
+
+  /** 完整性守卫：任何操作丢图时，保存/导出前把缺失的照片自动补回第一组（数据永不丢失） */
+  const repairIntegrity = (gs: Group[]): Group[] => {
+    const present = new Set(gs.flatMap((g) => g.items.map((i) => i.name)));
+    const missing = photos.filter((p) => !present.has(p.name));
+    if (missing.length === 0) return gs;
+    const next = gs.length > 0 ? gs.map((g) => ({ ...g, items: [...g.items] })) : [{ scene: photos[0]?.scene ?? null, items: [] }];
+    for (const p of missing) next[0].items.push({ name: p.name, thumb: p.thumb, hidden: false });
+    setStatus(`检测到 ${missing.length} 张照片被意外移出清单，已自动补回——请检查它们的位置`);
+    return next;
   };
 
   /** 整组换序 */
@@ -141,24 +154,33 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
   };
 
   const exportJson = () => {
-    const payload = { order: lineOrder(), hidden: hiddenList(), cover };
-    const blob = new Blob([JSON.stringify(payload, null, 2) + '\n'], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'order.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    if (sceneDirtyRef.current) {
-      const sb = new Blob([JSON.stringify(scenesFromGroups(), null, 2) + '\n'], { type: 'application/json' });
-      const b = document.createElement('a');
-      b.href = URL.createObjectURL(sb);
-      b.download = 'scenes.json';
-      b.click();
-      URL.revokeObjectURL(b.href);
-      setStatus('order.json 与 scenes.json 已导出——两个文件都发给我即可落库上线');
-    } else {
-      setStatus('order.json 已导出——发给助手即可落库上线');
-    }
+    setGroups((gs) => {
+      const safe = repairIntegrity(gs);
+      const payload = { order: safe.flatMap((g) => g.items.map((i) => i.name)), hidden: safe.flatMap((g) => g.items.filter((i) => i.hidden).map((i) => i.name)), cover };
+      const blob = new Blob([JSON.stringify(payload, null, 2) + '\n'], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'order.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      if (sceneDirtyRef.current) {
+        const map: Record<string, string> = {};
+        for (const g of safe) {
+          if (g.scene === null) continue;
+          for (const i of g.items) map[i.name] = g.scene;
+        }
+        const sb = new Blob([JSON.stringify(map, null, 2) + '\n'], { type: 'application/json' });
+        const b = document.createElement('a');
+        b.href = URL.createObjectURL(sb);
+        b.download = 'scenes.json';
+        b.click();
+        URL.revokeObjectURL(b.href);
+        setStatus('order.json 与 scenes.json 已导出——两个文件都发给我即可落库上线');
+      } else {
+        setStatus('order.json 已导出——发给助手即可落库上线');
+      }
+      return safe;
+    });
   };
 
   /** GitHub Contents API 提交一个文件（自动取 SHA 更新既有文件） */
@@ -188,20 +210,27 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
       return;
     }
     setSaving(true);
+    // 完整性守卫：先把丢图补回再序列化（守卫后的 safe 是提交的唯一来源）
+    const safe = repairIntegrity(groups);
+    setGroups(safe);
+    const orderPayload = {
+      order: safe.flatMap((g) => g.items.map((i) => i.name)),
+      hidden: safe.flatMap((g) => g.items.filter((i) => i.hidden).map((i) => i.name)),
+      cover,
+    };
+    const map: Record<string, string> = {};
+    for (const g of safe) {
+      if (g.scene === null) continue;
+      for (const i of g.items) map[i.name] = g.scene;
+    }
     setStatus('正在提交到 GitHub…');
     try {
-      const okOrder = await putFile(
-        tok,
-        `photos/${albumId}/order.json`,
-        JSON.stringify({ order: lineOrder(), hidden: hiddenList(), cover }, null, 2) + '\n',
-      );
-      const okScenes = sceneDirtyRef.current
-        ? await putFile(tok, `photos/${albumId}/scenes.json`, JSON.stringify(scenesFromGroups(), null, 2) + '\n')
-        : true;
+      const okOrder = await putFile(tok, `photos/${albumId}/order.json`, JSON.stringify(orderPayload, null, 2) + '\n');
+      const okScenes = await putFile(tok, `photos/${albumId}/scenes.json`, JSON.stringify(map, null, 2) + '\n');
       if (okOrder && okScenes) {
         sceneDirtyRef.current = false;
         setStatus('已提交！GitHub Actions 构建中，约 5 分钟后线上生效');
-      } else if (okOrder === false || okScenes === false) {
+      } else {
         setStatus('提交失败：HTTP 错误（token 无效为 401/403——检查权限或重新生成）');
       }
     } catch {
