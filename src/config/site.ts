@@ -120,7 +120,7 @@ export const siteConfig = {
 
   /** Now（首页与 /now 同源展示；只写可核实的此刻） */
   now: [
-    { key: "Building", text: "个人站 Traveling 长跑：56 页 / 1028 张照片上线，首页 Lighthouse 100·100·100·100，继续打磨体验" },
+    { key: "Building", text: "个人站 Traveling 长跑：56 页 / 1047 张照片上线，首页 Lighthouse 100·100·100·100，继续打磨体验" },
     { key: "Learning", text: "RAG 检索质量评测：已从「感觉不准」走到可复现指标并写成文章，方法正回流到 Math_Tutor_RAG" },
     { key: "Reading", text: "《Designing Data-Intensive Applications》第二遍" },
     { key: "Next", text: "青城后山 HEIC 相册补录（照片重导出后走 ingest 管线入库）" },

@@ -58,6 +58,8 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
   const [cover, setCover] = useState(coverName);
   const [drag, setDrag] = useState<{ gi: number; idx: number } | null>(null);
   const [groupDrag, setGroupDrag] = useState<number | null>(null);
+  /** 插入位置指示：拖动悬停在哪张的前/后（gi=-1 表示无有效目标） */
+  const [dropHint, setDropHint] = useState<{ gi: number; idx: number } | null>(null);
   const [token, setToken] = useState(() =>
     typeof localStorage !== 'undefined' ? localStorage.getItem(TOKEN_KEY) ?? '' : '',
   );
@@ -81,14 +83,34 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
 
   const markDirty = () => setStatus('有未保存的修改');
 
-  /** 组内拖拽落点 */
-  const dropInGroup = (gi: number, toIdx: number) => {
-    if (!drag || drag.gi !== gi) return;
+  /** 悬停时计算插入位置：鼠标在格子左半 → 插它前面，右半 → 插它后面 */
+  const hoverInGroup = (gi: number, idx: number, clientX: number, el: HTMLElement) => {
+    if (!drag || drag.gi !== gi) {
+      setDropHint(null);
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    const before = clientX < rect.left + rect.width / 2;
+    const insertAt = before ? idx : idx + 1;
+    // 拖到自己紧邻的位置（原位）不显示指示
+    if (insertAt === drag.idx || insertAt === drag.idx + 1) {
+      setDropHint(null);
+      return;
+    }
+    setDropHint({ gi, idx: insertAt });
+  };
+
+  /** 按指示位置落子插入 */
+  const dropInGroup = (gi: number) => {
+    if (!drag) return;
+    const hint = dropHint;
+    setDropHint(null);
+    if (!hint || hint.gi !== gi) return;
     setGroups((gs) => {
       const next = gs.map((g) => ({ ...g, items: [...g.items] }));
       const [moved] = next[gi].items.splice(drag.idx, 1);
-      let target = toIdx;
-      if (drag.idx < toIdx) target -= 1;
+      let target = hint.idx;
+      if (drag.idx < hint.idx) target -= 1;
       next[gi].items.splice(Math.max(0, target), 0, moved);
       return next;
     });
@@ -285,21 +307,38 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
               <p className="meta">{g.items.length} 张 · {g.scene ? '拖我换序' : '未分组'}</p>
             </div>
             <ul className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-8">
-              {g.items.map((it, idx) => (
+              {g.items.map((it, idx) => {
+                const hintBefore = dropHint?.gi === gi && dropHint?.idx === idx;
+                const hintAfter = dropHint?.gi === gi && dropHint?.idx === idx + 1;
+                return (
                 <li
                   key={it.name}
                   draggable
-                  onDragStart={() => setDrag({ gi, idx })}
-                  onDragOver={(e) => e.preventDefault()}
+                  onDragStart={(e) => {
+                    setDrag({ gi, idx });
+                    // 拖动浮层：以缩略图本体居中跟随（比浏览器默认快照更清晰）
+                    const img = e.currentTarget.querySelector('img');
+                    if (img) e.dataTransfer.setDragImage(img, img.clientWidth / 2, img.clientHeight / 2);
+                  }}
+                  onDragEnd={() => setDropHint(null)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    hoverInGroup(gi, idx, e.clientX, e.currentTarget as HTMLElement);
+                  }}
                   onDrop={(e) => {
                     e.stopPropagation();
-                    dropInGroup(gi, idx);
+                    dropInGroup(gi);
                   }}
-                  className={`relative cursor-grab overflow-hidden rounded-[4px] border bg-paper-2 active:cursor-grabbing ${
+                  className={`relative cursor-grab overflow-visible rounded-[4px] border bg-paper-2 active:cursor-grabbing ${
                     it.name === cover ? 'border-accent' : it.hidden ? 'border-rule-2 opacity-40' : 'border-rule'
                   }`}
                 >
+                  {/* 插入位置指示线：悬停格子左/右缘的 accent 竖条 */}
+                  {hintBefore && <span aria-hidden="true" className="absolute -left-1.5 top-0 h-full w-[3px] rounded bg-accent" />}
+                  {hintAfter && <span aria-hidden="true" className="absolute -right-1.5 top-0 h-full w-[3px] rounded bg-accent" />}
+                  <div className="overflow-hidden rounded-[4px]">
                   <img src={it.thumb} alt="" width={160} height={120} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover" />
+                  </div>
                   <span className="absolute left-1 top-1 rounded bg-black/60 px-1 font-mono text-[10px] text-white">
                     {groups.slice(0, gi).reduce((a, x) => a + x.items.length, 0) + idx + 1}
                   </span>
@@ -321,7 +360,8 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
                     </button>
                   </div>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </div>
         ))}
