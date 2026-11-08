@@ -1,10 +1,10 @@
 ---
 title: "6700 张旅行照片的自动化入库：抽样、压缩与一条 HEIC 坑"
-description: "原始图库 45.7GB、6746 张照片，把它们变成站上 10 本相册、532 张照片的完整管线设计（2026-11 增至 11 册 685 张）——以及为什么青城后山暂时缺席。"
+description: "原始图库 45.7GB、6746 张照片，把它们变成站上 10 本相册、532 张照片的完整管线设计（2026-11 增至 11 册 1028 张）——以及为什么青城后山暂时缺席。"
 pubDate: 2026-10-03
 category: "工程"
 tags: ["sharp", "EXIF", "静态站"]
-cover: "/photos/shanxi-huashan/02.jpg"
+cover: "/photos/shanxi-huashan/001.jpg"
 coverAlt: "华山相册照片，入库管线产物之一"
 coverWidth: 1600
 coverHeight: 1200
@@ -84,7 +84,7 @@ sharp(src)
 ## 结果
 
 <figure>
-  <img src="/photos/shanxi-huashan/thumbs/03.webp" alt="管线成品一例：华山相册中的景区石板步道与上行的游人，压缩至 1600px / q80 后上站的照片" width="1200" height="1600" loading="lazy" decoding="async" />
+  <img src="/photos/shanxi-huashan/thumbs/002.webp" alt="管线成品一例：华山相册中的景区石板步道与上行的游人，压缩至 1600px / q80 后上站的照片" width="1200" height="1600" loading="lazy" decoding="async" />
   <figcaption>管线成品一例：华山相册中的景区石板步道与上行的游人，压缩至 1600px / q80 后上站的照片</figcaption>
 </figure>
 
