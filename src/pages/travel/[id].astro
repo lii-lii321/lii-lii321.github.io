@@ -82,8 +82,20 @@ const sceneChips = groupScenes
 
 <Base title={trip.title} description={trip.description} ogImage={trip.cover}>
   <article>
-    <!-- 相册头：大封面背景（照片上的白字用墨色渐变压底） -->
-    <section class="relative mt-10 overflow-hidden rounded-[14px]">
+    <!-- 相册头：完整照片居中（零裁切）+ 同图放大模糊铺满空隙（letterbox 延伸），墨色渐变压白字 -->
+    <section class="relative mt-10 overflow-hidden rounded-[14px] bg-night">
+      <!-- 底层：同图放大模糊铺满（cover 兜底整个容器，空隙的延伸色） -->
+      <img
+        src={coverPhoto?.thumb ?? trip.cover}
+        srcset={coverPhoto ? headerSrcset(coverPhoto, trip.cover) : undefined}
+        sizes="(min-width: 1280px) 1200px, 100vw"
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        decoding="async"
+        class="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
+      />
+      <!-- 上层：完整照片居中，按原始比例显示不裁切；width/height 声明真实比例防布局跳动 -->
       <img
         src={coverPhoto?.thumb ?? trip.cover}
         srcset={coverPhoto ? headerSrcset(coverPhoto, trip.cover) : undefined}
@@ -93,12 +105,14 @@ const sceneChips = groupScenes
         loading="eager"
         fetchpriority="high"
         decoding="async"
-        class="absolute inset-0 h-full w-full object-cover"
+        width={coverPhoto?.width}
+        height={coverPhoto?.height}
+        class="relative mx-auto block h-auto max-h-[560px] w-auto max-w-full"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/30" aria-hidden="true">
       </div>
 
-      <div class="relative flex flex-col gap-4 px-6 py-10 sm:px-10 sm:py-14">
+      <div class="absolute inset-0 flex flex-col justify-center gap-4 px-6 py-10 sm:px-10 sm:py-14">
         <a
           href="/travel"
           class="self-start rounded-full border border-white/25 bg-black/25 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-white/90 backdrop-blur transition-colors hover:border-white hover:text-white"
