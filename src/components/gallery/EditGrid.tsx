@@ -7,7 +7,7 @@
  * - 保存时提交 order.json（线性顺序 + hidden + cover）；若组间有移动则同步重写 scenes.json；
  * - 访客（无 ?edit=1）零渲染零请求；token 仅存 localStorage、只建议授予单仓库 Contents 读写。
  */
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export interface EditPhoto {
   /** 文件名，如 047.jpg（order.json / scenes.json 的键） */
@@ -16,6 +16,10 @@ export interface EditPhoto {
   thumb: string;
   /** 所属子景点（build-photos 从 scenes.json 写入 travels.json）；null = 无分组结构 */
   scene: string | null;
+  /** 灯箱显示档 URL（点图放大预览用，比 640w 缩略图清晰） */
+  full?: string;
+  /** 原图 URL（full 缺失时的回退） */
+  src?: string;
 }
 
 interface Props {
@@ -28,6 +32,8 @@ interface Props {
 interface Item {
   name: string;
   thumb: string;
+  /** 放大预览用：显示档优先，回退原图 */
+  preview: string;
   hidden: boolean;
 }
 interface Group {
@@ -43,8 +49,9 @@ function initGroups(photos: EditPhoto[]): Group[] {
   const groups: Group[] = [];
   for (const p of photos) {
     const last = groups[groups.length - 1];
-    if (last && last.scene === p.scene) last.items.push({ name: p.name, thumb: p.thumb, hidden: false });
-    else groups.push({ scene: p.scene, items: [{ name: p.name, thumb: p.thumb, hidden: false }] });
+    const item = { name: p.name, thumb: p.thumb, preview: p.full ?? p.src ?? p.thumb, hidden: false };
+    if (last && last.scene === p.scene) last.items.push(item);
+    else groups.push({ scene: p.scene, items: [item] });
   }
   return groups;
 }
@@ -66,6 +73,22 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
   const sceneDirtyRef = useRef(false);
+  /** 放大预览：存预览图 URL（null = 关闭）；浮层内 ←/→ 键盘翻看 */
+  const [preview, setPreview] = useState<string | null>(null);
+
+  // 预览浮层打开时：←/→ 翻看整册、Esc 关闭
+  useEffect(() => {
+    if (!preview) return;
+    const flat = groups.flatMap((g) => g.items.map((i) => i.preview));
+    const onKey = (e: KeyboardEvent) => {
+      const cur = flat.indexOf(preview);
+      if (e.key === 'Escape') setPreview(null);
+      else if (e.key === 'ArrowRight' && cur < flat.length - 1) setPreview(flat[cur + 1]);
+      else if (e.key === 'ArrowLeft' && cur > 0) setPreview(flat[cur - 1]);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [preview, groups]);
 
   if (!editing) return null;
 
@@ -141,7 +164,10 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
     const missing = photos.filter((p) => !present.has(p.name));
     if (missing.length === 0) return gs;
     const next = gs.length > 0 ? gs.map((g) => ({ ...g, items: [...g.items] })) : [{ scene: photos[0]?.scene ?? null, items: [] }];
-    for (const p of missing) next[0].items.push({ name: p.name, thumb: p.thumb, hidden: false });
+    for (const p of missing) {
+      const src = photos.find((x) => x.name === p.name);
+      next[0].items.push({ name: p.name, thumb: p.thumb, preview: src?.full ?? src?.src ?? p.thumb, hidden: false });
+    }
     setStatus(`检测到 ${missing.length} 张照片被意外移出清单，已自动补回——请检查它们的位置`);
     return next;
   };
@@ -337,7 +363,17 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
                   {hintBefore && <span aria-hidden="true" className="absolute -left-1.5 top-0 h-full w-[3px] rounded bg-accent" />}
                   {hintAfter && <span aria-hidden="true" className="absolute -right-1.5 top-0 h-full w-[3px] rounded bg-accent" />}
                   <div className="overflow-hidden rounded-[4px]">
-                  <img src={it.thumb} alt="" width={160} height={120} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover" />
+                  <img
+                    src={it.thumb}
+                    alt=""
+                    width={160}
+                    height={120}
+                    loading="lazy"
+                    decoding="async"
+                    className="aspect-[4/3] w-full object-cover"
+                    title="点击放大预览"
+                    onClick={() => setPreview(it.preview)}
+                  />
                   </div>
                   <span className="absolute left-1 top-1 rounded bg-black/60 px-1 font-mono text-[10px] text-white">
                     {groups.slice(0, gi).reduce((a, x) => a + x.items.length, 0) + idx + 1}
@@ -366,6 +402,12 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
           </div>
         ))}
       </div>
+
+      {preview && (
+        <div className="fig-lightbox" role="dialog" aria-modal="true" aria-label="照片放大预览" onClick={() => setPreview(null)}>
+          <img src={preview} alt="放大预览" />
+        </div>
+      )}
 
       <details className="mt-4">
         <summary className="meta cursor-pointer normal-case">GitHub token 设置（首次使用填一次，仅存本浏览器）</summary>
