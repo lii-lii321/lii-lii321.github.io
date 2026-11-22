@@ -214,6 +214,21 @@ html {
   }
 }
 
+/* 懒加载图片淡入：加载完成（load 事件加 .img-loaded）后从透明柔和显现。
+ * 只作用于显式标记 data-fade 的懒加载图；首屏 eager 图（LCP）不参与。
+ * js-reveal 作用域保证无 JS 时直接可见；reduced-motion 由下方媒体查询豁免。 */
+@media (prefers-reduced-motion: no-preference) {
+  html.js-reveal img[data-fade] {
+    transition: opacity 0.45s ease;
+  }
+  html.js-reveal img[data-fade]:not(.img-loaded) {
+    opacity: 0;
+  }
+  html.js-reveal img[data-fade].img-loaded {
+    opacity: 1;
+  }
+}
+
 /* 首页大标题逐行浮现：两行交错入场（View Transitions 换页自动重播；reduced-motion 豁免） */
 @media (prefers-reduced-motion: no-preference) {
   .hero-line {
@@ -276,6 +291,13 @@ html {
     opacity: 1;
     transform: none;
   }
+}
+
+/* 编辑模式大册性能：屏外照片条目跳过渲染（山东册 1302 张时编辑页滚动才不卡）。
+ * contain-intrinsic-size 给屏外条目一个近似占位高（缩略图 4:3 ≈ 130px + 按钮行 ≈ 24px） */
+.edit-cv li {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 190px;
 }
 
 @media (prefers-reduced-motion: reduce) {

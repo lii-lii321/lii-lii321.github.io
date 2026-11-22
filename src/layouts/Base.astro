@@ -465,5 +465,66 @@ const homeJsonLd =
         document.querySelectorAll('[data-reveal]:not(.revealed)').forEach((el) => revealIo.observe(el));
       });
     </script>
+
+    <script>
+      // 懒加载图片淡入：load 事件不冒泡，用捕获层全局监听一次；
+      // 已在缓存中的图（complete）在换页时直接补 .img-loaded
+      document.addEventListener(
+        'load',
+        (e) => {
+          const t = e.target as HTMLElement | null;
+          if (t && t.tagName === 'IMG' && t.hasAttribute('data-fade')) t.classList.add('img-loaded');
+        },
+        true,
+      );
+      document.addEventListener('astro:page-load', () => {
+        document
+          .querySelectorAll<HTMLImageElement>('img[data-fade]')
+          .forEach((img) => img.complete && img.classList.add('img-loaded'));
+      });
+    </script>
+
+    <script>
+      // 相册页景点侧导航：多分组相册右侧圆点导航，滚动时当前景点高亮、点击直达。
+      // 仅当页面存在子景点分组（#scene-N 区块）时挂载；IO 追踪当前组（复用 Toc 的观察模式）
+      const navDots = () => {
+        document.getElementById('scene-dot-nav')?.remove();
+        const first = document.getElementById('scene-0');
+        if (!first) return;
+        const nav = document.createElement('nav');
+        nav.id = 'scene-dot-nav';
+        nav.className = 'fixed right-4 top-1/2 z-40 -translate-y-1/2 flex-col gap-2.5 md:flex';
+        nav.setAttribute('aria-label', '景点快速导航');
+        const total = document.querySelectorAll<HTMLElement>('[id^="scene-"][data-scene-nav]').length;
+        if (total === 0) return;
+        for (let i = 0; i < total; i++) {
+          const dot = document.createElement('a');
+          dot.href = `#scene-${i}`;
+          dot.className = 'scene-dot block h-2.5 w-2.5 rounded-full border border-rule-2 bg-paper-2 transition-all';
+          dot.setAttribute('aria-label', `跳到第 ${i + 1} 个景点`);
+          nav.appendChild(dot);
+        }
+        document.body.appendChild(nav);
+        const sections = Array.from({ length: total }, (_, i) => document.getElementById(`scene-${i}`)).filter(
+          (el): el is HTMLElement => el !== null,
+        );
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const idx = sections.indexOf(entry.target as HTMLElement);
+              nav.querySelectorAll('.scene-dot').forEach((d, di) => {
+                d.classList.toggle('bg-accent', di === idx);
+                d.classList.toggle('border-accent', di === idx);
+                d.classList.toggle('scale-125', di === idx);
+              });
+            }
+          },
+          { rootMargin: '-40% 0px -40% 0px' },
+        );
+        sections.forEach((s) => io.observe(s));
+      };
+      document.addEventListener('astro:page-load', navDots);
+    </script>
   </body>
 </html>

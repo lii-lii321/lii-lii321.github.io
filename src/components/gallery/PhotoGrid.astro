@@ -33,7 +33,7 @@ const hasScenes = groups.length > 1;
   {
     hasScenes
       ? groups.map((group, gi) => (
-          <section id={`scene-${gi}`} class="mb-10 last:mb-0 scroll-mt-28" aria-label={group.scene ?? albumTitle}>
+          <section id={`scene-${gi}`} data-scene-nav class="mb-10 last:mb-0 scroll-mt-28" aria-label={group.scene ?? albumTitle}>
             {group.scene && (
               <div class="sticky top-[88px] z-10 mb-4 flex items-baseline justify-between border-b border-rule bg-paper py-2">
                 {/* h2 而非 h3：相册页 h1 之下直接是分组标题，跳级会被 heading-order 审计扣分；class 不变视觉一致 */}

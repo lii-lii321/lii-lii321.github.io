@@ -75,6 +75,34 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
   const sceneDirtyRef = useRef(false);
   /** 放大预览：存预览图 URL（null = 关闭）；浮层内 ←/→ 键盘翻看 */
   const [preview, setPreview] = useState<string | null>(null);
+  /** 撤销栈：每次结构性操作前压入快照（Ctrl+Z / ↩ 弹出恢复） */
+  const historyRef = useRef<Group[][]>([]);
+  const [canUndo, setCanUndo] = useState(false);
+
+  /** 撤销：弹出上一快照恢复；撤销本身也是修改（标记未保存） */
+  const undo = () => {
+    const prev = historyRef.current.pop();
+    if (!prev) return;
+    setGroups(prev);
+    sceneDirtyRef.current = true;
+    setCanUndo(historyRef.current.length > 0);
+    setStatus('已撤销（记得保存）');
+  };
+
+  // Ctrl+Z 撤销（SSR 无 document：必须在 useEffect 挂载；焦点在输入框时不抢占；无历史时静默）
+  useEffect(() => {
+    if (!editing) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== 'z') return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (historyRef.current.length === 0) return;
+      e.preventDefault();
+      undo();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [editing]);
 
   // 预览浮层打开时：←/→ 翻看整册、Esc 关闭
   useEffect(() => {
@@ -106,6 +134,13 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
 
   const markDirty = () => setStatus('有未保存的修改');
 
+  /** 压栈当前快照（每次结构性操作前调用） */
+  const pushHistory = (gs: Group[]) => {
+    historyRef.current.push(structuredClone(gs));
+    if (historyRef.current.length > 50) historyRef.current.shift();
+    setCanUndo(true);
+  };
+
   /** 悬停时计算插入位置：鼠标在格子左半 → 插它前面，右半 → 插它后面 */
   const hoverInGroup = (gi: number, idx: number, clientX: number, el: HTMLElement) => {
     if (!drag || drag.gi !== gi) {
@@ -130,6 +165,7 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
     setDropHint(null);
     if (!hint || hint.gi !== gi) return;
     setGroups((gs) => {
+      pushHistory(gs);
       const next = gs.map((g) => ({ ...g, items: [...g.items] }));
       const [moved] = next[gi].items.splice(drag.idx, 1);
       let target = hint.idx;
@@ -146,6 +182,7 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
     const target = gi + dir;
     if (target < 0 || target >= groups.length) return;
     setGroups((gs) => {
+      pushHistory(gs);
       const safe = Math.min(idx, gs[gi].items.length - 1); // 防陈旧索引越界
       const next = gs.map((g) => ({ ...g, items: [...g.items] }));
       const [moved] = next[gi].items.splice(safe, 1);
@@ -176,6 +213,7 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
   const dropGroupBefore = (targetGi: number) => {
     if (groupDrag === null || groupDrag === targetGi) return;
     setGroups((gs) => {
+      pushHistory(gs);
       const next = [...gs];
       const [moved] = next.splice(groupDrag, 1);
       let t = targetGi;
@@ -188,16 +226,18 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
   };
 
   const toggleHidden = (gi: number, idx: number) => {
-    setGroups((gs) =>
-      gs.map((g, i) =>
+    setGroups((gs) => {
+      pushHistory(gs);
+      return gs.map((g, i) =>
         i === gi ? { ...g, items: g.items.map((it, j) => (j === idx ? { ...it, hidden: !it.hidden } : it)) } : g,
-      ),
-    );
+      );
+    });
     setStatus('有未保存的修改');
   };
 
   const makeCover = (gi: number, idx: number) => {
-    setCover(groups[gi].items[idx].name);
+    pushHistory(groups);
+    setCover(groups[gi]?.items[idx]?.name ?? cover);
     setStatus('有未保存的修改');
   };
 
@@ -288,10 +328,19 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
   };
 
   return (
-    <div className="mt-8 rounded-[10px] border border-accent/40 bg-accent-soft p-5">
+    <div className="edit-cv mt-8 rounded-[10px] border border-accent/40 bg-accent-soft p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="font-mono text-sm font-semibold text-accent">编辑模式 · {albumId}</p>
         <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={undo}
+            disabled={!canUndo}
+            className="cursor-pointer rounded-full border border-rule-2 bg-paper px-3 py-1.5 font-mono text-[11px] text-ink-2 disabled:cursor-not-allowed disabled:opacity-40 hover:border-accent hover:text-accent"
+            title="撤销上一步（Ctrl+Z）"
+          >
+            ↩ 撤销
+          </button>
           <button
             type="button"
             onClick={exportJson}
@@ -310,7 +359,8 @@ export default function EditGrid({ albumId, photos, coverName }: Props) {
         </div>
       </div>
       <p className="meta mt-2 normal-case">
-        组内拖动排序 · 拖动景点名整组换序 · 每张的 ▲/▼ 移到相邻景点（会更新归属）· ★ 设封面（当前：{cover}）· ✕ 隐藏
+        组内拖动排序 · 拖动景点名整组换序 · 每张的 ▲/▼ 移到相邻景点（会更新归属）· ★ 设封面（当前：{cover}）· ✕ 隐藏 ·
+        点图放大 · Ctrl+Z 撤销
         {status && <span className="ml-2 font-semibold text-accent">{status}</span>}
       </p>
 
