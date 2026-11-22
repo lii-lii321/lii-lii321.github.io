@@ -204,13 +204,14 @@ const sceneChips = groupScenes
          width/height/thumb2x/gps 是死重（每本相册页约省 25% 载荷） -->
     <Lightbox
       client:load
-      photos={trip.photos.map(({ src, full, blur, takenAt, camera, scene }) => ({
+      photos={trip.photos.map(({ src, full, blur, takenAt, camera, scene, gps }) => ({
         src,
         full,
         blur,
         takenAt,
         camera,
         scene,
+        gps,
       }))}
       albumTitle={trip.title}
     />

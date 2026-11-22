@@ -293,6 +293,45 @@ html {
   object-fit: contain;
 }
 
+/* 命令面板（Ctrl+K）：条目行由 JS 动态构建，样式集中在这里维护 */
+#cmdk-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  color: var(--color-ink-2);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+#cmdk-list a:hover,
+#cmdk-list a.cmdk-sel {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+#cmdk-list a .cmdk-icon {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+#cmdk-list a .cmdk-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+#cmdk-list a .cmdk-meta {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-3);
+}
+#cmdk-list a.cmdk-sel .cmdk-meta {
+  color: inherit;
+}
+
 /* 灯箱进场：遮罩淡入，图片按 key 重挂载所以每次切换都轻缩放入场 */
 @media (prefers-reduced-motion: no-preference) {
   .lb-shell {
@@ -610,6 +649,8 @@ a.tag-link:hover {
   #back-to-top,
   #read-progress,
   #scene-side-nav,
+  #cmdk,
+  #keys-dialog,
   details,
   [data-filter-chips],
   nav[aria-label='上一篇 / 下一篇'],

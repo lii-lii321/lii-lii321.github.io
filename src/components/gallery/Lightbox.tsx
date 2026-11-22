@@ -22,7 +22,7 @@ interface OpenEventDetail {
 }
 
 /** 灯箱消费的照片字段子集：island props 会被整体序列化进 HTML，
- *  调用处只传这六个字段（width/height/thumb2x/gps 不进灯箱，别带上） */
+ *  调用处只传这些字段（width/height/thumb2x 不进灯箱，别带上） */
 interface LightboxPhoto {
   /** 原图 URL（full 缺失时的回退） */
   src: string;
@@ -33,6 +33,8 @@ interface LightboxPhoto {
   takenAt: string | null;
   camera: string | null;
   scene: string | null;
+  /** EXIF GPS（WGS84）；仅少数照片有，有则展示「拍摄地」外链 */
+  gps?: { lng: number; lat: number } | null;
 }
 
 interface Props {
@@ -198,6 +200,39 @@ export default function Lightbox({ photos, albumTitle }: Props) {
     }
   }, [index, photos, count]);
 
+  // 深链直达：URL 带 #p=N（第 N 张）时开灯箱定位到该张（分享/刷新可复现）
+  useEffect(() => {
+    const m = location.hash.match(/^#p=(\d+)$/);
+    if (!m) return;
+    const n = Number(m[1]);
+    if (n >= 1 && n <= count) setIndex(n - 1);
+  }, [count]);
+
+  // 深链同步：打开/切换时写 #p=N，关闭时清掉（不影响 #scene-N 等其他锚点）
+  useEffect(() => {
+    if (index === null) {
+      if (location.hash.startsWith('#p=')) history.replaceState(null, '', location.pathname);
+      return;
+    }
+    history.replaceState(null, '', `${location.pathname}#p=${index + 1}`);
+  }, [index]);
+
+  // 复制照片深链（分享按钮）：成功后短暂显示「已复制」
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const t = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(t);
+  }, [copied]);
+  const copyLink = useCallback(() => {
+    if (index === null) return;
+    const url = `${location.origin}${location.pathname}#p=${index + 1}`;
+    navigator.clipboard?.writeText(url).then(
+      () => setCopied(true),
+      () => undefined,
+    );
+  }, [index]);
+
   if (index === null || count === 0) return null;
 
   const photo = photos[index];
@@ -244,16 +279,38 @@ export default function Lightbox({ photos, albumTitle }: Props) {
             )}
           </p>
         )}
-        {/* 原图找回：灯箱默认显示显示档（full），这里给未压缩原图的下载入口（full 缺失时当前显示的就是原图） */}
-        <a
-          href={photo.src}
-          download
-          target="_blank"
-          rel="noreferrer"
-          className="shrink-0 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white/85 transition-colors hover:border-white hover:text-white"
-        >
-          原图 ↗
-        </a>
+        {/* 原图找回：灯箱默认显示显示档（full），这里给未压缩原图的下载入口（full 缺失时当前显示的就是原图）；
+            EXIF GPS 在的照片给「拍摄地」外链（OpenStreetMap，WGS84 直接可用）；
+            分享按钮复制当前照片深链（#p=N，刷新/发给别人直达同一张） */}
+        <div className="flex shrink-0 items-center gap-2">
+          {photo.gps && (
+            <a
+              href={`https://www.openstreetmap.org/?mlat=${photo.gps.lat}&mlon=${photo.gps.lng}#map=15/${photo.gps.lat}/${photo.gps.lng}`}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white/85 transition-colors hover:border-white hover:text-white sm:block"
+            >
+              📍 拍摄地 ↗
+            </a>
+          )}
+          <a
+            href={photo.src}
+            download
+            target="_blank"
+            rel="noreferrer"
+            className="hidden rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white/85 transition-colors hover:border-white hover:text-white sm:block"
+          >
+            原图 ↗
+          </a>
+          <button
+            type="button"
+            onClick={copyLink}
+            aria-label="复制当前照片链接"
+            className="shrink-0 cursor-pointer rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white/85 transition-colors hover:border-white hover:text-white"
+          >
+            {copied ? '已复制 ✓' : '🔗 分享'}
+          </button>
+        </div>
         <button
           type="button"
           onClick={close}

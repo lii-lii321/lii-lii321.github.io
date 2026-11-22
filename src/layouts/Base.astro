@@ -5,7 +5,11 @@
 // 移动端（≤768px，Tailwind md 断点）链接收进汉堡下滑面板。
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+import { getCollection } from 'astro:content';
 import { siteConfig } from '../config/site';
+import projectsJson from '../data/projects.json';
+import travelsJson from '../data/travels.json';
+import type { Project, TravelData } from '../types';
 
 interface Props {
   /** 页面名：用于标题模板「{page} · {name} · {tagline}」；首页不传 */
@@ -42,6 +46,32 @@ const navLinks = [
 
 const year = new Date().getFullYear();
 
+// Ctrl+K 命令面板的紧凑索引：构建期生成、全站内联（约 3KB）。
+// 只含标题/类型/URL/日期的快速导航层；全文检索走 /search 的完整索引——快速直达与深度搜索分工。
+const palettePosts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const paletteProjects = (projectsJson as Project[]).sort((a, b) => a.order - b.order);
+const paletteTravels = (travelsJson as TravelData).trips;
+const paletteIndex = [
+  ...palettePosts.map((p) => ({
+    t: p.data.title,
+    u: `/blog/${p.id}/`,
+    k: '文章',
+    d: p.data.pubDate.toISOString().slice(0, 10),
+  })),
+  ...paletteProjects.map((p) => ({ t: p.title, u: `/projects/${p.id}/`, k: '项目' })),
+  ...paletteTravels.map((t) => ({ t: t.title, u: `/travel/${t.id}/`, k: '相册', d: t.date })),
+  { t: '全部相册', u: '/travel/', k: '页面' },
+  { t: '全部文章', u: '/blog/', k: '页面' },
+  { t: '全部项目', u: '/projects/', k: '页面' },
+  { t: '关于我', u: '/about/', k: '页面' },
+  { t: '中文简历', u: '/resume/', k: '页面' },
+  { t: '现在进展', u: '/now/', k: '页面' },
+  { t: '深度搜索', u: '/search/', k: '页面' },
+];
+const paletteJson = JSON.stringify(paletteIndex).replace(/</g, '\\u003c');
+
 // canonical 与 OG 绝对链接依赖 astro.config 的 site（已上线域名 lii-lii321.github.io）
 const site = Astro.site ?? new URL('https://lii-lii321.github.io');
 const canonical = new URL(Astro.url.pathname, site);
@@ -76,6 +106,22 @@ const homeJsonLd =
 <html lang="zh-CN">
   <head>
     <ClientRouter />
+    <!-- Speculation Rules：悬停/按下时对同站链接预渲染（Chrome 121+，其余浏览器静默忽略）。
+         moderate 档 = 指针按下或悬停 >200ms 才预渲染，不会盲目烧流量 -->
+    <script is:inline type="speculationrules">
+      {
+        "prefetch": [
+          { "source": "document", "where": { "href_matches": "/*" }, "eagerness": "conservative" }
+        ],
+        "prerender": [
+          {
+            "source": "document",
+            "where": { "and": [{ "href_matches": "/*" }, { "not": { "href_matches": "/*.{png,jpg,jpeg,webp,xml,txt,pdf,webmanifest}" } }] },
+            "eagerness": "moderate"
+          }
+        ]
+      }
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
@@ -339,32 +385,263 @@ const homeJsonLd =
       ↑
     </button>
 
+    <!-- 快捷键速查面板（? 键） -->
+    <div
+      id="keys-dialog"
+      class="fixed inset-0 z-[110] hidden bg-night/40 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-label="快捷键速查"
+    >
+      <div class="mx-auto mt-[18vh] w-[min(420px,92vw)] rounded-[14px] border border-rule bg-paper px-6 py-5 shadow-2xl">
+        <p class="eyebrow">Keyboard</p>
+        <h2 class="h3 mt-1">快捷键</h2>
+        <dl class="mt-4 space-y-2.5 text-sm text-ink-2">
+          <div class="flex justify-between gap-6"><dt>命令面板</dt><dd class="font-mono">Ctrl / ⌘ + K</dd></div>
+          <div class="flex justify-between gap-6"><dt>深度搜索</dt><dd class="font-mono">/</dd></div>
+          <div class="flex justify-between gap-6"><dt>灯箱切换</dt><dd class="font-mono">← / →</dd></div>
+          <div class="flex justify-between gap-6"><dt>灯箱缩放</dt><dd class="font-mono">双击 / 捏合</dd></div>
+          <div class="flex justify-between gap-6"><dt>关闭 / 返回</dt><dd class="font-mono">Esc</dd></div>
+          <div class="flex justify-between gap-6"><dt>本速查</dt><dd class="font-mono">?</dd></div>
+        </dl>
+        <button type="button" id="keys-close" class="btn-outline mt-5 w-full">关闭（Esc）</button>
+      </div>
+    </div>
+
+    <!-- 命令面板（Ctrl / ⌘ + K）：构建期紧凑索引 + 即时筛选 + 键盘导航 -->
+    <div
+      id="cmdk"
+      class="fixed inset-0 z-[110] hidden bg-night/40 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-label="命令面板"
+    >
+      <div id="cmdk-panel" class="mx-auto mt-[12vh] w-[min(560px,92vw)] overflow-hidden rounded-[14px] border border-rule bg-paper shadow-2xl">
+        <input
+          id="cmdk-input"
+          type="text"
+          placeholder="文章 / 项目 / 相册 / 页面…"
+          aria-label="快速导航"
+          autocomplete="off"
+          spellcheck="false"
+          class="w-full border-b border-rule bg-transparent px-5 py-4 text-sm text-ink outline-none placeholder:text-ink-3"
+        />
+        <ul id="cmdk-list" class="max-h-[46vh] overflow-y-auto py-2" role="listbox" aria-label="结果"></ul>
+        <p class="meta flex items-center gap-4 border-t border-rule px-5 py-2.5 normal-case">
+          <span>↑↓ 选择</span><span aria-hidden="true">·</span>
+          <span>↵ 打开</span><span aria-hidden="true">·</span>
+          <span>Esc 关闭</span>
+          <a href="/search/" class="ml-auto transition-colors hover:text-accent">深度搜索 →</a>
+        </p>
+      </div>
+    </div>
+    <script type="application/json" id="cmdk-data" set:html={paletteJson} />
+
     <script>
-      // / 或 Ctrl+K（macCmd+K）跳转全站搜索（焦点在对话框如灯箱内时不抢占，避免中断浏览）。
-      // / 沿用惯例不在输入框内触发；Ctrl+K 是全局唤起惯例，输入框内也响应。
-      // 已在 /search 时改为聚焦搜索框——重载会清掉已输入的关键词与焦点
-      addEventListener('keydown', (event) => {
-        const isSlash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey;
-        const isCtrlK =
-          (event.ctrlKey || event.metaKey) && (event.key === 'k' || event.key === 'K');
-        if (!isSlash && !isCtrlK) return;
-        const target = event.target as HTMLElement | null;
-        if (
-          isSlash &&
-          target &&
-          (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
-        ) {
+      // 键盘中枢（模块只执行一次，DOM 每次导航重建、元素用时现查）：
+      // / 深度搜索页 · Ctrl/⌘+K 命令面板 · ? 快捷键速查 · Esc 关闭面板。
+      // 灯箱等其他对话框内不抢占（除 Esc/面板内部按键）。
+      type PaletteItem = { t: string; u: string; k: string; d?: string };
+      const PALETTE_ITEMS: PaletteItem[] = JSON.parse(
+        document.getElementById('cmdk-data')?.textContent ?? '[]',
+      );
+      const KIND_ICON: Record<string, string> = { 文章: '📄', 项目: '🧩', 相册: '📷', 页面: '🧭' };
+      let filtered: PaletteItem[] = [];
+      let sel = 0;
+
+      const cmdkRoot = () => document.getElementById('cmdk');
+      const keysRoot = () => document.getElementById('keys-dialog');
+      const cmdkIsOpen = () => cmdkRoot()?.classList.contains('hidden') === false;
+      const keysIsOpen = () => keysRoot()?.classList.contains('hidden') === false;
+
+      const lockScroll = () => {
+        document.body.style.overflow = 'hidden';
+      };
+      const unlockScroll = () => {
+        if (!cmdkIsOpen() && !keysIsOpen()) document.body.style.overflow = '';
+      };
+
+      const cmdkOpen = () => {
+        const root = cmdkRoot();
+        const inputEl = document.getElementById('cmdk-input') as HTMLInputElement | null;
+        if (!root || !inputEl) return;
+        root.classList.remove('hidden');
+        lockScroll();
+        renderPalette();
+        inputEl.focus();
+      };
+      const cmdkClose = () => {
+        cmdkRoot()?.classList.add('hidden');
+        unlockScroll();
+      };
+
+      const keysToggle = () => {
+        keysRoot()?.classList.toggle('hidden');
+        unlockScroll();
+      };
+
+      const paletteScore = (it: PaletteItem, q: string) => {
+        const t = it.t.toLowerCase();
+        if (t.startsWith(q)) return 100;
+        if (t.includes(q)) return 80 - t.indexOf(q);
+        if ((it.d ?? '').toLowerCase().includes(q)) return 40;
+        if (it.k.toLowerCase().includes(q)) return 30;
+        return -1;
+      };
+
+      const renderPalette = () => {
+        const listEl = document.getElementById('cmdk-list');
+        const inputEl = document.getElementById('cmdk-input') as HTMLInputElement | null;
+        if (!listEl || !inputEl) return;
+        const q = inputEl.value.trim().toLowerCase();
+        filtered = PALETTE_ITEMS.map((it) => ({ it, s: q ? paletteScore(it, q) : 50 }))
+          .filter((x) => x.s >= 0)
+          .sort((a, b) => b.s - a.s || a.it.t.localeCompare(b.it.t))
+          .slice(0, 9)
+          .map((x) => x.it);
+        sel = 0;
+        if (filtered.length === 0) {
+          const empty = document.createElement('li');
+          empty.className = 'px-5 py-6 text-center text-sm text-ink-3';
+          empty.textContent = q ? '没有匹配项——回车去深度搜索' : '输入以筛选文章 / 项目 / 相册';
+          listEl.replaceChildren(empty);
           return;
         }
-        if (event.defaultPrevented || target?.closest?.('[role="dialog"]')) return;
-        event.preventDefault();
-        if (location.pathname.startsWith('/search')) {
-          const input = document.getElementById('search-input') as HTMLInputElement | null;
-          input?.focus();
-          input?.select();
-        } else {
-          location.href = '/search';
+        listEl.replaceChildren(
+          ...filtered.map((it, r) => {
+            const li = document.createElement('li');
+            li.setAttribute('role', 'option');
+            li.setAttribute('aria-selected', String(r === sel));
+            const a = document.createElement('a');
+            a.href = it.u;
+            if (r === sel) a.classList.add('cmdk-sel');
+            const icon = document.createElement('span');
+            icon.className = 'cmdk-icon';
+            icon.textContent = KIND_ICON[it.k] ?? '•';
+            icon.setAttribute('aria-hidden', 'true');
+            const title = document.createElement('span');
+            title.className = 'cmdk-title';
+            title.textContent = it.t;
+            const meta = document.createElement('span');
+            meta.className = 'cmdk-meta';
+            meta.textContent = [it.d, it.k].filter(Boolean).join(' · ');
+            a.append(icon, title, meta);
+            li.append(a);
+            return li;
+          }),
+        );
+      };
+
+      const paletteMove = (delta: number) => {
+        if (filtered.length === 0) return;
+        sel = (sel + delta + filtered.length) % filtered.length;
+        const rows = document.getElementById('cmdk-list')?.querySelectorAll('[role="option"]') ?? [];
+        rows.forEach((li, i) => {
+          li.setAttribute('aria-selected', String(i === sel));
+          li.querySelector('a')?.classList.toggle('cmdk-sel', i === sel);
+        });
+        rows[sel]?.scrollIntoView({ block: 'nearest' });
+      };
+
+      const paletteGo = () => {
+        if (filtered.length === 0) {
+          const q = (document.getElementById('cmdk-input') as HTMLInputElement | null)?.value.trim();
+          location.href = q ? `/search?q=${encodeURIComponent(q)}` : '/search/';
+          return;
         }
+        document
+          .getElementById('cmdk-list')
+          ?.querySelectorAll('[role="option"]')
+          [sel]?.querySelector('a')
+          ?.click(); // 走锚点点击，ClientRouter 会接管为 SPA 导航
+      };
+
+      addEventListener('keydown', (event) => {
+        const meta = event.ctrlKey || event.metaKey;
+        // 面板打开时优先消费内部按键
+        if (cmdkIsOpen()) {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            cmdkClose();
+            return;
+          }
+          if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            paletteMove(1);
+            return;
+          }
+          if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            paletteMove(-1);
+            return;
+          }
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            paletteGo();
+            return;
+          }
+        }
+        if (keysIsOpen() && (event.key === 'Escape' || event.key === '?')) {
+          event.preventDefault();
+          keysToggle();
+          return;
+        }
+        if (meta && (event.key === 'k' || event.key === 'K')) {
+          event.preventDefault();
+          if (cmdkIsOpen()) cmdkClose();
+          else {
+            const target = event.target as HTMLElement | null;
+            if (target?.closest?.('[role="dialog"]')) return; // 灯箱内不抢占
+            cmdkOpen();
+          }
+          return;
+        }
+        const inField = (() => {
+          const target = event.target as HTMLElement | null;
+          return Boolean(
+            target &&
+              (target.tagName === 'INPUT' ||
+                target.tagName === 'TEXTAREA' ||
+                target.isContentEditable),
+          );
+        })();
+        if (event.key === '?' && !inField) {
+          const target = event.target as HTMLElement | null;
+          if (event.defaultPrevented || target?.closest?.('[role="dialog"]')) return;
+          event.preventDefault();
+          keysToggle();
+          return;
+        }
+        // / 深度搜索（输入框内不触发；已在 /search 时聚焦输入框）
+        if (event.key === '/' && !meta && !event.ctrlKey && !event.altKey && !inField) {
+          const target = event.target as HTMLElement | null;
+          if (event.defaultPrevented || target?.closest?.('[role="dialog"]')) return;
+          event.preventDefault();
+          if (location.pathname.startsWith('/search')) {
+            const input = document.getElementById('search-input') as HTMLInputElement | null;
+            input?.focus();
+            input?.select();
+          } else {
+            location.href = '/search';
+          }
+        }
+      });
+
+      // 面板交互：输入筛选、点条目导航（after-swap 统一收尾）、点遮罩关闭
+      document.addEventListener('input', (event) => {
+        if ((event.target as HTMLElement).id === 'cmdk-input') renderPalette();
+      });
+      document.addEventListener('click', (event) => {
+        if (cmdkIsOpen() && event.target === cmdkRoot()) cmdkClose();
+        if (keysIsOpen() && event.target === keysRoot()) keysToggle();
+        if ((event.target as HTMLElement).id === 'keys-close') keysToggle();
+        const item = event.target instanceof Element ? event.target.closest('#cmdk-list a') : null;
+        if (item) cmdkClose();
+      });
+      document.addEventListener('astro:after-swap', () => {
+        cmdkRoot()?.classList.add('hidden');
+        keysRoot()?.classList.add('hidden');
+        document.body.style.overflow = '';
       });
     </script>
 
