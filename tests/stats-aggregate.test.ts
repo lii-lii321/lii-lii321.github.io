@@ -59,9 +59,9 @@ test('aggregateStats：省份照片归并与降序、相机型号分组、相册
   ]);
   assert.deepEqual(s.cameras, [
     ['Canon EOS 600D', 2],
-    // 数量并列时按名称字典序（localeCompare：CJK 在拉丁字母前）
-    ['未记录', 1],
+    // 数量并列时按码点序（locale 无关，本地与 CI 恒定一致）
     ['iPhone 15 Pro', 1],
+    ['未记录', 1],
   ]);
   assert.deepEqual(s.tripSizes, [
     ['山东半岛', 3],

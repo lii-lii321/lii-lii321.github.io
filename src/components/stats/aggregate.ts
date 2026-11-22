@@ -76,5 +76,7 @@ export function aggregateStats(travels: TravelData): StatsAggregates {
   };
 }
 
+// 数量降序 + 名称码点序 tie-break：localeCompare 的 CJK/拉丁排序随平台 ICU 不同
+// （本地 Windows 与 CI Linux 实测相反），码点比较跨平台恒定
 const byCountDesc = (a: [string, number], b: [string, number]) =>
-  b[1] - a[1] || a[0].localeCompare(b[0]);
+  b[1] - a[1] || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
