@@ -2,7 +2,7 @@
   "stats": {
     "countries": 1,
     "provinces": 8,
-    "photoCount": 2260
+    "photoCount": 2162
   },
   "trips": [
     {
@@ -6032,7 +6032,7 @@
         "lng": 120.3826,
         "lat": 36.0671
       },
-      "cover": "/photos/shandong/0001.jpg",
+      "cover": "/photos/shandong/0005.jpg",
       "photos": [
         {
           "src": "/photos/shandong/0001.jpg",
@@ -6061,32 +6061,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0003.jpg",
-          "thumb": "/photos/shandong/thumbs/0003.webp",
-          "thumb2x": "/photos/shandong/thumbs/0003.1280.webp",
-          "full": "/photos/shandong/thumbs/0003.full.webp",
-          "blur": "data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAACQAQCdASoQAAsAA4BaJYwAAtiyngAAySK4TvjOzQLA925YPbUsdyfxKPN1GH+Dia535oAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-15T06:08:59.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0004.jpg",
-          "thumb": "/photos/shandong/thumbs/0004.webp",
-          "thumb2x": "/photos/shandong/thumbs/0004.1280.webp",
-          "full": "/photos/shandong/thumbs/0004.full.webp",
-          "blur": "data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAACwAQCdASoQAAsAA4BaJZwC7AEOxHnEAP6wWG1IboCiudTHdAAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-15T06:09:14.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0005.jpg",
           "thumb": "/photos/shandong/thumbs/0005.webp",
           "thumb2x": "/photos/shandong/thumbs/0005.1280.webp",
@@ -6095,32 +6069,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-15T06:09:37.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0006.jpg",
-          "thumb": "/photos/shandong/thumbs/0006.webp",
-          "thumb2x": "/photos/shandong/thumbs/0006.1280.webp",
-          "full": "/photos/shandong/thumbs/0006.full.webp",
-          "blur": "data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAAAQAgCdASoQAAsAA4BaJZQC7AEUotawSBAAAPx2q6XONepjc6JZ99CRHfnOhBNYKGQhwAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-15T06:09:54.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0007.jpg",
-          "thumb": "/photos/shandong/thumbs/0007.webp",
-          "thumb2x": "/photos/shandong/thumbs/0007.1280.webp",
-          "full": "/photos/shandong/thumbs/0007.full.webp",
-          "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADwAQCdASoQAAsAA4BaJZQCdAEOsIvqTwAA/lZ4GA+Fz5hRypHhU9mPuPszQAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-15T06:10:19.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -6139,19 +6087,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0009.jpg",
-          "thumb": "/photos/shandong/thumbs/0009.webp",
-          "thumb2x": "/photos/shandong/thumbs/0009.1280.webp",
-          "full": "/photos/shandong/thumbs/0009.full.webp",
-          "blur": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAQAgCdASoQAAsAA4BaJZwAL4AI/ld/BReAAP64PoXcHJv5LJwuB0ypXfkOkNcaDeIfIJvTEHwfalps95xLIHtOowP9oEJo5LuTnv4P61uO7D8AAuAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-15T08:56:57.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0010.jpg",
           "thumb": "/photos/shandong/thumbs/0010.webp",
           "thumb2x": "/photos/shandong/thumbs/0010.1280.webp",
@@ -6160,18 +6095,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-15T08:57:07.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0011.jpg",
-          "thumb": "/photos/shandong/thumbs/0011.webp",
-          "full": "/photos/shandong/thumbs/0011.full.webp",
-          "blur": "data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAABQAwCdASoQABgAPu1iqU2ppaOiMAgBMB2JaQAAWzJXbl2WAAD+UXZ4dAQIGTp6QiAAAA==",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-15T08:57:27.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -6197,19 +6120,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-15T08:58:21.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0014.jpg",
-          "thumb": "/photos/shandong/thumbs/0014.webp",
-          "thumb2x": "/photos/shandong/thumbs/0014.1280.webp",
-          "full": "/photos/shandong/thumbs/0014.full.webp",
-          "blur": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoQAAsAA4BaJZwAAuinqYSIZ4AA/sSve5/oOlzy+ax1Lv5tjOObatzN21UWfu18pmmWyOAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-15T09:11:31.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -6248,19 +6158,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-15T09:24:54.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0018.jpg",
-          "thumb": "/photos/shandong/thumbs/0018.webp",
-          "thumb2x": "/photos/shandong/thumbs/0018.1280.webp",
-          "full": "/photos/shandong/thumbs/0018.full.webp",
-          "blur": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoQAAsAA4BaJZACdH8AEwMUPAAA/UUrkTBeja1K7MgloVxPKjZ5IDsbPoztyqInSi0dLZ3igE3ixxdRfeBt7QnLZKkJSwrgAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-15T09:27:42.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -6305,19 +6202,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0022.jpg",
-          "thumb": "/photos/shandong/thumbs/0022.webp",
-          "thumb2x": "/photos/shandong/thumbs/0022.1280.webp",
-          "full": "/photos/shandong/thumbs/0022.full.webp",
-          "blur": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAQCdASoQAAsAA4BaJZACdAEO4+xI8gAA/vTeAm6kNUhQv1tHPgI9uW8p3GjFaFKHp9JQ3obT0UukMAOcOb2gAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T03:07:49.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0023.jpg",
           "thumb": "/photos/shandong/thumbs/0023.webp",
           "full": "/photos/shandong/thumbs/0023.full.webp",
@@ -6355,19 +6239,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0026.jpg",
-          "thumb": "/photos/shandong/thumbs/0026.webp",
-          "thumb2x": "/photos/shandong/thumbs/0026.1280.webp",
-          "full": "/photos/shandong/thumbs/0026.full.webp",
-          "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAADwAQCdASoQAAsAA4BaJZACdH8AFbLelAAA92LcIi8x5puCUvgw+rWgAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T03:11:15.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0027.jpg",
           "thumb": "/photos/shandong/thumbs/0027.webp",
           "thumb2x": "/photos/shandong/thumbs/0027.1280.webp",
@@ -6376,19 +6247,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T03:11:36.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0028.jpg",
-          "thumb": "/photos/shandong/thumbs/0028.webp",
-          "thumb2x": "/photos/shandong/thumbs/0028.1280.webp",
-          "full": "/photos/shandong/thumbs/0028.full.webp",
-          "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADQAQCdASoQAAsAA4BaJZACdAD6PtW8AADbZfh/JOUpyFxvOtxiOVZrLQgnEPDILa4/8m+jvAAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T03:11:55.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -6549,19 +6407,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0041.jpg",
-          "thumb": "/photos/shandong/thumbs/0041.webp",
-          "thumb2x": "/photos/shandong/thumbs/0041.1280.webp",
-          "full": "/photos/shandong/thumbs/0041.full.webp",
-          "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAABQAQCdASoQAAsAA4BaJZwABAAAAP7P7//M5U3ed3yKiF91yUmt6AAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T03:44:30.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0042.jpg",
           "thumb": "/photos/shandong/thumbs/0042.webp",
           "thumb2x": "/photos/shandong/thumbs/0042.1280.webp",
@@ -6595,19 +6440,6 @@
           "width": 1067,
           "height": 1600,
           "takenAt": "2025-12-16T03:52:45.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0045.jpg",
-          "thumb": "/photos/shandong/thumbs/0045.webp",
-          "thumb2x": "/photos/shandong/thumbs/0045.1280.webp",
-          "full": "/photos/shandong/thumbs/0045.full.webp",
-          "blur": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAADwAQCdASoQAAsAA4BaJQBOgBwcQ5XIIAAA2XEs+u7TBI9SkYM4MxX4vX+ij8fYSsLg4cWpjDJD+tFbj78QAAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T03:53:01.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -6691,45 +6523,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0052.jpg",
-          "thumb": "/photos/shandong/thumbs/0052.webp",
-          "thumb2x": "/photos/shandong/thumbs/0052.1280.webp",
-          "full": "/photos/shandong/thumbs/0052.full.webp",
-          "blur": "data:image/webp;base64,UklGRi4AAABXRUJQVlA4ICIAAABwAQCdASoQAAsAA4BaJaWR5AGIAAD6/5X4reVUGe/vEAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T03:57:52.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0053.jpg",
-          "thumb": "/photos/shandong/thumbs/0053.webp",
-          "thumb2x": "/photos/shandong/thumbs/0053.1280.webp",
-          "full": "/photos/shandong/thumbs/0053.full.webp",
-          "blur": "data:image/webp;base64,UklGRi4AAABXRUJQVlA4ICIAAABwAQCdASoQAAsAA4BaJaQAAlSeUADbYdz87g3gZyrwRAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T03:57:53.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0054.jpg",
-          "thumb": "/photos/shandong/thumbs/0054.webp",
-          "thumb2x": "/photos/shandong/thumbs/0054.1280.webp",
-          "full": "/photos/shandong/thumbs/0054.full.webp",
-          "blur": "data:image/webp;base64,UklGRi4AAABXRUJQVlA4ICIAAACQAQCdASoQAAsAA4BaJaQAAuXqkAAA29a+lpNsK3pvoAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T03:57:55.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0055.jpg",
           "thumb": "/photos/shandong/thumbs/0055.webp",
           "thumb2x": "/photos/shandong/thumbs/0055.1280.webp",
@@ -6782,19 +6575,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0059.jpg",
-          "thumb": "/photos/shandong/thumbs/0059.webp",
-          "thumb2x": "/photos/shandong/thumbs/0059.1280.webp",
-          "full": "/photos/shandong/thumbs/0059.full.webp",
-          "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAADwAQCdASoQAAsAA4BaJagCdAD1cZa0q8AA/dFkr4iggDex6/16pbupLztWzBGAAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T04:41:19.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0060.jpg",
           "thumb": "/photos/shandong/thumbs/0060.webp",
           "thumb2x": "/photos/shandong/thumbs/0060.1280.webp",
@@ -6821,19 +6601,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0062.jpg",
-          "thumb": "/photos/shandong/thumbs/0062.webp",
-          "thumb2x": "/photos/shandong/thumbs/0062.1280.webp",
-          "full": "/photos/shandong/thumbs/0062.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADQAQCdASoQAAsAA4BaJZAC7AEOzKaQAAD+1O8ccO7yhEsDguGbA/8CQAAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T04:42:38.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0063.jpg",
           "thumb": "/photos/shandong/thumbs/0063.webp",
           "thumb2x": "/photos/shandong/thumbs/0063.1280.webp",
@@ -6842,58 +6609,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T04:42:45.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0064.jpg",
-          "thumb": "/photos/shandong/thumbs/0064.webp",
-          "thumb2x": "/photos/shandong/thumbs/0064.1280.webp",
-          "full": "/photos/shandong/thumbs/0064.full.webp",
-          "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADQAQCdASoQAAsAA4BaJaACdAEOttee2AD+6nbSD2EttJSygrL8zsgwlr87rAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T04:42:46.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0065.jpg",
-          "thumb": "/photos/shandong/thumbs/0065.webp",
-          "thumb2x": "/photos/shandong/thumbs/0065.1280.webp",
-          "full": "/photos/shandong/thumbs/0065.full.webp",
-          "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAADQAQCdASoQAAsAA4BaJbACdAEOsGG+AAD+9gYMogoaBl1HzFIlfFiX5lm/DF4AAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T04:43:09.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0066.jpg",
-          "thumb": "/photos/shandong/thumbs/0066.webp",
-          "thumb2x": "/photos/shandong/thumbs/0066.1280.webp",
-          "full": "/photos/shandong/thumbs/0066.full.webp",
-          "blur": "data:image/webp;base64,UklGRjAAAABXRUJQVlA4ICQAAACwAQCdASoQAAsAA4BaJZwAAudZ4BFAAP7zb4ij0t2u3XgeAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T04:43:49.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0067.jpg",
-          "thumb": "/photos/shandong/thumbs/0067.webp",
-          "thumb2x": "/photos/shandong/thumbs/0067.1280.webp",
-          "full": "/photos/shandong/thumbs/0067.full.webp",
-          "blur": "data:image/webp;base64,UklGRjAAAABXRUJQVlA4ICQAAACwAQCdASoQAAsAA4BaJZwAAuZ5lk4AAP7zcCBu5RSfZzkgeAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T04:43:50.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -6963,32 +6678,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0073.jpg",
-          "thumb": "/photos/shandong/thumbs/0073.webp",
-          "thumb2x": "/photos/shandong/thumbs/0073.1280.webp",
-          "full": "/photos/shandong/thumbs/0073.full.webp",
-          "blur": "data:image/webp;base64,UklGRi4AAABXRUJQVlA4ICIAAABQAQCdASoQAAsAA4BaJZwABAAAAP7sqb8+gUTFS4CGSGAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T05:13:55.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0074.jpg",
-          "thumb": "/photos/shandong/thumbs/0074.webp",
-          "thumb2x": "/photos/shandong/thumbs/0074.1280.webp",
-          "full": "/photos/shandong/thumbs/0074.full.webp",
-          "blur": "data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAADQAQCdASoQAAsAA4BaJYwC7AENeIly8AD+tKh2kAcLncVRPNtIbOxHSEy5jGoRvXaQAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T05:14:35.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0075.jpg",
           "thumb": "/photos/shandong/thumbs/0075.webp",
           "thumb2x": "/photos/shandong/thumbs/0075.1280.webp",
@@ -7040,70 +6729,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0079.jpg",
-          "thumb": "/photos/shandong/thumbs/0079.webp",
-          "thumb2x": "/photos/shandong/thumbs/0079.1280.webp",
-          "full": "/photos/shandong/thumbs/0079.full.webp",
-          "blur": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADQAQCdASoQAAsAA4BaJZQAApxW2Y/+wAD+7WGlXFYeUBuRQSpBMlFDj/nJ36wBZgjMe0GnDrN3/fwAAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T05:41:50.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0080.jpg",
-          "thumb": "/photos/shandong/thumbs/0080.webp",
-          "thumb2x": "/photos/shandong/thumbs/0080.1280.webp",
-          "full": "/photos/shandong/thumbs/0080.full.webp",
-          "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAACwAQCdASoQAAsAA4BaJZQAAu0aS58AAP7nYngGUUzhMdIB2u0+tUn98jdSY4aTL0trXPcNrdAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T05:41:52.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0081.jpg",
-          "thumb": "/photos/shandong/thumbs/0081.webp",
-          "thumb2x": "/photos/shandong/thumbs/0081.1280.webp",
-          "full": "/photos/shandong/thumbs/0081.full.webp",
-          "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAACwAQCdASoQAAsAA4BaJZwAAujX6LnAAP7v7H0aHP9hyPAOy3urIAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T05:43:00.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0082.jpg",
-          "thumb": "/photos/shandong/thumbs/0082.webp",
-          "full": "/photos/shandong/thumbs/0082.full.webp",
-          "blur": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADQAwCdASoQABgAPu1kq04ppaQiMAgBMB2JZQC/OCHfjKNAn450rAAA/vNxcRQAqDgxkx0Hb9FRZCM4P5zXj7tHjA2DtMb7NJG/U//KgTJTShP9oAA=",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T05:44:05.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0083.jpg",
-          "thumb": "/photos/shandong/thumbs/0083.webp",
-          "thumb2x": "/photos/shandong/thumbs/0083.1280.webp",
-          "full": "/photos/shandong/thumbs/0083.full.webp",
-          "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAADQAQCdASoQAAsAA4BaJZwAAua1vCWwAAD+8dRCmb5ypqDQYnClNtgAAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T05:47:33.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0084.jpg",
           "thumb": "/photos/shandong/thumbs/0084.webp",
           "thumb2x": "/photos/shandong/thumbs/0084.1280.webp",
@@ -7112,19 +6737,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T06:25:36.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0085.jpg",
-          "thumb": "/photos/shandong/thumbs/0085.webp",
-          "thumb2x": "/photos/shandong/thumbs/0085.1280.webp",
-          "full": "/photos/shandong/thumbs/0085.full.webp",
-          "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAACwAQCdASoQAAsAA4BaJZwAAubOHjT4AP7TDvtptuCevdMlwAOA8AAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:25:37.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -7143,84 +6755,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0087.jpg",
-          "thumb": "/photos/shandong/thumbs/0087.webp",
-          "thumb2x": "/photos/shandong/thumbs/0087.1280.webp",
-          "full": "/photos/shandong/thumbs/0087.full.webp",
-          "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAACQAQCdASoQAAsAA4BaJZwAAkn1zAAA/tTnA17amXBH7MBq1afaYIWNrb/hP51fuui7PuKawAAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:03.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0088.jpg",
-          "thumb": "/photos/shandong/thumbs/0088.webp",
-          "thumb2x": "/photos/shandong/thumbs/0088.1280.webp",
-          "full": "/photos/shandong/thumbs/0088.full.webp",
-          "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADwAQCdASoQAAsAA4BaJZwAApgL7VXLoQAA/sXeMSCwRQML1MNfRG4vQXOOh1402ngfNFt2SAeAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:07.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0089.jpg",
-          "thumb": "/photos/shandong/thumbs/0089.webp",
-          "thumb2x": "/photos/shandong/thumbs/0089.1280.webp",
-          "full": "/photos/shandong/thumbs/0089.full.webp",
-          "blur": "data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAACwAQCdASoQAAsAA4BaJaQAAuY5N2wAAP7TFqYPnGmkVBBRQ1RgAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:08.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0090.jpg",
-          "thumb": "/photos/shandong/thumbs/0090.webp",
-          "thumb2x": "/photos/shandong/thumbs/0090.1280.webp",
-          "full": "/photos/shandong/thumbs/0090.full.webp",
-          "blur": "data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAABwAQCdASoQAAsAA4BaJaS0gAAOYAD+6K8XsQsgYEW5+FjCXHY6x3nHRBoJiGsaQoAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:09.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0091.jpg",
-          "thumb": "/photos/shandong/thumbs/0091.webp",
-          "thumb2x": "/photos/shandong/thumbs/0091.1280.webp",
-          "full": "/photos/shandong/thumbs/0091.full.webp",
-          "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAACwAQCdASoQAAsAA4BaJZwAAuUqBkAAAP7UZvvwclWnRhGRu2/KJinz2TCiBzGOAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:10.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0092.jpg",
-          "thumb": "/photos/shandong/thumbs/0092.webp",
-          "thumb2x": "/photos/shandong/thumbs/0092.1280.webp",
-          "full": "/photos/shandong/thumbs/0092.full.webp",
-          "blur": "data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAACwAQCdASoQAAsAA4BaJYwCdACWe/iAAP2Z20gY/rPdi8HG5N9qGgNk880sOXrhipo7AAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:42.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0093.jpg",
           "thumb": "/photos/shandong/thumbs/0093.webp",
           "thumb2x": "/photos/shandong/thumbs/0093.1280.webp",
@@ -7229,110 +6763,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T06:26:42.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0094.jpg",
-          "thumb": "/photos/shandong/thumbs/0094.webp",
-          "thumb2x": "/photos/shandong/thumbs/0094.1280.webp",
-          "full": "/photos/shandong/thumbs/0094.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADQAQCdASoQAAsAA4BaJZQCdAERBuwgAAD9nB9mtF7S5dPcqR2TFaCOKgAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:43.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0095.jpg",
-          "thumb": "/photos/shandong/thumbs/0095.webp",
-          "thumb2x": "/photos/shandong/thumbs/0095.1280.webp",
-          "full": "/photos/shandong/thumbs/0095.full.webp",
-          "blur": "data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAADQAQCdASoQAAsAA4BaJZQCdAERHR4AAAD9mMltVavcyav7TpEAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:44.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0096.jpg",
-          "thumb": "/photos/shandong/thumbs/0096.webp",
-          "thumb2x": "/photos/shandong/thumbs/0096.1280.webp",
-          "full": "/photos/shandong/thumbs/0096.full.webp",
-          "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAACwAQCdASoQAAsAA4BaJYwCdAC9kSwAAPWN39RJIT0TQl+nC7ZOojk4AAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:45.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0097.jpg",
-          "thumb": "/photos/shandong/thumbs/0097.webp",
-          "thumb2x": "/photos/shandong/thumbs/0097.1280.webp",
-          "full": "/photos/shandong/thumbs/0097.full.webp",
-          "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAADQAQCdASoQAAsAA4BaJYwCsAEffCFAAAD9j79bE4aX1G8N3tzcsxLWgAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:46.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0098.jpg",
-          "thumb": "/photos/shandong/thumbs/0098.webp",
-          "thumb2x": "/photos/shandong/thumbs/0098.1280.webp",
-          "full": "/photos/shandong/thumbs/0098.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAABwAQCdASoQAAsAA4BaJYwCsABKAAD+QNLQVPxk6kqw31L6XUxtoQXweKIAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:47.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0099.jpg",
-          "thumb": "/photos/shandong/thumbs/0099.webp",
-          "thumb2x": "/photos/shandong/thumbs/0099.1280.webp",
-          "full": "/photos/shandong/thumbs/0099.full.webp",
-          "blur": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoQAAsAA4BaJZwAAujYqOJgnAAA/I9EZhECJf3yMOT4k73+X/mRqWE1Dm1SDeReX/qQHgAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:53.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0100.jpg",
-          "thumb": "/photos/shandong/thumbs/0100.webp",
-          "thumb2x": "/photos/shandong/thumbs/0100.1280.webp",
-          "full": "/photos/shandong/thumbs/0100.full.webp",
-          "blur": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoQAAsAA4BaJZQAAurtZLFz2AAA/pGV3jkZwSvRVHB+OzxJ55y+x2rMWP9ahAM4F9SA8AAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:54.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0101.jpg",
-          "thumb": "/photos/shandong/thumbs/0101.webp",
-          "thumb2x": "/photos/shandong/thumbs/0101.1280.webp",
-          "full": "/photos/shandong/thumbs/0101.full.webp",
-          "blur": "data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAADwAQCdASoQAAsAA4BaJZQAAupGvWkmwAAA/pGTK5jktd6bNSUBVo5vgW/9L5FCNW9SA8AA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:55.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -7351,19 +6781,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0103.jpg",
-          "thumb": "/photos/shandong/thumbs/0103.webp",
-          "thumb2x": "/photos/shandong/thumbs/0103.1280.webp",
-          "full": "/photos/shandong/thumbs/0103.full.webp",
-          "blur": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAACwAQCdASoQAAsAA4BaJZQAApX8BcAAAMs1HhYOt6zD/6kDMoXE/fY/6eVONM8pNWFXYjQALUJx/IQnvywAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:26:57.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0104.jpg",
           "thumb": "/photos/shandong/thumbs/0104.webp",
           "thumb2x": "/photos/shandong/thumbs/0104.1280.webp",
@@ -7372,56 +6789,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T06:28:58.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0105.jpg",
-          "thumb": "/photos/shandong/thumbs/0105.webp",
-          "full": "/photos/shandong/thumbs/0105.full.webp",
-          "blur": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAACQAwCdASoQABgAPu1oqk6ppiQiMAgBMB2JZQC06Glf45NwyJBQAP77P0gnAYwUZj2BF9cTupE/8u9ZzR1oHKqImNWMAAAA",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T06:29:45.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0106.jpg",
-          "thumb": "/photos/shandong/thumbs/0106.webp",
-          "full": "/photos/shandong/thumbs/0106.full.webp",
-          "blur": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABwAwCdASoQABgAPu1iqU2ppaOiMAgBMB2JZQCdMoAKRdXiREAA/vohQ6cjVn0YbmQYIQoMUGu6NKrhof/3MFjutIm7quSUYIAAAA==",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T06:29:47.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0107.jpg",
-          "thumb": "/photos/shandong/thumbs/0107.webp",
-          "thumb2x": "/photos/shandong/thumbs/0107.1280.webp",
-          "full": "/photos/shandong/thumbs/0107.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADQAQCdASoQAAsAA4BaJYwC7AEO/88dAAD+3q8HpQZP3MAR4T0lCipdUAAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:29:50.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0108.jpg",
-          "thumb": "/photos/shandong/thumbs/0108.webp",
-          "thumb2x": "/photos/shandong/thumbs/0108.1280.webp",
-          "full": "/photos/shandong/thumbs/0108.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAACwAQCdASoQAAsAA4BaJYwAAudejFgAAP7err7UwLvMErMZd2LQn9B7e2IAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:29:51.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -7440,84 +6807,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0110.jpg",
-          "thumb": "/photos/shandong/thumbs/0110.webp",
-          "thumb2x": "/photos/shandong/thumbs/0110.1280.webp",
-          "full": "/photos/shandong/thumbs/0110.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAACQAQCdASoQAAsAA4BaJYwAAubLsQAA/t7aYW6WArf/xc7t6eL33J77YgAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:29:53.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0111.jpg",
-          "thumb": "/photos/shandong/thumbs/0111.webp",
-          "thumb2x": "/photos/shandong/thumbs/0111.1280.webp",
-          "full": "/photos/shandong/thumbs/0111.full.webp",
-          "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACwAQCdASoQAAsAA4BaJYwAAvd8UbQAAP7e2p4d06lsJajo5IxHuKa79ye+2IAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:29:53.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0112.jpg",
-          "thumb": "/photos/shandong/thumbs/0112.webp",
-          "thumb2x": "/photos/shandong/thumbs/0112.1280.webp",
-          "full": "/photos/shandong/thumbs/0112.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAACwAQCdASoQAAsAA4BaJYwAAveFtJ0gAP7e2phwH5qCQD9+0e2/Qe3tiAAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:29:54.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0113.jpg",
-          "thumb": "/photos/shandong/thumbs/0113.webp",
-          "thumb2x": "/photos/shandong/thumbs/0113.1280.webp",
-          "full": "/photos/shandong/thumbs/0113.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAACwAQCdASoQAAsAA4BaJYwAAvrbw2wAAP7e2mFuhNLLyX4+REff7k99sQAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:29:55.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0114.jpg",
-          "thumb": "/photos/shandong/thumbs/0114.webp",
-          "thumb2x": "/photos/shandong/thumbs/0114.1280.webp",
-          "full": "/photos/shandong/thumbs/0114.full.webp",
-          "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAACwAQCdASoQAAsAA4BaJZQAAu0do2UAAP7nhcz3w8fldOX8375VgAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:30:08.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0115.jpg",
-          "thumb": "/photos/shandong/thumbs/0115.webp",
-          "thumb2x": "/photos/shandong/thumbs/0115.1280.webp",
-          "full": "/photos/shandong/thumbs/0115.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADQAQCdASoQAAsAA4BaJYwAAxZgjDgvMAD+54e/Sy6o2HjASjUaP1L2xAAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:30:09.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0116.jpg",
           "thumb": "/photos/shandong/thumbs/0116.webp",
           "thumb2x": "/photos/shandong/thumbs/0116.1280.webp",
@@ -7526,54 +6815,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T06:30:10.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0117.jpg",
-          "thumb": "/photos/shandong/thumbs/0117.webp",
-          "full": "/photos/shandong/thumbs/0117.full.webp",
-          "blur": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAABQAwCdASoQABgAPu1mqk2ppaQiMAgBMB2JZwABHtW7xUQ6QAD++6XQn7wEZnisAtV6e7xvd9jVcjpmL4NdSA8AAAA=",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T06:30:17.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0118.jpg",
-          "thumb": "/photos/shandong/thumbs/0118.webp",
-          "full": "/photos/shandong/thumbs/0118.full.webp",
-          "blur": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAACQAwCdASoQABgAPu1iqk2ppaQiMAgBMB2JZQDE2GlZsIVzBs5AAP77pdCfcVT/6qchpNzOpnJDqM6zwAA=",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T06:30:17.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0119.jpg",
-          "thumb": "/photos/shandong/thumbs/0119.webp",
-          "full": "/photos/shandong/thumbs/0119.full.webp",
-          "blur": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAACQAwCdASoQABgAPu1oqk6ppiQiMAgBMB2JZwDE2GlZsD2vhfgAAP76pwZPHTsV33fMRAOH4g41BylI/KQOMAAA",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T06:30:18.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0120.jpg",
-          "thumb": "/photos/shandong/thumbs/0120.webp",
-          "full": "/photos/shandong/thumbs/0120.full.webp",
-          "blur": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAACQAwCdASoQABgAPu1mq04ppaQiMAgBMB2JZQDE2GlZsDaeojQAAP77KuSKmZrfNhv2l8Gt/tM49KuQl5dlXUAA",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T06:30:21.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -7592,32 +6833,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0122.jpg",
-          "thumb": "/photos/shandong/thumbs/0122.webp",
-          "thumb2x": "/photos/shandong/thumbs/0122.1280.webp",
-          "full": "/photos/shandong/thumbs/0122.full.webp",
-          "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACwAQCdASoQAAsAA4BaJQBWACHZwL4AAP7quYXL7aZcS44smg5jLYLfCPw7QAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:36:30.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0123.jpg",
-          "thumb": "/photos/shandong/thumbs/0123.webp",
-          "thumb2x": "/photos/shandong/thumbs/0123.1280.webp",
-          "full": "/photos/shandong/thumbs/0123.full.webp",
-          "blur": "data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAACQAQCdASoQAAsAA4BaJYwCdAENQIAA/ouTDPfdowHQWcbsR6oA408BN5653cATm0AAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:36:37.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0124.jpg",
           "thumb": "/photos/shandong/thumbs/0124.webp",
           "thumb2x": "/photos/shandong/thumbs/0124.1280.webp",
@@ -7626,32 +6841,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T06:36:38.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0125.jpg",
-          "thumb": "/photos/shandong/thumbs/0125.webp",
-          "thumb2x": "/photos/shandong/thumbs/0125.1280.webp",
-          "full": "/photos/shandong/thumbs/0125.full.webp",
-          "blur": "data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAADQAQCdASoQAAsAA4BaJYwCdAEfkLAmAAD+kSAW8wxdch+0/Rs7UXjBBG1v2m0TCAAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:36:39.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0126.jpg",
-          "thumb": "/photos/shandong/thumbs/0126.webp",
-          "thumb2x": "/photos/shandong/thumbs/0126.1280.webp",
-          "full": "/photos/shandong/thumbs/0126.full.webp",
-          "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAACwAQCdASoQAAsAA4BaJYwC7AEQLrAAAP3780pl8mPzXycSSrBWwsjIlNA0xzqgAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:36:40.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -7670,19 +6859,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0128.jpg",
-          "thumb": "/photos/shandong/thumbs/0128.webp",
-          "thumb2x": "/photos/shandong/thumbs/0128.1280.webp",
-          "full": "/photos/shandong/thumbs/0128.full.webp",
-          "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAABwAQCdASoQAAsAA4BaJZUwAAH+AAD+eD+e21RulmEoCUxzIaEidNeB4AA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:39:04.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0129.jpg",
           "thumb": "/photos/shandong/thumbs/0129.webp",
           "thumb2x": "/photos/shandong/thumbs/0129.1280.webp",
@@ -7696,32 +6872,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0130.jpg",
-          "thumb": "/photos/shandong/thumbs/0130.webp",
-          "thumb2x": "/photos/shandong/thumbs/0130.1280.webp",
-          "full": "/photos/shandong/thumbs/0130.full.webp",
-          "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAADwAQCdASoQAAsAA4BaJZQCdAD2Hzn0AAAA+IOhm4ETmhBAyJkIHUpEAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:39:08.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0131.jpg",
-          "thumb": "/photos/shandong/thumbs/0131.webp",
-          "thumb2x": "/photos/shandong/thumbs/0131.1280.webp",
-          "full": "/photos/shandong/thumbs/0131.full.webp",
-          "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACQAQCdASoQAAsAA4BaJZ12ARgAtIAA/Zo4ckmfgsPDm4vx4kg3OwqBWLI9KRAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T06:39:09.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0132.jpg",
           "thumb": "/photos/shandong/thumbs/0132.webp",
           "full": "/photos/shandong/thumbs/0132.full.webp",
@@ -7729,18 +6879,6 @@
           "width": 1067,
           "height": 1600,
           "takenAt": "2025-12-16T06:44:44.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0133.jpg",
-          "thumb": "/photos/shandong/thumbs/0133.webp",
-          "full": "/photos/shandong/thumbs/0133.full.webp",
-          "blur": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADQAwCdASoQABgAPu1kqk2ppaQiMAgBMB2JYwABHuj0DIhQTXA5XcAA/v292wSvJDeMEte8RBsIY5ue9+FUtnhjLzDzaLThRWl6NhEp1mFQOOeLBVNHPVayddlRuLPPEu4Mxahwpe1XQMTmAAA=",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T06:44:45.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -7772,19 +6910,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0136.jpg",
-          "thumb": "/photos/shandong/thumbs/0136.webp",
-          "thumb2x": "/photos/shandong/thumbs/0136.1280.webp",
-          "full": "/photos/shandong/thumbs/0136.full.webp",
-          "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAACwAQCdASoQAAsAA4BaJZwAAube5mToAP6uddUIU1NUqs9BW1W80AAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T07:58:57.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0137.jpg",
           "thumb": "/photos/shandong/thumbs/0137.webp",
           "thumb2x": "/photos/shandong/thumbs/0137.1280.webp",
@@ -7793,19 +6918,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T07:59:13.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0138.jpg",
-          "thumb": "/photos/shandong/thumbs/0138.webp",
-          "thumb2x": "/photos/shandong/thumbs/0138.1280.webp",
-          "full": "/photos/shandong/thumbs/0138.full.webp",
-          "blur": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoQAAsAA4BaJZwC7AEO9Z1TbJgA/u/uSDsAzaj6XYWUph/psr9l505yyBJ4ADN3QpwzAAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T07:59:14.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -7824,32 +6936,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0140.jpg",
-          "thumb": "/photos/shandong/thumbs/0140.webp",
-          "thumb2x": "/photos/shandong/thumbs/0140.1280.webp",
-          "full": "/photos/shandong/thumbs/0140.full.webp",
-          "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADQAQCdASoQAAsAA4BaJZwC7AEOxCmMAAD+3z5af6zos34/UJK6PcKyjV+uAQAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T07:59:19.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0141.jpg",
-          "thumb": "/photos/shandong/thumbs/0141.webp",
-          "thumb2x": "/photos/shandong/thumbs/0141.1280.webp",
-          "full": "/photos/shandong/thumbs/0141.full.webp",
-          "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADQAQCdASoQAAsAA4BaJZwC7AEOsi4sAAD+5137zhearrS/AVmfVdPEzy7kwjQA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T07:59:21.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0142.jpg",
           "thumb": "/photos/shandong/thumbs/0142.webp",
           "thumb2x": "/photos/shandong/thumbs/0142.1280.webp",
@@ -7858,58 +6944,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T07:59:46.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0143.jpg",
-          "thumb": "/photos/shandong/thumbs/0143.webp",
-          "thumb2x": "/photos/shandong/thumbs/0143.1280.webp",
-          "full": "/photos/shandong/thumbs/0143.full.webp",
-          "blur": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoQAAsAA4BaJZwAAjWzNsrdOEAA/qn3J4Nhu9SuKiqaVg0JG8wTnLInxu42CNbyF8zTexi603YzUMKNQu53goAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T07:59:47.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0144.jpg",
-          "thumb": "/photos/shandong/thumbs/0144.webp",
-          "thumb2x": "/photos/shandong/thumbs/0144.1280.webp",
-          "full": "/photos/shandong/thumbs/0144.full.webp",
-          "blur": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADwAQCdASoQAAsAA4BaJaQAAsSv9uPwEQAA/qn3Otx1Z6pM0dNJyUlVEmO4CyzeP0pEgp13noKi20aNGr5x0rej6hxGWNMAUAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T07:59:48.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0145.jpg",
-          "thumb": "/photos/shandong/thumbs/0145.webp",
-          "thumb2x": "/photos/shandong/thumbs/0145.1280.webp",
-          "full": "/photos/shandong/thumbs/0145.full.webp",
-          "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAADQAQCdASoQAAsAA4BaJZwAAuc/yQ3QAAD+Vnr1Mk7CqnAHcxG4CAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:02:14.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0146.jpg",
-          "thumb": "/photos/shandong/thumbs/0146.webp",
-          "thumb2x": "/photos/shandong/thumbs/0146.1280.webp",
-          "full": "/photos/shandong/thumbs/0146.full.webp",
-          "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAACwAQCdASoQAAsAA4BaJZwAAubQNUIAAP5W7wxvAQrqBtvZd/WRI+2FYAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:14:43.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -7941,19 +6975,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0149.jpg",
-          "thumb": "/photos/shandong/thumbs/0149.webp",
-          "thumb2x": "/photos/shandong/thumbs/0149.1280.webp",
-          "full": "/photos/shandong/thumbs/0149.full.webp",
-          "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAAAQAgCdASoQAAsAA4BaJZQAAxf/wrhRrZgAAP7v7ClM/gqPAcmbav9bIe2AhRi5ZMQwl8O7oQAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:14:58.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0150.jpg",
           "thumb": "/photos/shandong/thumbs/0150.webp",
           "thumb2x": "/photos/shandong/thumbs/0150.1280.webp",
@@ -7967,32 +6988,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0151.jpg",
-          "thumb": "/photos/shandong/thumbs/0151.webp",
-          "thumb2x": "/photos/shandong/thumbs/0151.1280.webp",
-          "full": "/photos/shandong/thumbs/0151.full.webp",
-          "blur": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAADQAQCdASoQAAsAA4BaJYwC7AED8BqAeAD+2EUza1pv0qYM2RIIRG+fpJQgDlxs1xp+n2SEjnKh2YvQoNwqgAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:15:45.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0152.jpg",
-          "thumb": "/photos/shandong/thumbs/0152.webp",
-          "thumb2x": "/photos/shandong/thumbs/0152.1280.webp",
-          "full": "/photos/shandong/thumbs/0152.full.webp",
-          "blur": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAQCdASoQAAsAA4BaJYwC7AC9Evz64wAA/sptlKVIimjceaKLUZYGwpnv0QGBzE5+qqUOJpkXU/5nlxFCOyby4AA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:15:46.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0153.jpg",
           "thumb": "/photos/shandong/thumbs/0153.webp",
           "thumb2x": "/photos/shandong/thumbs/0153.1280.webp",
@@ -8001,45 +6996,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T08:15:59.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0154.jpg",
-          "thumb": "/photos/shandong/thumbs/0154.webp",
-          "thumb2x": "/photos/shandong/thumbs/0154.1280.webp",
-          "full": "/photos/shandong/thumbs/0154.full.webp",
-          "blur": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADwAQCdASoQAAsAA4BaJYwAAud4O0GbFoAA/pFEnOqRXnYx7LoKd5Vi//PsgUEthHDzNqSGfeLIJUF2mRq1gB0MI+lLsAC8b98qwAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:16:00.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0155.jpg",
-          "thumb": "/photos/shandong/thumbs/0155.webp",
-          "thumb2x": "/photos/shandong/thumbs/0155.1280.webp",
-          "full": "/photos/shandong/thumbs/0155.full.webp",
-          "blur": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAAAwAgCdASoQAAsAA4BaJYwAD43wbSi2GxtgAAD+kUSc6pKTcVOb6KgrjqoALKC9wlYe0Tdw9FCbYc2zR4qdDcLWAywmGl4375VgAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:16:00.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0156.jpg",
-          "thumb": "/photos/shandong/thumbs/0156.webp",
-          "thumb2x": "/photos/shandong/thumbs/0156.1280.webp",
-          "full": "/photos/shandong/thumbs/0156.full.webp",
-          "blur": "data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAADQAQCdASoQAAsAA4BaJaQAAubeT11Q0AD+56bM9xv4oqdRJk/IuN7BnJfqjL7Y1Jn0u04AAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:18:50.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -8071,32 +7027,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0159.jpg",
-          "thumb": "/photos/shandong/thumbs/0159.webp",
-          "thumb2x": "/photos/shandong/thumbs/0159.1280.webp",
-          "full": "/photos/shandong/thumbs/0159.full.webp",
-          "blur": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAAAQAgCdASoQAAsAA4BaJZwAArIoJlYU+88AAP7fSf8jQjWRleV+ogr6yXBTvU0bDJWqD8pjA1bPn1V5nWOqwHtoGJDuV70DkySuiBwA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:19:00.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0160.jpg",
-          "thumb": "/photos/shandong/thumbs/0160.webp",
-          "thumb2x": "/photos/shandong/thumbs/0160.1280.webp",
-          "full": "/photos/shandong/thumbs/0160.full.webp",
-          "blur": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoQAAsAA4BaJZwAArOgwx4oAAD+30n/JR+T8tWj1+rgdQmG8p4UOeusSalIVnUYxPI1GrENB5eIAKkr+0181ZzZStgAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:19:01.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0161.jpg",
           "thumb": "/photos/shandong/thumbs/0161.webp",
           "thumb2x": "/photos/shandong/thumbs/0161.1280.webp",
@@ -8105,45 +7035,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T08:22:00.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0162.jpg",
-          "thumb": "/photos/shandong/thumbs/0162.webp",
-          "thumb2x": "/photos/shandong/thumbs/0162.1280.webp",
-          "full": "/photos/shandong/thumbs/0162.full.webp",
-          "blur": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoQAAsAA4BaJZwCsADzn7wQJAAA/DWv6CoKxCLAVb20w164X3IpZCQgsmXLJ4RA3H+f+ghDznbWIu+GYdaxgAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:22:00.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0163.jpg",
-          "thumb": "/photos/shandong/thumbs/0163.webp",
-          "thumb2x": "/photos/shandong/thumbs/0163.1280.webp",
-          "full": "/photos/shandong/thumbs/0163.full.webp",
-          "blur": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoQAAsAA4BaJZQCsADzraYrl/IAAPw2c/ZOhNm1WKaNiRiB6LIA40vEbvDYc2D3RjfDppN2TS4Josn5gAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:22:01.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0164.jpg",
-          "thumb": "/photos/shandong/thumbs/0164.webp",
-          "thumb2x": "/photos/shandong/thumbs/0164.1280.webp",
-          "full": "/photos/shandong/thumbs/0164.full.webp",
-          "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAACwAQCdASoQAAsAA4BaJQBOgCKh8SdAAP4nqghGvmv7QW+zIwqJsyd2xTavh87AAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:41:40.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -8188,19 +7079,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0168.jpg",
-          "thumb": "/photos/shandong/thumbs/0168.webp",
-          "thumb2x": "/photos/shandong/thumbs/0168.1280.webp",
-          "full": "/photos/shandong/thumbs/0168.full.webp",
-          "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACwAQCdASoQAAsAA4BaJQBOgCGugx0AAP60yHJNDpNjNlUdAWXEyXTZKxGD4oAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:45:30.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0169.jpg",
           "thumb": "/photos/shandong/thumbs/0169.webp",
           "thumb2x": "/photos/shandong/thumbs/0169.1280.webp",
@@ -8209,31 +7087,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T08:45:30.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0170.jpg",
-          "thumb": "/photos/shandong/thumbs/0170.webp",
-          "thumb2x": "/photos/shandong/thumbs/0170.1280.webp",
-          "full": "/photos/shandong/thumbs/0170.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAACwAQCdASoQAAsAA4BaJQBOgCGodNQAAP60yHJNDpZunGN62dqrQZPVe4wgAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T08:45:31.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0171.jpg",
-          "thumb": "/photos/shandong/thumbs/0171.webp",
-          "full": "/photos/shandong/thumbs/0171.full.webp",
-          "blur": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAAAwBACdASoQABgAPu1mq04ppaQiMAgBMB2JYgCdMoADTqHd0dnClSzIdQAA/lHRQ+WilKsTR8VfaEM2mqk5NXvgavG5ttW0wArWH2hLQzLoAA==",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T08:46:29.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -8277,19 +7130,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0175.jpg",
-          "thumb": "/photos/shandong/thumbs/0175.webp",
-          "thumb2x": "/photos/shandong/thumbs/0175.1280.webp",
-          "full": "/photos/shandong/thumbs/0175.full.webp",
-          "blur": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAAAQAgCdASoQAAsAA4BaJZQCdAEPEGWzcPsAAP7fTClipU/PskSjTLpzahxFWY1Bv4aS2395gCQyP1v7saAAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T09:12:04.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0176.jpg",
           "thumb": "/photos/shandong/thumbs/0176.webp",
           "thumb2x": "/photos/shandong/thumbs/0176.1280.webp",
@@ -8308,19 +7148,6 @@
           "thumb2x": "/photos/shandong/thumbs/0177.1280.webp",
           "full": "/photos/shandong/thumbs/0177.full.webp",
           "blur": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAAAwAgCdASoQAAsAA4BaJYwCw7EPD3/KaZgSQAD+9F3i6Kx45JQZ+5mgZxT7mZDUDOrkiJLLx2SKsAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T09:16:06.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0178.jpg",
-          "thumb": "/photos/shandong/thumbs/0178.webp",
-          "thumb2x": "/photos/shandong/thumbs/0178.1280.webp",
-          "full": "/photos/shandong/thumbs/0178.full.webp",
-          "blur": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAAAQAgCdASoQAAsAA4BaJYwCdAD0l3eUjwgAAP70XevT4+k7VI6rsqikN5lhTEXPwKDpOOZOxoh1Z4gYQAA=",
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T09:16:06.000Z",
@@ -8355,19 +7182,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0181.jpg",
-          "thumb": "/photos/shandong/thumbs/0181.webp",
-          "thumb2x": "/photos/shandong/thumbs/0181.1280.webp",
-          "full": "/photos/shandong/thumbs/0181.full.webp",
-          "blur": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoQAAsAA4BaJYwAAxeamJq6bkgA/vM+itpeB8N+1G376dpMmTdp0Ahpml/yuOm/y3vLDs/mGjZEB3OzO6F01wT+UQgfV/oAAAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T09:16:36.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0182.jpg",
           "thumb": "/photos/shandong/thumbs/0182.webp",
           "full": "/photos/shandong/thumbs/0182.full.webp",
@@ -8375,44 +7189,6 @@
           "width": 1067,
           "height": 1600,
           "takenAt": "2025-12-16T09:40:53.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0183.jpg",
-          "thumb": "/photos/shandong/thumbs/0183.webp",
-          "full": "/photos/shandong/thumbs/0183.full.webp",
-          "blur": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAACQAwCdASoQABgAPu1kq04ppaQiMAgBMB2JaAAAW+ifgRXMOvgsAP70Hdiy/H6uqvaabNQJzZ+1OiJlrfXu7t4YOjAicd7cosEhOoMLnACXB/n9NX8vtJETY97cSTPuTffD5LlEbdkuU1/R6aD0KaGpAiFHNoAA",
-          "width": 1067,
-          "height": 1600,
-          "takenAt": "2025-12-16T09:40:57.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0184.jpg",
-          "thumb": "/photos/shandong/thumbs/0184.webp",
-          "thumb2x": "/photos/shandong/thumbs/0184.1280.webp",
-          "full": "/photos/shandong/thumbs/0184.full.webp",
-          "blur": "data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAADwAQCdASoQAAsAA4BaJZwAAudfBHK6lwAA/vd12qNCCH16SMuMb0sP1hzW640RoP4XJ3AA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T09:42:47.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0185.jpg",
-          "thumb": "/photos/shandong/thumbs/0185.webp",
-          "thumb2x": "/photos/shandong/thumbs/0185.1280.webp",
-          "full": "/photos/shandong/thumbs/0185.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADQAQCdASoQAAsAA4BaJaQAAude90g2gAD++Epf7TNi7a23ec5E+nV14vQAAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T09:42:58.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
@@ -8443,19 +7219,6 @@
           "scene": "威海"
         },
         {
-          "src": "/photos/shandong/0188.jpg",
-          "thumb": "/photos/shandong/thumbs/0188.webp",
-          "thumb2x": "/photos/shandong/thumbs/0188.1280.webp",
-          "full": "/photos/shandong/thumbs/0188.full.webp",
-          "blur": "data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAACwAQCdASoQAAsAA4BaJZwAAn/SOcvAAP72k9lNyXErr2BWP2bzGuQcLodr6nfRG7CBAAAA",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T09:45:16.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
           "src": "/photos/shandong/0189.jpg",
           "thumb": "/photos/shandong/thumbs/0189.webp",
           "thumb2x": "/photos/shandong/thumbs/0189.1280.webp",
@@ -8464,32 +7227,6 @@
           "width": 1600,
           "height": 1067,
           "takenAt": "2025-12-16T09:45:16.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0190.jpg",
-          "thumb": "/photos/shandong/thumbs/0190.webp",
-          "thumb2x": "/photos/shandong/thumbs/0190.1280.webp",
-          "full": "/photos/shandong/thumbs/0190.full.webp",
-          "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAABQAQCdASoQAAsAA4BaJZwABAAAAP7yfRZ8DnfO1Yv/c5f8CdX2s06m+RYbyp9CgAA=",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T09:45:16.000Z",
-          "camera": "Canon EOS 600D",
-          "gps": null,
-          "scene": "威海"
-        },
-        {
-          "src": "/photos/shandong/0191.jpg",
-          "thumb": "/photos/shandong/thumbs/0191.webp",
-          "thumb2x": "/photos/shandong/thumbs/0191.1280.webp",
-          "full": "/photos/shandong/thumbs/0191.full.webp",
-          "blur": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADwAQCdASoQAAsAA4BaJZwAAvafOZZHNegA/vbXTv2r9/wSxVb8XZou3XkIAA==",
-          "width": 1600,
-          "height": 1067,
-          "takenAt": "2025-12-16T09:45:17.000Z",
           "camera": "Canon EOS 600D",
           "gps": null,
           "scene": "威海"
