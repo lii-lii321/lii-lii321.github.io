@@ -1,0 +1,59 @@
+---
+/**
+ * 数据驾驶舱：把 travels.json 的照片/相册/器材数据构建期聚合，
+ * 交给 StatsCharts island 渲染五张图（快门日历/月度快门/器材构成/足迹分布/相册规模）。
+ * 纯静态——运行时零请求，ECharts 是唯一 JS 依赖且按需注册。
+ */
+import Base from '../layouts/Base.astro';
+import StatsCharts from '../components/stats/StatsCharts';
+import { aggregateStats } from '../components/stats/aggregate';
+import travelsJson from '../data/travels.json';
+import type { TravelData } from '../types';
+
+const travels = travelsJson as TravelData;
+const stats = aggregateStats(travels);
+const takenRatio = stats.total > 0 ? Math.round(((stats.total - stats.noTakenAt) / stats.total) * 100) : 0;
+
+const numbers: { label: string; value: string }[] = [
+  { label: '入库照片', value: `${stats.total} 张` },
+  { label: '旅行相册', value: `${travels.trips.length} 本` },
+  { label: '足迹省份', value: `${stats.provinces.length} 个省级行政区` },
+  { label: '拍摄器材', value: `${stats.cameras.filter(([name]) => name !== '未记录').length} 种相机` },
+];
+---
+
+<Base
+  title="数据驾驶舱"
+  description={`本站 ${stats.total} 张照片的时间、地点与器材数据可视化：快门日历、月度快门、足迹分布。`}
+  active="/stats"
+>
+  <article>
+    <section class="pt-[var(--spacing-sec)]">
+      <p class="eyebrow">Data Cockpit</p>
+      <h1 class="h1 mt-3">数据驾驶舱</h1>
+      <p class="lede mt-5">
+        全站 {stats.total} 张照片的拍摄时间、地点与器材，构建期从 EXIF 与相册数据聚合。
+        我读数据科学——那当然也要给自己的相册做一张仪表盘。
+      </p>
+
+      <dl class="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-rule pt-8 md:grid-cols-4">
+        {
+          numbers.map((n) => (
+            <div>
+              <dt class="meta">{n.label}</dt>
+              <dd class="mt-2 font-serif text-2xl font-bold text-ink">{n.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section aria-label="图表">
+      <StatsCharts client:load data={stats} />
+      <p class="meta mt-6 normal-case">
+        {stats.noTakenAt} 张照片缺少拍摄时间（EXIF 被剥离），未计入时间维度图表；
+        有时间记录的覆盖 {takenRatio}%。数据生成于构建时刻，与相册页完全同源。
+      </p>
+    </section>
+  </article>
+</Base>
