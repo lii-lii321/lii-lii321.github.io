@@ -246,6 +246,34 @@ html {
   }
 }
 
+/* 相册头图滚动视差：头图滚出视口时底层模糊图滞后下沉、主图轻微超前上移，制造层次。
+ * 纯 CSS scroll-driven（Chrome 115+），不支持的浏览器静态不动、无 JS 依赖。
+ * 主图 transform 同时被 index→详情 的共享元素过渡快照使用，互不冲突（快照按当时状态取样）。 */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .album-hero-bg {
+      animation: hero-parallax-bg linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+    .album-hero-photo {
+      animation: hero-parallax-photo linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+  }
+}
+@keyframes hero-parallax-bg {
+  to {
+    transform: translateY(44px);
+  }
+}
+@keyframes hero-parallax-photo {
+  to {
+    transform: translateY(-14px);
+  }
+}
+
 /* 文章配图灯箱：点击正文图片全屏放大（blog/[id] 脚本挂载） */
 .fig-lightbox {
   position: fixed;
@@ -581,6 +609,7 @@ a.tag-link:hover {
   body > footer,
   #back-to-top,
   #read-progress,
+  #scene-side-nav,
   details,
   [data-filter-chips],
   nav[aria-label='上一篇 / 下一篇'],

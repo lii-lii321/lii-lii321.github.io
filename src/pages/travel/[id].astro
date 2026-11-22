@@ -84,7 +84,8 @@ const sceneChips = groupScenes
   <article>
     <!-- 相册头：完整照片居中（零裁切）+ 同图放大模糊铺满空隙（letterbox 延伸），墨色渐变压白字 -->
     <section class="relative mt-10 overflow-hidden rounded-[14px] bg-night">
-      <!-- 底层：同图放大模糊铺满（cover 兜底整个容器，空隙的延伸色） -->
+      <!-- 底层：同图放大模糊铺满（cover 兜底整个容器，空隙的延伸色）；
+           放大用 -inset-[5%] 而非 scale-110，把 transform 留给滚动视差动画 -->
       <img
         src={coverPhoto?.thumb ?? trip.cover}
         srcset={coverPhoto ? headerSrcset(coverPhoto, trip.cover) : undefined}
@@ -93,9 +94,10 @@ const sceneChips = groupScenes
         aria-hidden="true"
         loading="eager"
         decoding="async"
-        class="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
+        class="album-hero-bg absolute -inset-[8%] object-cover blur-2xl"
       />
-      <!-- 上层：完整照片居中，按原始比例显示不裁切；width/height 声明真实比例防布局跳动 -->
+      <!-- 上层：完整照片居中，按原始比例显示不裁切；width/height 声明真实比例防布局跳动；
+           与相册索引页卡片封面同名 view-transition-name → 点击卡片时封面连续变形展开成头图 -->
       <img
         src={coverPhoto?.thumb ?? trip.cover}
         srcset={coverPhoto ? headerSrcset(coverPhoto, trip.cover) : undefined}
@@ -107,7 +109,8 @@ const sceneChips = groupScenes
         decoding="async"
         width={coverPhoto?.width}
         height={coverPhoto?.height}
-        class="relative mx-auto block h-auto max-h-[560px] w-auto max-w-full"
+        transition:name={`album-${trip.id}`}
+        class="album-hero-photo relative mx-auto block h-auto max-h-[560px] w-auto max-w-full"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/30" aria-hidden="true">
       </div>
@@ -220,6 +223,27 @@ const sceneChips = groupScenes
       coverName={coverPhoto?.src.split('/').pop() ?? ''}
     />
 
+    <!-- 景点侧导航：分组 ≥2 时右侧固定圆点，滚到对应景点高亮（脚本见页尾） -->
+    {
+      sceneChips.length > 1 && (
+        <nav
+          id="scene-side-nav"
+          class="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-center gap-2.5 md:flex"
+          aria-label="景点导航"
+        >
+          {sceneChips.map((c) => (
+            <a
+              href={`#scene-${c.gi}`}
+              data-dot={c.gi}
+              title={c.scene}
+              aria-label={`跳到 ${c.scene}`}
+              class="h-2 w-2 rounded-full border border-rule-2 bg-paper-2 transition-all hover:scale-125 hover:border-accent"
+            />
+          ))}
+        </nav>
+      )
+    }
+
     <!-- 上一本 / 下一本相册 -->
     <nav class="mt-[var(--spacing-sec)] grid border-t border-rule sm:grid-cols-2 sm:divide-x sm:divide-rule" aria-label="上一本 / 下一本相册">
       {
@@ -241,5 +265,36 @@ const sceneChips = groupScenes
         )
       }
     </nav>
+
+    <script>
+      // 景点侧导航高亮：观察各分组 section（#scene-N），滚过视口中线的组点亮对应圆点。
+      // ClientRouter 下模块脚本只执行一次，astro:page-load 每次导航重跑绑定；离开相册页无圆点即短路。
+      let sceneIo: IntersectionObserver | undefined;
+      document.addEventListener('astro:page-load', () => {
+        const dots = document.querySelectorAll<HTMLAnchorElement>('#scene-side-nav [data-dot]');
+        if (!dots.length) return;
+        sceneIo?.disconnect();
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const en of entries) {
+              if (!en.isIntersecting) continue;
+              const active = en.target.id.replace('scene-', '');
+              dots.forEach((d) => {
+                const on = d.dataset.dot === active;
+                d.classList.toggle('bg-accent', on);
+                d.classList.toggle('border-accent', on);
+                d.classList.toggle('scale-150', on);
+              });
+            }
+          },
+          { rootMargin: '-45% 0px -45% 0px' },
+        );
+        dots.forEach((d) => {
+          const sec = document.getElementById(`scene-${d.dataset.dot}`);
+          if (sec) io.observe(sec);
+        });
+        sceneIo = io;
+      });
+    </script>
   </article>
 </Base>
