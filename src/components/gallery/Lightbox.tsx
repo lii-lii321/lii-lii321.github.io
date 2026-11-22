@@ -7,6 +7,8 @@
  *   字段缺失时回退原图 src），并预加载相邻两张显示档；
  * - 照片有 EXIF（takenAt / camera）时展示，没有则整行隐藏；
  * - 打开期间锁定 body 滚动，blur 占位图作为原图加载时的背景；
+ * - 缩放：双击（桌面）/ 双击轻点（移动端）1 ↔ 2.4 倍切换、双指捏合 1–4 倍、
+ *   拖拽平移（放大态），切换照片或收起时自动复位；
  * - 打开时焦点移入对话框、Tab 焦点圈闭在对话框内、关闭时归还给触发元素。
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -58,16 +60,39 @@ export default function Lightbox({ photos, albumTitle }: Props) {
   const touchStartX = useRef<number | null>(null);
   const count = photos.length;
 
+  /* 缩放态：双击/双击轻点切换、捏合缩放、放大态拖拽平移；切图或收起自动复位 */
+  const [zoom, setZoom] = useState(1);
+  const [origin, setOrigin] = useState('center');
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  /** 手势进行中（捏合/拖拽）：禁用 transform 过渡，松手恢复 */
+  const [dragging, setDragging] = useState(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  /** 双指捏合起点（两指距离 + 起始倍率） */
+  const pinchRef = useRef<{ startDist: number; startZoom: number } | null>(null);
+  /** 单指/鼠标拖拽的抓取点（相对当前 pan 的偏移） */
+  const panDragRef = useRef<{ x: number; y: number } | null>(null);
+  /** 双击轻点判定：上一次轻触的时间与位置 */
+  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
+
   const close = useCallback(() => setIndex(null), []);
+
+  /** 复位缩放：倍率、缩放中心、平移量 */
+  const resetZoom = useCallback(() => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+    setOrigin('center');
+    setDragging(false);
+  }, []);
 
   const step = useCallback(
     (delta: number) => {
+      resetZoom();
       setIndex((current) => {
         if (current === null || count === 0) return current;
         return (current + delta + count) % count;
       });
     },
-    [count],
+    [count, resetZoom],
   );
 
   // 监听静态网格派发的打开事件（带越界钳制）
@@ -75,11 +100,39 @@ export default function Lightbox({ photos, albumTitle }: Props) {
     const onOpen = (event: Event) => {
       const detail = (event as CustomEvent<OpenEventDetail>).detail;
       if (!detail || !Number.isInteger(detail.index) || count === 0) return;
+      resetZoom();
       setIndex(Math.max(0, Math.min(detail.index, count - 1)));
     };
     document.addEventListener(OPEN_EVENT, onOpen);
     return () => document.removeEventListener(OPEN_EVENT, onOpen);
-  }, [count]);
+  }, [count, resetZoom]);
+
+  /** 双击 / 双击轻点：1 ↔ 2.4 倍切换；放大时以点击点为缩放中心 */
+  const toggleZoomAt = (clientX: number, clientY: number) => {
+    if (zoom > 1) {
+      resetZoom();
+      return;
+    }
+    const rect = imgRef.current?.getBoundingClientRect();
+    if (rect && rect.width > 0) {
+      setOrigin(
+        `${(((clientX - rect.left) / rect.width) * 100).toFixed(2)}% ${(((clientY - rect.top) / rect.height) * 100).toFixed(2)}%`,
+      );
+    }
+    setZoom(2.4);
+  };
+
+  /** 把平移量钳制在图片溢出范围内，避免把照片拖出画面 */
+  const clampPan = (p: { x: number; y: number }, z: number) => {
+    const rect = imgRef.current?.getBoundingClientRect();
+    if (!rect || rect.width === 0) return p;
+    const mx = ((z - 1) * rect.width) / 2;
+    const my = ((z - 1) * rect.height) / 2;
+    return {
+      x: Math.max(-mx, Math.min(mx, p.x)),
+      y: Math.max(-my, Math.min(my, p.y)),
+    };
+  };
 
   // 键盘：← / → 切换，Esc 关闭
   useEffect(() => {
@@ -211,13 +264,72 @@ export default function Lightbox({ photos, albumTitle }: Props) {
         </button>
       </div>
 
-      {/* 图片区：显示档只在灯箱内加载，blur 占位图作为加载背景；移动端左右滑切换 */}
+      {/* 图片区：显示档只在灯箱内加载，blur 占位图作为加载背景；
+          未缩放时左右滑切换，缩放态（双击/捏合）下单指/鼠标拖拽改为平移 */}
       <div
         className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-12 sm:px-24"
+        style={{ cursor: zoom > 1 ? (dragging ? 'grabbing' : 'grab') : undefined }}
         onTouchStart={(event) => {
-          touchStartX.current = event.touches[0]?.clientX ?? null;
+          if (event.touches.length === 2) {
+            const [a, b] = [event.touches[0], event.touches[1]];
+            if (a && b) {
+              pinchRef.current = {
+                startDist: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY),
+                startZoom: zoom,
+              };
+              touchStartX.current = null;
+              lastTapRef.current = null;
+            }
+            return;
+          }
+          const t = event.touches[0];
+          if (!t) return;
+          const now = Date.now();
+          const last = lastTapRef.current;
+          // 双击轻点（<300ms、位移 <24px）切换缩放——放大/缩小两个方向都支持
+          if (last && now - last.time < 300 && Math.hypot(t.clientX - last.x, t.clientY - last.y) < 24) {
+            lastTapRef.current = null;
+            toggleZoomAt(t.clientX, t.clientY);
+            touchStartX.current = null;
+            return;
+          }
+          lastTapRef.current = { time: now, x: t.clientX, y: t.clientY };
+          if (zoom > 1) {
+            // 缩放态单指 = 平移，不参与滑动切图
+            panDragRef.current = { x: t.clientX - pan.x, y: t.clientY - pan.y };
+            touchStartX.current = null;
+            return;
+          }
+          touchStartX.current = t.clientX;
+        }}
+        onTouchMove={(event) => {
+          if (event.touches.length === 2 && pinchRef.current) {
+            const [a, b] = [event.touches[0], event.touches[1]];
+            if (!a || !b) return;
+            const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+            const next = Math.min(4, Math.max(1, pinchRef.current.startZoom * (dist / pinchRef.current.startDist)));
+            setDragging(true);
+            setZoom(next);
+            return;
+          }
+          if (zoom > 1 && panDragRef.current && event.touches.length === 1) {
+            const t = event.touches[0];
+            if (!t) return;
+            setDragging(true);
+            setPan(clampPan({ x: t.clientX - panDragRef.current.x, y: t.clientY - panDragRef.current.y }, zoom));
+          }
         }}
         onTouchEnd={(event) => {
+          const wasPinch = pinchRef.current !== null;
+          pinchRef.current = null;
+          panDragRef.current = null;
+          setDragging(false);
+          // 捏合或缩放态不参与滑动切图；捏合回落到 1 附近时整体复位
+          if (wasPinch || zoom > 1) {
+            touchStartX.current = null;
+            if (zoom < 1.05) resetZoom();
+            return;
+          }
           if (touchStartX.current === null) return;
           const endX = event.changedTouches[0]?.clientX;
           if (endX === undefined) return;
@@ -226,8 +338,28 @@ export default function Lightbox({ photos, albumTitle }: Props) {
           // 阈值以上才算滑动，避免轻点误切；水平滑动不干扰点击空白关闭（click 正常触发）
           if (Math.abs(dx) > 48) step(dx < 0 ? 1 : -1);
         }}
+        onMouseDown={(event) => {
+          if (zoom <= 1) return;
+          panDragRef.current = { x: event.clientX - pan.x, y: event.clientY - pan.y };
+          setDragging(true);
+          event.preventDefault();
+        }}
+        onMouseMove={(event) => {
+          if (zoom > 1 && panDragRef.current) {
+            setPan(clampPan({ x: event.clientX - panDragRef.current.x, y: event.clientY - panDragRef.current.y }, zoom));
+          }
+        }}
+        onMouseUp={() => {
+          panDragRef.current = null;
+          setDragging(false);
+        }}
+        onMouseLeave={() => {
+          panDragRef.current = null;
+          setDragging(false);
+        }}
       >
         <img
+          ref={imgRef}
           key={photo.src}
           src={displaySrc(photo)}
           alt={`${albumTitle} · 第 ${index + 1} 张`}
@@ -236,8 +368,16 @@ export default function Lightbox({ photos, albumTitle }: Props) {
             backgroundImage: `url("${photo.blur}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            transformOrigin: origin,
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+            transition: dragging ? 'none' : 'transform 0.22s ease',
+          }}
+          onDoubleClick={(event) => {
+            event.stopPropagation();
+            toggleZoomAt(event.clientX, event.clientY);
           }}
           onClick={stopPropagation}
+          draggable={false}
         />
 
         {count > 1 && (
@@ -273,7 +413,7 @@ export default function Lightbox({ photos, albumTitle }: Props) {
         className="px-4 py-3 text-center text-xs text-white/50"
         onClick={stopPropagation}
       >
-        ← / → 或滑动切换 · Esc 或点击空白处关闭
+        ← / → 或滑动切换 · 双击缩放 / 捏合缩放 · Esc 或点击空白处关闭
       </p>
     </div>
   );

@@ -10,10 +10,17 @@ import { formatDate, getCoverPhoto } from './utils';
 interface Props {
   /** 最新一次旅行；无数据时隐藏拍立得 */
   trip: Trip | null;
+  /** 封面轮播候选（最新在前，首页传最新 3 册）；首张永远是 trip 本身——LCP 预加载指向它 */
+  recent?: Trip[];
 }
 
-const { trip } = Astro.props;
-const cover = trip ? getCoverPhoto(trip) : null;
+const { trip, recent = [] } = Astro.props;
+
+// 轮播候选：trip 打头，recent 去重补位，截前 3；只保留有封面照片的册
+const candidates = [trip, ...recent.filter((t) => t?.id !== trip?.id)].slice(0, 3);
+const slides = candidates.filter((t): t is Trip => t !== null && getCoverPhoto(t) !== null);
+const firstCover = slides.length > 0 ? getCoverPhoto(slides[0]) : null;
+const cover = firstCover;
 
 // 拍立得是首屏视觉锚点（LCP 元素）：把 640w 缩略图预加载进 head，抢在 CSS 解析前开始取图。
 // Astro 会把组件内的 link 提升进 <head>；srcset 主选档是 640w 缩略图（与 img 的 sizes 匹配）
@@ -70,32 +77,122 @@ const titleLines = siteConfig.tagline.split(/(?<=，)/).filter(Boolean);
     </p>
   </div>
 
-  {/* 拍立得：首屏视觉锚点。真实比例展示（width/height 属性定比例，不裁切）。
+  {/* 拍立得：首屏视觉锚点。容器按首册封面比例定高（aspect-ratio，零裁切不跳动），
+      首张图 LCP 原样保留（eager+preload），其余册封面懒加载叠放、由脚本交叉淡入轮换。
       data-tilt：鼠标跟随 3D 视差（Base 全局脚本接管 transform，仅 pointer:fine 生效） */}
   {
-    trip && cover && (
+    slides.length > 0 && firstCover && (
       <figure
         data-tilt
         class="group relative mx-auto w-full max-w-[340px] rounded-[4px] border border-rule bg-white p-3 pb-12 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out lg:max-w-none"
         style="transform:perspective(900px) rotate(2deg)"
       >
-        <img
-          src={cover.thumb}
-          srcset={`${cover.thumb} 640w, ${trip.cover} ${cover.width}w`}
-          sizes="(min-width: 1024px) 440px, (min-width: 640px) 60vw, 85vw"
-          alt={`${trip.title} —— ${trip.place.name}`}
-          width={cover.width}
-          height={cover.height}
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          class="h-auto w-full"
-          style={`background-image:url(${cover.blur});background-size:cover;background-position:center`}
-        />
-        <figcaption class="meta absolute bottom-4 left-4 normal-case">
-          {trip.title} · {formatDate(trip.date)}
+        <div
+          data-hero-carousel
+          class="relative overflow-hidden rounded-[2px]"
+          style={`aspect-ratio:${firstCover.width} / ${firstCover.height}`}
+        >
+          {slides.map((t, i) => {
+            const c = getCoverPhoto(t);
+            if (!c) return null;
+            return (
+              <img
+                src={c.thumb}
+                srcset={`${c.thumb} 640w, ${t.cover} ${c.width}w`}
+                sizes="(min-width: 1024px) 440px, (min-width: 640px) 60vw, 85vw"
+                alt={`${t.title} —— ${t.place.name}`}
+                width={c.width}
+                height={c.height}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : undefined}
+                decoding="async"
+                data-slide={i}
+                data-caption={`${t.title} · ${formatDate(t.date)}`}
+                class:list={[
+                  'h-full w-full object-cover motion-safe:transition-opacity motion-safe:duration-700 motion-safe:ease-out',
+                  i === 0 ? 'opacity-100' : 'absolute inset-0 opacity-0',
+                ]}
+                style={`background-image:url(${c.blur});background-size:cover;background-position:center`}
+              />
+            );
+          })}
+          {slides.length > 1 && (
+            <div class="absolute right-2 bottom-2 flex gap-1.5" role="group" aria-label="拍立得封面切换">
+              {slides.map((_, i) => (
+                <button
+                  type="button"
+                  data-dot={i}
+                  aria-label={`切到第 ${i + 1} 本相册封面`}
+                  aria-pressed={i === 0}
+                  class="h-1.5 w-4 cursor-pointer rounded-full bg-white/40 shadow-[0_0_0_1px_rgba(20,20,25,0.15)] transition-colors aria-pressed:bg-white/90"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        <figcaption data-hero-caption class="meta absolute bottom-4 left-4 normal-case">
+          {slides[0].title} · {formatDate(slides[0].date)}
         </figcaption>
       </figure>
     )
   }
 </section>
+
+<script>
+  // 拍立得封面轮播：最新三册封面 6s 交叉淡入轮换（ClientRouter 下模块脚本只执行一次，
+  // astro:page-load 每次进页重绑）。首张是 LCP 元素（eager+preload）不动；
+  // hover 暂停、圆点手动切换并重新计时；reduced-motion 不轮换（CSS 过渡也一并禁用）。
+  const ROTATE_MS = 6000;
+  let timer: ReturnType<typeof setInterval> | undefined;
+  let active = 0;
+
+  const stopRotate = () => {
+    if (timer) {
+      clearInterval(timer);
+      timer = undefined;
+    }
+  };
+
+  const setSlide = (carousel: HTMLElement, next: number) => {
+    const imgs = carousel.querySelectorAll<HTMLImageElement>('[data-slide]');
+    const target = imgs[next];
+    if (!target) return;
+    imgs.forEach((img, i) => {
+      img.classList.toggle('opacity-100', i === next);
+      img.classList.toggle('opacity-0', i !== next);
+    });
+    const caption = document.querySelector<HTMLElement>('[data-hero-caption]');
+    if (caption && target.dataset.caption) caption.textContent = target.dataset.caption;
+    carousel.querySelectorAll<HTMLButtonElement>('[data-dot]').forEach((d) => {
+      d.setAttribute('aria-pressed', String(d.dataset.dot === String(next)));
+    });
+    active = next;
+  };
+
+  const startRotate = (carousel: HTMLElement) => {
+    const imgs = carousel.querySelectorAll('[data-slide]');
+    if (imgs.length < 2) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    stopRotate();
+    timer = setInterval(() => {
+      setSlide(carousel, (active + 1) % imgs.length);
+    }, ROTATE_MS);
+  };
+
+  document.addEventListener('astro:page-load', () => {
+    stopRotate();
+    active = 0;
+    const carousel = document.querySelector<HTMLElement>('[data-hero-carousel]');
+    if (!carousel) return;
+    carousel.querySelectorAll<HTMLButtonElement>('[data-dot]').forEach((d) => {
+      d.addEventListener('click', () => {
+        setSlide(carousel, Number(d.dataset.dot));
+        startRotate(carousel); // 手动切换后重新计时，避免紧接着被轮走
+      });
+    });
+    const figure = carousel.closest('figure');
+    figure?.addEventListener('mouseenter', stopRotate);
+    figure?.addEventListener('mouseleave', () => startRotate(carousel));
+    startRotate(carousel);
+  });
+</script>

@@ -243,7 +243,7 @@ const homeJsonLd =
                 <a href="/tags" class="text-ink-2 transition-colors hover:text-accent">标签</a>
               </li>
               <li>
-                <a href="/search" class="text-ink-2 transition-colors hover:text-accent">搜索</a>
+                <a href="/search" title="快捷键：Ctrl+K" class="text-ink-2 transition-colors hover:text-accent">搜索</a>
               </li>
               <li>
                 <a href="/now" class="text-ink-2 transition-colors hover:text-accent">Now</a>
@@ -340,12 +340,17 @@ const homeJsonLd =
     </button>
 
     <script>
-      // 按 / 跳转全站搜索（输入框内不触发；焦点在对话框如灯箱内时不抢占，避免中断浏览）。
+      // / 或 Ctrl+K（macCmd+K）跳转全站搜索（焦点在对话框如灯箱内时不抢占，避免中断浏览）。
+      // / 沿用惯例不在输入框内触发；Ctrl+K 是全局唤起惯例，输入框内也响应。
       // 已在 /search 时改为聚焦搜索框——重载会清掉已输入的关键词与焦点
       addEventListener('keydown', (event) => {
-        if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
+        const isSlash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey;
+        const isCtrlK =
+          (event.ctrlKey || event.metaKey) && (event.key === 'k' || event.key === 'K');
+        if (!isSlash && !isCtrlK) return;
         const target = event.target as HTMLElement | null;
         if (
+          isSlash &&
           target &&
           (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
         ) {

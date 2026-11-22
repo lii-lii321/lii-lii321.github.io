@@ -48,8 +48,37 @@ const VIEWS: { key: MapView; label: (visited: VisitedData) => string }[] = [
 
 const VIEW_LABEL_CN: Record<MapView, string> = { world: '世界地图', china: '中国地图' };
 
+/* 视图偏好记忆：世界/中国选择与 roam 后的视野（center/zoom）存 localStorage，
+ * 下次进页自动回到上次看到的地方。读写失败静默降级为默认行为。 */
+const VIEW_PREF_KEY = 'map-view-pref';
+interface GeoViewPref {
+  center?: [number, number];
+  zoom?: number;
+}
+interface ViewPref {
+  view?: MapView;
+  world?: GeoViewPref;
+  china?: GeoViewPref;
+}
+function loadViewPref(): ViewPref {
+  try {
+    return JSON.parse(localStorage.getItem(VIEW_PREF_KEY) ?? '{}') as ViewPref;
+  } catch {
+    return {};
+  }
+}
+function saveViewPref(pref: ViewPref) {
+  try {
+    localStorage.setItem(VIEW_PREF_KEY, JSON.stringify(pref));
+  } catch {
+    /* 隐私模式等场景写入失败可接受 */
+  }
+}
+
 export default function TravelMap({ trips, visited }: Props) {
   const [view, setView] = useState<MapView>('world');
+  /** 视图偏好（挂载后读一次 localStorage；SSR 端不碰 storage） */
+  const prefRef = useRef<ViewPref>({});
   const [status, setStatus] = useState<Record<MapView, GeoStatus>>({
     world: 'loading',
     china: 'loading',
@@ -109,7 +138,14 @@ export default function TravelMap({ trips, visited }: Props) {
   }, []);
 
   /* ①b GeoJSON 按需加载（含首次挂载）：初始只拉 world（约 0.96MB），
-   * china（约 0.56MB）推迟到首次切到中国视图——挂载不再并行拉两份共约 1.5MB */
+   * china（约 0.56MB）推迟到首次切到中国视图——挂载不再并行拉两份共约 1.5MB。
+   * 挂载后恢复上次选中的视图（china 会触发对应 GeoJSON 按需抓取） */
+  useEffect(() => {
+    const saved = loadViewPref();
+    prefRef.current = saved;
+    if (saved.view === 'china') setView('china');
+  }, []);
+
   useEffect(() => {
     ensureGeo(view);
   }, [view, ensureGeo]);
@@ -141,6 +177,16 @@ export default function TravelMap({ trips, visited }: Props) {
       return;
     }
 
+    // 恢复该视图上次 roam 后的视野（notMerge 全量重建之后再叠加合并，仅一次）
+    const savedGeo = prefRef.current[view];
+    if (savedGeo?.center) {
+      try {
+        chart.setOption({ geo: { center: savedGeo.center, zoom: savedGeo.zoom ?? 1 } } as never);
+      } catch {
+        /* 视野恢复失败不影响渲染 */
+      }
+    }
+
     const handleMarkerClick = (
       params: { componentType?: string; seriesType?: string; data?: { placeKey?: string } },
     ) => {
@@ -163,8 +209,34 @@ export default function TravelMap({ trips, visited }: Props) {
     zr.off('click');
     zr.on('click', handleBlankClick);
 
+    // roam 后防抖记录视野：getOption().geo[0] 反映拖拽/缩放后的最新 center/zoom
+    let roamTimer: ReturnType<typeof setTimeout> | undefined;
+    const handleRoam = () => {
+      clearTimeout(roamTimer);
+      roamTimer = setTimeout(() => {
+        try {
+          const geoOpt = (
+            chart.getOption() as { geo?: { center?: number[]; zoom?: number }[] }
+          ).geo?.[0];
+          if (!geoOpt?.center) return;
+          const next: ViewPref = { ...prefRef.current };
+          next[view] = {
+            center: geoOpt.center as [number, number],
+            zoom: geoOpt.zoom ?? 1,
+          };
+          prefRef.current = next;
+          saveViewPref(next);
+        } catch {
+          /* 记录失败可接受 */
+        }
+      }, 300);
+    };
+    chart.on('geoRoam', handleRoam);
+
     return () => {
+      clearTimeout(roamTimer);
       chart.off('click');
+      chart.off('geoRoam');
       zr.off('click');
     };
   }, [view, status, clusters, visited]);
@@ -182,6 +254,10 @@ export default function TravelMap({ trips, visited }: Props) {
   const switchView = (next: MapView) => {
     setView(next);
     setSelectedKey(null);
+    // 记住上次选中的视图，下次进页直接回到它
+    const nextPref: ViewPref = { ...prefRef.current, view: next };
+    prefRef.current = nextPref;
+    saveViewPref(nextPref);
   };
 
   return (

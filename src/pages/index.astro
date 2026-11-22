@@ -39,7 +39,7 @@ const latestTrip = trips[0] ?? null;
 <Base description={`${siteConfig.name}，${siteConfig.title}。${siteConfig.tagline} 项目、文章、履历与旅行足迹。`}>
   {/* data-reveal：滚动进场（IO 加 .revealed）；Hero 不参与——它是 LCP，不能延迟首屏 */}
   <div class="flex flex-col gap-[var(--spacing-sec)]">
-    <Hero trip={latestTrip} />
+    <Hero trip={latestTrip} recent={trips.slice(0, 3)} />
 
     <div data-reveal>
       <StatBand items={siteConfig.stats} />
