@@ -38,4 +38,4 @@ draft: false
 
 ---
 
-24 段玩具语料、一条命令跑通全链路，`--corpus-dir` 换成你自己的语料目录就能出第一份报告。工具仓库就是它的说明书：[llm-eval-kit](https://github.com/lii-lii321/llm-eval-kit)，在线评测报告每次 push 自动更新。
+24 段玩具语料、一条命令跑通全链路，`--corpus-dir` 换成你自己的语料目录就能出第一份报告。项目主页见 [/projects/llm-eval-kit](/projects/llm-eval-kit)；工具仓库就是它的说明书：[llm-eval-kit](https://github.com/lii-lii321/llm-eval-kit)，在线评测报告每次 push 自动更新。

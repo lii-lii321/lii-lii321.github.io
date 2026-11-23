@@ -302,6 +302,39 @@ const related = posts
       });
     </script>
 
+    <!-- 评论（giscus：GitHub Discussions 驱动，pathname 映射一篇文章一个讨论串）。
+         客户端路由下模块只执行一次，astro:page-load 每次进页重挂；已有内容则跳过防双挂 -->
+    <section id="comments" class="mt-[var(--spacing-sec)]" aria-label="评论">
+      <p class="eyebrow">Comments</p>
+      <div data-giscus class="mt-6"></div>
+    </section>
+    <script>
+      document.addEventListener('astro:page-load', () => {
+        const host = document.querySelector('[data-giscus]');
+        if (!host || host.childElementCount > 0) return;
+        const s = document.createElement('script');
+        s.src = 'https://giscus.app/client.js';
+        s.async = true;
+        s.crossOrigin = 'anonymous';
+        for (const [k, v] of Object.entries({
+          'data-repo': 'lii-lii321/lii-lii321.github.io',
+          'data-repo-id': 'R_kgDOU74PhA',
+          'data-category': 'General',
+          'data-category-id': 'DIC_kwDOU74PhM4DLyab',
+          'data-mapping': 'pathname',
+          'data-strict': '0',
+          'data-reactions-enabled': '1',
+          'data-emit-metadata': '0',
+          'data-input-position': 'top',
+          'data-theme': 'light',
+          'data-lang': 'zh-CN',
+        })) {
+          s.setAttribute(k, v);
+        }
+        host.append(s);
+      });
+    </script>
+
     <!-- 上 / 下一篇 -->
     <nav class="grid border-t border-rule sm:grid-cols-2 sm:divide-x sm:divide-rule" aria-label="上一篇 / 下一篇">
       {

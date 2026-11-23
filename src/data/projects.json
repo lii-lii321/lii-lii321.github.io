@@ -385,7 +385,7 @@
         "num": "11",
         "unit": "本",
         "label": "旅行相册",
-        "baseline": "2260 张照片，原始图库 6700+ 张精选入库"
+        "baseline": "2162 张照片，原始图库 6700+ 张精选入库"
       },
       {
         "num": "8",
@@ -449,5 +449,277 @@
     ],
     "featured": true,
     "order": 4
+  },
+  {
+    "id": "credit-risk-modeling",
+    "title": "credit-risk-modeling · 信贷违约风险建模",
+    "year": "2026",
+    "period": "2026.10",
+    "role": "独立开发",
+    "category": "开源",
+    "summary": "端到端信贷违约概率建模：自实现 WOE/IV、2 模型 × 3 不平衡策略实验矩阵、SHAP 解释与 FastAPI 评分服务的科研式全链路。",
+    "standfirst": "以 OpenML credit-g 公开数据集（1000 行 × 20 特征）为载体回答一个业务问题：给定申请人的画像，预测违约概率（PD）并给出可审计的解释。Model Card 里每个数字都由脚本实跑产出，150 个 pytest 与 ruff + mypy 门禁守着复现性。",
+    "status": "live",
+    "repoUrl": "https://github.com/lii-lii321/credit-risk-modeling",
+    "stack": ["Python", "scikit-learn", "LightGBM", "SHAP", "FastAPI", "Streamlit", "pytest"],
+    "cover": "/projects/credit-risk-modeling/demo.gif",
+    "shots": [
+      {
+        "src": "/projects/credit-risk-modeling/demo.gif",
+        "caption": "评分服务演示：20 维画像进，校准 PD + 风险分档 + top 解释项出",
+        "width": 880,
+        "height": 460
+      }
+    ],
+    "metrics": [
+      {
+        "num": "0.8013",
+        "unit": "",
+        "label": "测试集 AUC",
+        "baseline": "部署模型（LR + weight + sigmoid 校准）独立测试集 n=200，KS 0.5119"
+      },
+      {
+        "num": "150",
+        "unit": "项",
+        "label": "自动化测试",
+        "baseline": "pytest 全绿，ruff + mypy 进 CI 门禁"
+      },
+      {
+        "num": "2×3",
+        "unit": "",
+        "label": "实验矩阵",
+        "baseline": "LR / LightGBM × none / weight / SMOTE，5 折 CV 全量对比"
+      }
+    ],
+    "pull": "风控模型的生死线不是 AUC，是每个分数都能回答「为什么」。",
+    "problem": [
+      "风控模型最常见的两种失败：一是黑盒——业务方不敢用一个说不清理由的分数；二是教条——「不平衡就要 SMOTE」这类教科书结论直接抄上线，没人验证过适不适用。",
+      "约束是真实的小数据：1000 行、20 维、坏样本率 30%。这个体量下特征工程的杠杆远大于模型复杂度，正好把「问题 → 数据 → 实验 → 解释 → 部署」的科研式链路完整走一遍。"
+    ],
+    "approach": [
+      {
+        "n": "01",
+        "title": "自实现 WOE 编码",
+        "body": "分位数分箱 + WOE 转换，加法平滑 α=0.5 防止零频箱漂移；缺失与训练期未见值统一映射中性 0——训练得分、上线翻车的经典源头用测试钉死。"
+      },
+      {
+        "n": "02",
+        "title": "2 模型 × 3 不平衡策略实验矩阵",
+        "body": "LR 与 LightGBM 各配 none / weight / SMOTE，5 折分层 CV 报 AUC + KS 均值方差，谁赢谁上拿数据说话。"
+      },
+      {
+        "n": "03",
+        "title": "校准、阈值与业务语言",
+        "body": "OOF held-out 上 Platt 与 isotonic 择优，Brier / ECE 验证概率质量；阈值-业务分析把批准率 / 坏账率曲线摆给业务方选阈值，而不是拿 AUC 选。"
+      },
+      {
+        "n": "04",
+        "title": "解释双通道 + 稳定性守卫",
+        "body": "coef × WOE 线性归因审计可读，SHAP 全局 + 单样本交叉验证无系统性偏差；自实现 PSI 做 train/test 对比外加漂移注入测试。"
+      }
+    ],
+    "decisions": [
+      {
+        "title": "部署 LR，而不是 LightGBM",
+        "body": "测试集 AUC 0.8013 vs 最好 LightGBM 组合的 0.7711——1000 行的小数据上，WOE 强先验特征工程比模型复杂度值钱。线性模型的系数本身就是一份审计报告。"
+      },
+      {
+        "title": "weight 代替 SMOTE",
+        "body": "温和不平衡（坏样本率 30%）下两者 CV AUC 差距仅 0.0012：加权以更低复杂度、无重采样的线上副作用达到同等效果。结论带边界写入 README：坏样本率 <5% 需重新实验。"
+      },
+      {
+        "title": "概率要能当钱算",
+        "body": "PD 是业务决策的输入，只排序不准不行。校准修复单独成步：Brier / ECE 达标才允许部署，版本号写进模型元数据。"
+      }
+    ],
+    "outcome": [
+      "部署模型独立测试集 AUC 0.8013 / KS 0.5119 / Gini 0.6026（n=200，实跑见 artifacts/metrics.json）",
+      "FastAPI /score 出校准 PD + 风险分档 + top 解释项，Streamlit 交互 Demo 同套后端",
+      "150 个 pytest 全绿，ruff + mypy CI 门禁；Model Card 全部数字可由 scripts/run_training.py 一键复现"
+    ],
+    "pitfalls": [
+      "SMOTE 在温和不平衡下没有可辨识收益（差距 0.0012）——教科书结论也要过实验；它真正的适用区（坏样本率 <5%）在 README 里写成了显式边界。",
+      "LightGBM 在 1000 行数据上全线跑输 LR——小数据集盲目上 GBDT 是反向优化，先看清数据体量再选模型。"
+    ],
+    "featured": false,
+    "order": 5
+  },
+  {
+    "id": "jd-resume-matcher",
+    "title": "jd-resume-matcher · JD-简历可解释匹配器",
+    "year": "2026",
+    "period": "2026.10",
+    "role": "独立开发",
+    "category": "开源",
+    "summary": "JD↔简历结构化匹配与解释器：纯离线规则抽取 + 六因素加权打分，每条推荐理由都能回溯到 JD 与简历的原文证据片段。",
+    "standfirst": "招聘筛选不该是黑盒。这个工具把「为什么推荐 / 为什么不推荐」拆成逐因素、带证据的解释链路：先结构化（47 个规范技能名 + 别名归一）、再建模（六因素加权，权重与依据全部公开）、最后解释（逐条理由回溯原文）。纯离线、不依赖 LLM、结果确定可复现。",
+    "status": "live",
+    "repoUrl": "https://github.com/lii-lii321/jd-resume-matcher",
+    "stack": ["Python", "FastAPI", "Streamlit", "pytest"],
+    "cover": "/projects/jd-resume-matcher/demo.gif",
+    "shots": [
+      {
+        "src": "/projects/jd-resume-matcher/demo.gif",
+        "caption": "批量筛选演示：一份 JD 筛整个简历文件夹，按总分降序出候选名单",
+        "width": 880,
+        "height": 460
+      }
+    ],
+    "metrics": [
+      {
+        "num": "144",
+        "unit": "项",
+        "label": "自动化测试",
+        "baseline": "pytest 全绿 + ruff / mypy 静态检查门禁"
+      },
+      {
+        "num": "47",
+        "unit": "个",
+        "label": "规范技能名",
+        "baseline": "含别名归一，词表外置 vocab.json，三种自定义入口共用同一套校验"
+      },
+      {
+        "num": "6",
+        "unit": "因素",
+        "label": "加权打分",
+        "baseline": "权重与设计依据全部公开在 constants.py，总和 1.00"
+      }
+    ],
+    "pull": "与其等一个不可解释的系统来审判我，不如先写一个可解释的系统理解审判的逻辑。",
+    "problem": [
+      "求职季反复遇到同一件事：JD 列着一堆要求，简历投出去石沉大海，中间发生了什么没人告诉你。招聘筛选对候选人是黑盒，对招聘方其实也是——ATS 给了个分数，谁也说不清它怎么算的。",
+      "设计动机因此是双向的：既帮自己核对简历与 JD 的证据链，也演示一个「筛选就该可解释」的参照实现。"
+    ],
+    "approach": [
+      {
+        "n": "01",
+        "title": "规则抽取层",
+        "body": "规则 + 关键词抽取技能（47 规范名含别名归一）、学历阶梯、工作年限、领域标签；词表外置，CLI / API / Demo 三个自定义入口共用同一套校验与合并语义，坏词表显式报错不静默。"
+      },
+      {
+        "n": "02",
+        "title": "六因素加权打分",
+        "body": "硬性技能 0.40 / 经验 0.20 / 学历 0.15 / 加分技能 0.10 / 领域 0.10 / 语义 0.05，每条权重注明设计依据；JD 未提供的因素权重按比例摊回，总分保持 0–100 跨 JD 可比。"
+      },
+      {
+        "n": "03",
+        "title": "证据回溯的解释链",
+        "body": "total_score 之外输出 score_breakdown 与逐条 reasons，每条理由带 JD 与简历原文的证据片段；85 分 A 强烈推荐、70 分 B 推荐，阈值在常量文件可调。"
+      }
+    ],
+    "decisions": [
+      {
+        "title": "不依赖 LLM，离线可跑",
+        "body": "抽取与打分全走规则，结果确定、可复现、零成本评估——克隆即跑。语义能力留作可选：嵌入 provider 可插拔，默认 mock（确定性 3-gram 哈希）。"
+      },
+      {
+        "title": "语义只当兜底信号",
+        "body": "嵌入噪声大，只给 0.05 权重；无 Key / 非法 URL / 调用失败三级优雅降级回纯规则，语义路挂了也不动摇结论。"
+      },
+      {
+        "title": "批量模式带流水线闸门",
+        "body": "--resume-dir 一份 JD 筛整个文件夹，坏文件只记失败不中断整批；--min-score 做「无人达标即失败」的闸门，--csv 导出 Excel 友好的 utf-8-sig 候选名单。"
+      }
+    ],
+    "outcome": [
+      "144 个 pytest 全绿，展示层之外的纯函数独立可测；ruff + mypy 门禁常开",
+      "FastAPI /match 端点 + CLI 演示命令 + Streamlit 双页签 Demo（示例数据预填、打开即出完整结果）",
+      "每条推荐理由均可回溯到 JD / 简历原文证据片段——黑盒变审计"
+    ],
+    "pitfalls": [
+      "简历自述易注水——经验年限权重因此压到 0.20 而非直觉的更高；权重是主观建模，但依据必须公开，让人可以不同意你。",
+      "词表管理是持久战：别名归一（k8s = Kubernetes）比扩词表更防漏召回，三个自定义入口必须共享同一套校验，否则各入口行为漂移。"
+    ],
+    "featured": false,
+    "order": 6
+  },
+  {
+    "id": "llm-eval-kit",
+    "title": "llm-eval-kit · RAG/LLM 评测工具库",
+    "year": "2026",
+    "period": "2026.10 —",
+    "role": "独立开发",
+    "category": "开源",
+    "summary": "离线可跑的 RAG 检索与 LLM 应用评测工具库：合成评测集、检索指标、LLM-as-judge、badcase 归因与回归门禁，核心零第三方依赖。",
+    "standfirst": "评测方法写进博客容易腐烂，长在工具里才会被真的执行。llm-eval-kit 把「合成评测集 → 多路检索对比 → 四维 judge 评分 → badcase 归因 → CI 门禁」做成一条命令跑通的管线，Markdown + HTML 双报告由 GitHub Pages 在每次 push 后自动重新发布。",
+    "status": "live",
+    "repoUrl": "https://github.com/lii-lii321/llm-eval-kit",
+    "stack": ["Python", "BM25", "LLM-as-judge", "pytest", "GitHub Actions"],
+    "cover": "/projects/llm-eval-kit/demo.gif",
+    "shots": [
+      {
+        "src": "/projects/llm-eval-kit/demo.gif",
+        "caption": "端到端演示：内置 24 段玩具语料，一条命令跑通评测全链路出双报告",
+        "width": 880,
+        "height": 460
+      }
+    ],
+    "metrics": [
+      {
+        "num": "40",
+        "unit": "×",
+        "label": "FastBM25 提速",
+        "baseline": "2 万段语料单查询 P50 23.4ms → 0.6ms；高频词元收窄至 2.6×，边界写在 PERFORMANCE.md"
+      },
+      {
+        "num": "4",
+        "unit": "条",
+        "label": "检索管线同台",
+        "baseline": "BM25 / 词频 / 加权混合 / RRF 融合，外加 Retriever 协议接外部系统"
+      },
+      {
+        "num": "0",
+        "unit": "个",
+        "label": "核心第三方依赖",
+        "baseline": "全部功能离线可复现，固定 seed"
+      }
+    ],
+    "pull": "评测方法要长在工具里：--fail-under 不过线，合并就被挡下。",
+    "problem": [
+      "RAG 项目的指标计算代码通常散落在 notebook 里：换个项目重写一遍、口径悄悄漂移、没人敢动。评测这件事要么被工具化，要么被口头化。",
+      "目标是一个离线可跑、固定 seed 完全可复现的评测基座：没有标注数据也能合成冷启动，有了标注直接接管；外部检索系统一层适配即可同台对比。"
+    ],
+    "approach": [
+      {
+        "n": "01",
+        "title": "合成评测集冷启动",
+        "body": "词频 × 逆文档频率选关键词 + 查询模板生成 query-doc-answer 三元组，固定 seed；同义改写构造词面不匹配的困难样本。人工标注走 JSONL 通道：缺字段 / 重复 id 报错带行号，_meta 记录标注日期与版本。"
+      },
+      {
+        "n": "02",
+        "title": "Retriever 协议统一入口",
+        "body": "duck typing：任何检索系统实现一个 retrieve(query, top_k) 即可与内置 BM25 / 词频 / 加权混合 / RRF 融合同台对比；CallableRetriever 宽容归一化各种返回形状，协议不满足时报可诊断错误。"
+      },
+      {
+        "n": "03",
+        "title": "指标、judge 与门禁",
+        "body": "Recall@K / MRR / MAP@10 / NDCG@10 / Weighted NDCG@10 + P50/P95 延迟，聚合指标附 bootstrap 95% 置信区间；LLM-as-judge 四维评分（正确 / 相关 / 可操作 / 清晰），SelfConsistencyJudge 采样 n 次按维度多数票压噪声；--fail-under 任一指标不过线退出码 1，直接做 CI 合并卡点。"
+      }
+    ],
+    "decisions": [
+      {
+        "title": "核心零第三方依赖",
+        "body": "指标、BM25、合成器全部 stdlib 实现——评测基座的依赖越少，被评测的项目越敢引入它。LLM 依赖只出现在可选的 judge provider。"
+      },
+      {
+        "title": "性能数字带边界发布",
+        "body": "FastBM25 用纯 stdlib 倒排索引，打分口径与玩具版完全一致；2 万段语料 P50 提速约 40×（23.4ms → 0.6ms），但查询含高频词元时收益收窄至 2.6×——基准脚本随库发布，边界写进 PERFORMANCE.md，数字随时可复现。"
+      },
+      {
+        "title": "badcase 三类归因",
+        "body": "top-K 未命中查询自动分类：关键词不匹配 / 语义漂移 / 语料缺失，报告附未命中示例——归因出口有限，问题才能收敛到具体一层。"
+      }
+    ],
+    "outcome": [
+      "在线评测报告 https://lii-lii321.github.io/llm-eval-kit/ 随 push 自动重新生成发布",
+      "一条命令端到端 demo：内置 24 段玩具语料 + 四种检索器，--corpus-dir 换自己的语料即出第一份报告",
+      "评测回归门禁可直接进 CI：实测值 vs 阈值 vs 差距三行输出，不过线退出码 1"
+    ],
+    "pitfalls": [
+      "单次 LLM judge 打分抖动足以误导调参方向——SelfConsistencyJudge 用多次采样多数票压噪声，多花的 token 是值得的。",
+      "评测集构成不对齐内容源分布，离线指标再好看也是自欺——外部语料 + 标注集 + 门禁因此做成了同一条命令链。"
+    ],
+    "featured": false,
+    "order": 7
   }
 ]
