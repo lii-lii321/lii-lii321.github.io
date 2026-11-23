@@ -8,11 +8,18 @@
 import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
 import { BarChart, HeatmapChart, PieChart } from 'echarts/charts';
-import { CalendarComponent, GridComponent, TooltipComponent } from 'echarts/components';
+import {
+  CalendarComponent,
+  GridComponent,
+  TooltipComponent,
+  VisualMapComponent,
+} from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import type { EChartsType } from 'echarts/core';
 import type { StatsAggregates } from './aggregate';
 
+// VisualMapComponent 必须注册：快门日历的 visualMap 色阶靠它（漏注册会让 setOption
+// 抛 "Cannot read properties of undefined (reading 'type')"、canvas 不出现）
 echarts.use([
   BarChart,
   HeatmapChart,
@@ -20,6 +27,7 @@ echarts.use([
   CalendarComponent,
   GridComponent,
   TooltipComponent,
+  VisualMapComponent,
   CanvasRenderer,
 ]);
 
@@ -31,6 +39,7 @@ interface Props {
 const ACCENT = '#2f4bff';
 const INK3 = '#6f6f7a';
 const RULE = '#e2dfd6';
+const PAPER = '#fbfaf7';
 const MONO = 'JetBrains Mono, ui-monospace, SFMono-Regular, Consolas, monospace';
 
 const AXIS_TEXT = { fontSize: 10, color: INK3, fontFamily: MONO } as const;
@@ -56,8 +65,9 @@ export default function StatsCharts({ data }: Props) {
       const chart = echarts.init(el);
       try {
         chart.setOption(optionFor(el.dataset.chart ?? '', data));
-      } catch {
-        /* 单图渲染失败不让整页崩 */
+      } catch (err) {
+        // 单图渲染失败不让整页崩；错误落到容器属性上，页面上可直接检查（canvas 不出现时先看这里）
+        el.setAttribute('data-chart-err', err instanceof Error ? err.message : String(err));
       }
       charts.push(chart);
     }
@@ -146,16 +156,21 @@ function optionFor(kind: string, data: StatsAggregates): Record<string, unknown>
   }
 }
 
-/** 快门日历：每年一行日历 + 热力色阶 */
+/** 快门日历：每年一行日历 + 热力色阶。
+ *  ⚠️ 多年日历的 option 键必须是单数 calendar（数组值表示多实例）——
+ *  写成复数 calendars 会被 echarts 静默忽略，坐标系建不出来，
+ *  setOption 抛 "Cannot read properties of undefined (reading 'type')" */
 function calendarOption(data: StatsAggregates): Record<string, unknown> {
   const max = Math.max(1, ...data.days.map(([, v]) => v));
-  const calendars = data.years.map((year, i) => ({
+  const calendar = data.years.map((year, i) => ({
     top: 28 + i * 200,
     left: 46,
     right: 10,
     cellSize: ['auto', 17],
     range: year,
-    itemStyle: { color: 'transparent', borderColor: RULE, borderWidth: 1 },
+    // 单元格描边用纸色当「白缝」（GitHub 热力图风格），月界由 splitLine 画细线
+    itemStyle: { color: 'transparent', borderColor: PAPER, borderWidth: 1 },
+    splitLine: { show: true, lineStyle: { color: RULE, width: 1 } },
     dayLabel: { nameMap: 'ZH', firstDay: 1, ...AXIS_TEXT },
     monthLabel: { nameMap: 'ZH', ...AXIS_TEXT },
     yearLabel: { show: false },
@@ -168,7 +183,7 @@ function calendarOption(data: StatsAggregates): Record<string, unknown> {
       show: false,
       inRange: { color: ['#e8ebff', '#93a1ff', ACCENT] },
     },
-    calendars,
+    calendar,
     series: data.years.map((year, i) => ({
       type: 'heatmap',
       coordinateSystem: 'calendar',
